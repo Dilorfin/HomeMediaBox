@@ -4,18 +4,25 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import base64 from 'react-native-base64'
 import SendIntentAndroid from "react-native-send-intent";
+import Dict from './src/dict';
 
 function startVideo(url:string)
 {
 	Platform.select({
-		
+		android(){
+            SendIntentAndroid.openAppWithData(
+                /* "org.videolan.vlc" */null,
+                "https://www.w3schools.com/html/mov_bbb.mp4",
+                "video/*"
+            ).then(wasOpened => {});
+        },
 		default(){
 			Linking.openURL(url).catch(err => {});
 		}
 	})();
 }
 
-function HomeScreen({ navigation }) {
+function HomeScreen() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
 	  <Button
@@ -77,10 +84,11 @@ function HomeScreen({ navigation }) {
 	</View>
 	);
 }
-function DetailsScreen() {
+function DetailsScreen({ navigation }) {
 	return (
 	  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-		<Text>Details Screen</Text>
+		<Button title="Dict" onPress={()=>{navigation.navigate("Dict")}}/>
+		<Button title="Video" onPress={()=>{navigation.navigate("Video")}}/>
 	  </View>
 	);
 }
@@ -91,8 +99,9 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={HomeScreen}options={{ title: 'Overview' }} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Home" component={DetailsScreen} />
+        <Stack.Screen name="Video" component={HomeScreen}options={{ title: 'Overview' }} />
+		<Stack.Screen name="Dict" component={Dict} />
       </Stack.Navigator>
     </NavigationContainer>
   );
