@@ -6,16 +6,16 @@ import base64 from 'react-native-base64'
 import SendIntentAndroid from "react-native-send-intent";
 import Dict from './src/dict';
 
-function startVideo(url:string)
+function startVideo(url :string)
 {
 	Platform.select({
-		android(){
-            SendIntentAndroid.openAppWithData(
-                /* "org.videolan.vlc" */null,
-                "https://www.w3schools.com/html/mov_bbb.mp4",
-                "video/*"
-            ).then(wasOpened => {});
-        },
+		android() {
+			SendIntentAndroid.openAppWithData(
+				/* "org.videolan.vlc" */null,
+				url,
+				"video/*"
+			).then(wasOpened => {});
+		},
 		default(){
 			Linking.openURL(url).catch(err => {});
 		}
@@ -23,11 +23,11 @@ function startVideo(url:string)
 }
 
 function HomeScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-	  <Button
-        title="Start video"
-        onPress={() => {
+	return (
+		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+		<Button
+				title="Start video"
+				onPress={() => {
 			const headers = {
 				'Accept':'*/*',
 				'Accept-Encoding': 'gzip, deflate, br',
@@ -86,26 +86,25 @@ function HomeScreen() {
 }
 function DetailsScreen({ navigation }) {
 	return (
-	  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
 		<Button title="Dict" onPress={()=>{navigation.navigate("Dict")}}/>
 		<Button title="Video" onPress={()=>{navigation.navigate("Video")}}/>
-	  </View>
+		</View>
 	);
 }
 
 const Stack = createNativeStackNavigator();
 
 function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={DetailsScreen} />
-        <Stack.Screen name="Video" component={HomeScreen}options={{ title: 'Overview' }} />
-		<Stack.Screen name="Dict" component={Dict} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+	return (
+		<NavigationContainer>
+			<Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+				<Stack.Screen name="Home" component={DetailsScreen} />
+				<Stack.Screen name="Video" component={HomeScreen}options={{ title: 'Overview' }} />
+				<Stack.Screen name="Dict" component={Dict} />
+			</Stack.Navigator>
+		</NavigationContainer>
+	);
 }
-
 
 export default App;
