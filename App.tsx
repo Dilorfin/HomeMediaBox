@@ -7,7 +7,6 @@ import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 import MovieScreen from './src/screens/MovieScreen'
 import SurfScreen from './src/screens/SurfScreen'
 import SearchScreen from './src/screens/SearchScreen'
-import TempScreen from './src/screens/TempScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +25,6 @@ export default function App() {
 				<Stack.Screen name="SurfScreen" component={SurfScreen} />
 				<Stack.Screen name="MovieScreen" component={MovieScreen} />
 				<Stack.Screen name="SearchScreen" component={SearchScreen} />
-				<Stack.Screen name="TempScreen" component={TempScreen} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

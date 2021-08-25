@@ -5,11 +5,14 @@ import SendIntentAndroid from 'react-native-send-intent';
 import MovieDetails from '../models/MovieDetails';
 import TMDB from '../providers/TMDB';
 import defaults from '../defaults';
-import { GetUrl } from '../providers/Seasonvar';
 
 function startVideo(url :string)
 {
-	
+	const m = url.match(/http(s)?:\/\//g);
+	console.log(m)
+	if (m.length != 1){
+		console.error(`not valid url ${url}`);
+	}
 	Platform.select({
 		android() {
 			SendIntentAndroid.openAppWithData(
@@ -90,7 +93,7 @@ class VideoCdnProvider {
 			return playlist;
 		})
 		.then((playlist)=>{
-			return "https" + playlist[Object.keys(playlist)[0]]
+			return "https:" + playlist[Object.keys(playlist)[0]]
 				.match(/\[1080p\]\/\/cloud.cdnland.in\/.*720.mp4/g)[0]
 				.split(" or ")[0]
 				.replace(/\[1080p\]/, '');
@@ -104,7 +107,7 @@ export default class MovieScreen extends Component
 		movieModel: null
 	};
 
-	navigation = {};
+	navigation = null;
 
 	constructor(inProp)
 	{
