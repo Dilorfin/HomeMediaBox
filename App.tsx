@@ -4,13 +4,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 
-import Dict from './src/dict';
 import MovieScreen from './src/screens/MovieScreen'
 import SurfScreen from './src/screens/SurfScreen'
+import SearchScreen from './src/screens/SearchScreen'
+import TempScreen from './src/screens/TempScreen';
 
 const Stack = createNativeStackNavigator();
 
-function App() {
+export default function App() {
 	// testing network connectivity
 	NetInfo.fetch().then((state :NetInfoState) => {
 		if(!state.isConnected)
@@ -23,11 +24,10 @@ function App() {
 		<NavigationContainer>
 			<Stack.Navigator initialRouteName="SurfScreen" screenOptions={{ headerShown: false }}>
 				<Stack.Screen name="SurfScreen" component={SurfScreen} />
-				<Stack.Screen name="MovieScreen" component={MovieScreen}options={{ title: 'Overview' }} />
-				<Stack.Screen name="Dict" component={Dict} />
+				<Stack.Screen name="MovieScreen" component={MovieScreen} />
+				<Stack.Screen name="SearchScreen" component={SearchScreen} />
+				<Stack.Screen name="TempScreen" component={TempScreen} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
 }
-
-export default App;

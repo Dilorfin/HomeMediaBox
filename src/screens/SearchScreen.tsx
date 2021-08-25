@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react';
 import Voice from '@react-native-voice/voice';
 import { Button, Text, View } from 'react-native';
 
-const Dict = () => {
+const SearchScreen = () => {
 	const [isRecord, setIsRecord] = useState<boolean>(false);
 	const [text, setText] = useState<string>('');
 	const buttonLabel = isRecord ? 'Stop' : 'Start';
@@ -57,4 +57,4 @@ const Dict = () => {
 	);
 };
 
-export default Dict;
+export default SearchScreen;

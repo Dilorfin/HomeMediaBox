@@ -1,92 +1,158 @@
-import * as React from 'react';
-import { View, Button, Linking, Platform } from 'react-native';
+import React, { Component } from 'react';
+import { Button, Linking, Platform, Image, ImageBackground } from 'react-native';
 import SendIntentAndroid from 'react-native-send-intent';
-import base64 from 'react-native-base64';
+
+import MovieDetails from '../models/MovieDetails';
+import TMDB from '../providers/TMDB';
+import defaults from '../defaults';
+import { GetUrl } from '../providers/Seasonvar';
 
 function startVideo(url :string)
 {
+	
 	Platform.select({
 		android() {
 			SendIntentAndroid.openAppWithData(
-				/* "org.videolan.vlc" */null,
+				//"org.videolan.vlc",
+				null,
 				url,
 				"video/*"
 			).then(wasOpened => {});
 		},
 		default(){
-			Linking.openURL(url).catch(err => {});
+			
+			Linking.openURL(url).catch(err => {console.error(err);});
 		}
 	})();
 }
-async function GetUrl(playerUrl :string){
-	const headers = {
-		'Accept':'*/*',
-		'Accept-Encoding': 'gzip, deflate, br',
-		'Connection': 'keep-alive',
-		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
+
+class VideoCdnProvider {
+	static async getVideoUrl(movieModel:MovieDetails) :Promise<string>
+	{
+		function tb(b) {
+			if (b.indexOf(".") == -1) {
+				b = b.substr(1);
+				var s2 = "";
+				for (var j = 0; j < b.length; j += 3)
+					s2 += "%u0" + b.slice(j, j + 3);
+				b = unescape(s2)
+			}
+			return b
+		}
+		function decodeEntities(encodedString :string) {
+			var translate_re = /&(nbsp|amp|quot|lt|gt);/g;
+			var translate = {
+				"nbsp":" ",
+				"amp" : "&",
+				"quot": "\"",
+				"lt"  : "<",
+				"gt"  : ">"
+			};
+			return encodedString.replace(translate_re, function(match, entity) {
+				return translate[entity];
+			}).replace(/&#(\d+);/gi, function(match, numStr) {
+				var num = parseInt(numStr, 10);
+				return String.fromCharCode(num);
+			});
+		}
+
+		const api_token = "lyvhjadzMUnDErAS6l7zIAk0M2nMYpbb";
+		const url = `https://videocdn.tv/api/movies?api_token=${api_token}&field=imdb_id&query=${movieModel.imdb_id}`;
+		return await fetch(url, {
+			headers: defaults.headers
+		}).then((response :Response)=>{
+			return response.json();
+		}).then((responseJson)=>{
+			return "https:"+responseJson.data[0].media[0].qualities[0].url;
+		}).then((playerUrl :string)=>{
+			return fetch(playerUrl, {
+				headers: defaults.headers
+			});
+		}).then((response :Response)=>{
+			return response.text();
+		})
+		.then((htmlText :string)=>{
+			var matches :RegExpMatchArray = htmlText.match(/<input type=["']hidden["'] id=["']files["'] value=["'].*\}">/g);
+			if(!matches || matches.length != 1)
+			{
+				throw `${movieModel.imdb_id} should be checked`;
+			}
+			
+			return matches[0].replace(/<input type=["']hidden["'] id=["']files["'] value=["']/g, '')
+				.replace(/["']>/g, '');
+		})
+		.then((decodedPlaylist :string)=>{
+			var playlist = JSON.parse(decodeEntities(decodedPlaylist));
+
+			for (const [key, value] of Object.entries(playlist)) {
+				playlist[key] = tb(value);
+			}
+			return playlist;
+		})
+		.then((playlist)=>{
+			return "https" + playlist[Object.keys(playlist)[0]]
+				.match(/\[1080p\]\/\/cloud.cdnland.in\/.*720.mp4/g)[0]
+				.split(" or ")[0]
+				.replace(/\[1080p\]/, '');
+		});
+	}
+};
+
+export default class MovieScreen extends Component
+{
+	state : {movieModel:MovieDetails} = {
+		movieModel: null
+	};
+
+	navigation = {};
+
+	constructor(inProp)
+	{
+		super(inProp);
+
+		this.navigation = inProp.navigation;
+		this.state.movieModel = inProp.route.params
+		this.load(this.state.movieModel.id)
+	}
+	load(id:number)
+	{
+		TMDB.getDetails(id).then(
+			(data :MovieDetails)=>{
+				this.setState({movieModel: data});
+			});
 	}
 
-	return fetch(playerUrl, {
-		headers: headers
-	}).then((response :Response)=>{
-		console.log("first request", response.ok);
-		return response.text();
-	}).then((htmlText :string) =>{
-		var matches :RegExpMatchArray = htmlText.match(/<script type="text\/javascript">.*eval.*<\/script>/);
-		
-		if(!matches || matches.length != 1)
-		{
-			throw 'cannot load datalock player';
-		}
+	render(){
+		return (
+				<ImageBackground
+						source={{uri: this.state.movieModel.backdrop_path}}
+						resizeMode="cover"
+						style={{width:"100%",flex: 1,justifyContent: "center"}}
+					>
+					<Image
+						source={{ uri: this.state.movieModel.poster_path}}
+						style={{
+							width: 120,
+							height: 150
+						}}/>
 
-		var input :string = matches[0].replace('<script type="text/javascript">', '')
-			.replace('</script>', '');
-		matches = input.match(/.*eval\(function\(\w,\w,\w,\w\).*/g);
-		while(matches && matches.length != 0)
-		{
-			input = "(" + input.substr(0, input.length-2)
-				.replace(/.*eval\(/g, "")
-				.replace("}('", "})('");
-			input = eval(input)
-			matches = input.match(/.*eval\(function\(\w,\w,\w,\w\).*/g);
-		}
-		return "https://"+input.match(/datalock\.ru\/playlist\/.*\.txt\?time=\d+/g)[0];
-	}).then((playlistUrl :string) => {
-		console.log("playlistUrl", playlistUrl);
-		return fetch(playlistUrl, {headers: headers });
-	}).then((response :Response)=>{
-		console.log("second request", response.ok);
-		return response.json();
-	}).then((playlist)=>{
-		if (playlist[0].folder) 
-		{
-			return playlist[0].folder[0].file;
-		}
-		else 
-		{
-			return playlist[0].file;
-		}
-	}).then((fileDecodedUrl :string)=>{
-		console.log("fileDecodedUrl", fileDecodedUrl);
-		fileDecodedUrl = fileDecodedUrl.replace(/(\/\/.*?==)/g, '');
-
-		return base64.decode(fileDecodedUrl.substr(2));
-	});
-}
-
-export default function MovieScreen() {
-	return (
-		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-			<Button
-				title="Start video"
-				onPress={() => {
-					GetUrl('https://datalock.ru/player/14424')
-						.then((fileUrl :string)=>{
-							console.log("fileUrl", fileUrl);
-							startVideo(fileUrl);
-						});
-				}}
-			/>
-		</View>
-	);
+					<Button
+						title="Start video"
+						onPress={() => {
+							VideoCdnProvider.getVideoUrl(this.state.movieModel)
+								.then((url:string)=>{
+									console.log(url);
+									startVideo(url);
+								});
+							/*GetUrl('https://datalock.ru/player/14425')
+								.then((fileUrl :string)=>{
+									console.log("fileUrl", fileUrl);
+									startVideo(fileUrl);
+								});*/
+						}}
+						/>
+				</ImageBackground>
+			
+		);
+	}
 }
