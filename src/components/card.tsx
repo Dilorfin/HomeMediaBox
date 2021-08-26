@@ -1,34 +1,60 @@
-import React  from 'react';
-import { Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState }  from 'react';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import TextTicker from 'react-native-text-ticker';
 
-export default function Card ({imageUrl, title, onPress, width, height}) {
+const textPadding:number = 5;
+
+export default function Card (props)
+{
+	//const [focused, setFocused] = useState(false);
+
 	return (
-	<TouchableOpacity onPress={onPress}
-		  style={styles.container}>
+	<TouchableOpacity 
+			onPress={props.onPress}
+			onFocus={(event)=>{
+				console.log(`focused: ${event}`);
+				//setFocused(true);
+			}}
+			onBlur={(event)=>{
+				console.log(`unfocused: ${event}`);
+				//setFocused(false);
+			}}
+			style={[
+			  styles.container,
+			  //focused && styles.styleFocused
+			]}
+		>
 		<Image
-			source={{ uri: imageUrl }}
+			source={{ uri: props.imageUrl }}
 			style={{
-				width: width,
-				height: height
+				width: props.width,
+				height: props.height
 			}}
 		/>
-		<Text
+		<View style={[styles.textWrapper, {width:props.width}]}>
+			<TextTicker bounce={false}
+				shouldAnimateTreshold={textPadding}
+				style={styles.text}>
+				{props.title}
+			</TextTicker>
+      	</View>
 
-		 style={styles.text}>
-			{title}
-		</Text>
 	</TouchableOpacity>)
 };
 
 const styles = StyleSheet.create({
 	container:{
-		margin: 10
+		margin: 10,
 	},
-	text: {
-		width:150,
-		backgroundColor:"rgb(40, 40, 40)",
-		color:"rgb(200, 200, 200)",
-		padding: 5,
-		
+	text:{
+		color: 'rgb(200, 200, 200)'
+	},
+	textWrapper:{
+		padding: textPadding,
+		backgroundColor: 'rgb(40, 40, 40)',
+	},
+	styleFocused: {
+		borderWidth:2,
+		borderColor:"#0f0"
 	}
 });

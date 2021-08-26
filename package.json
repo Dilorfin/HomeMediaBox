@@ -19,7 +19,8 @@
     "react-native-base64": "^0.2.1",
     "react-native-safe-area-context": "^3.3.0",
     "react-native-screens": "^3.6.0",
-    "react-native-send-intent": "^1.2.3"
+    "react-native-send-intent": "^1.2.3",
+    "react-native-text-ticker": "^1.14.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

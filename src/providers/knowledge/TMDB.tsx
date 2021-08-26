@@ -4,6 +4,8 @@ import MovieListResult from "../../models/MovieListResult";
 import Pagination from "../../models/Pagination";
 
 export default class TMDB {
+	private static locale:string = 'ru-RU';//'en-US';
+	private static apikey:string = '3735813b72994d73278ea217e6a50dd0';
 	private static async getJson<TData>(url:string) :Promise<TData>
 	{
 		return await fetch(url, {
@@ -24,7 +26,7 @@ export default class TMDB {
 
 	static async getPopularMovie() :Promise<Pagination<MovieListResult[]>>
 	{
-		const url = "https://api.themoviedb.org/3/movie/popular?api_key=3735813b72994d73278ea217e6a50dd0&language=en-US&page=1";
+		const url = `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB.apikey}&language=${TMDB.locale}&page=1`;
 		return TMDB.getJson<Pagination<MovieListResult[]>>(url)
 			.then((movies :Pagination<MovieListResult[]>)=>{
 				movies.results = TMDB.setFullImagePaths(movies.results);
@@ -34,7 +36,7 @@ export default class TMDB {
 
 	static async getDetails(id:number) :Promise<MovieDetails>
 	{
-		const url :string = `https://api.themoviedb.org/3/movie/${id}?api_key=3735813b72994d73278ea217e6a50dd0&language=en-US&append_to_response=recommendations`;
+		const url :string = `https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB.apikey}&language=${TMDB.locale}&append_to_response=recommendations`;
 		console.log(url)
 		return TMDB.getJson<MovieDetails>(url)
 			.then((movie :MovieDetails)=>{
