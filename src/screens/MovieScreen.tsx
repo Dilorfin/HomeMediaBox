@@ -3,15 +3,15 @@ import { Button, Linking, Platform, Image, ImageBackground } from 'react-native'
 import SendIntentAndroid from 'react-native-send-intent';
 
 import MovieDetails from '../models/MovieDetails';
-import TMDB from '../providers/TMDB';
+import TMDB from '../providers/knowledge/TMDB';
 import defaults from '../defaults';
 
-function startVideo(url :string)
+function startVideo(title :string, url :string)
 {
 	const m = url.match(/http(s)?:\/\//g);
-	console.log(m)
 	if (m.length != 1){
 		console.error(`not valid url ${url}`);
+		return;
 	}
 	Platform.select({
 		android() {
@@ -19,7 +19,10 @@ function startVideo(url :string)
 				//"org.videolan.vlc",
 				null,
 				url,
-				"video/*"
+				"video/*",
+				{
+					'title': title
+				}
 			).then(wasOpened => {});
 		},
 		default(){
@@ -145,7 +148,7 @@ export default class MovieScreen extends Component
 							VideoCdnProvider.getVideoUrl(this.state.movieModel)
 								.then((url:string)=>{
 									console.log(url);
-									startVideo(url);
+									startVideo(this.state.movieModel.title, url);
 								});
 							/*GetUrl('https://datalock.ru/player/14425')
 								.then((fileUrl :string)=>{

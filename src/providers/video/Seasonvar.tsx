@@ -1,5 +1,5 @@
 import base64 from 'react-native-base64';
-import defaults from '../defaults';
+import defaults from '../../defaults';
 /*
 
 GetUrl('https://datalock.ru/player/14425')

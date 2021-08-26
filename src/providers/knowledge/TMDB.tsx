@@ -1,7 +1,7 @@
-import defaults from "../defaults";
-import MovieDetails from "../models/MovieDetails";
-import MovieListResult from "../models/MovieListResult";
-import Pagination from "../models/Pagination";
+import defaults from "../../defaults";
+import MovieDetails from "../../models/MovieDetails";
+import MovieListResult from "../../models/MovieListResult";
+import Pagination from "../../models/Pagination";
 
 export default class TMDB {
 	private static async getJson<TData>(url:string) :Promise<TData>
