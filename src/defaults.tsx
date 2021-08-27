@@ -1,4 +1,8 @@
+import KnowledgeProvider from "./providers/KnowledgeProvider"
+
 export default class {
+	public static kProvider: KnowledgeProvider;
+
 	public static headers = {
 		'Accept':'*/*',
 		//'Accept-Encoding': 'gzip, deflate, br',

@@ -1,6 +1,6 @@
 export default interface MovieListResult
 {
-	id :number;
+	id :string;
 	
 	title:string;
 	original_title:string;

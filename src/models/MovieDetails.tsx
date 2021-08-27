@@ -3,7 +3,7 @@ import Pagination from "./Pagination";
 
 export default interface MovieDetails
 {
-	id :number;
+	id :string;
 	imdb_id :string;
 	
 	title :string;

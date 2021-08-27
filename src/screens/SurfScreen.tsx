@@ -4,15 +4,18 @@ import {
 	ListRenderItemInfo,
 	View,
 	Text,
+	StyleSheet,
+	Button,
+	TouchableOpacity,
 } from 'react-native';
 
-import TMDB from '../providers/knowledge/TMDB';
 import MovieListResult from '../models/MovieListResult';
 import Pagination from '../models/Pagination';
 import Card from '../components/card';
+import defaults from '../defaults';
 
-export default class MyLayout extends Component {
-
+export default class SurfScreen extends Component 
+{
 	state = { listData:null };
 	navigation :any = null;
 	columnsNumber :number = 4;
@@ -20,14 +23,13 @@ export default class MyLayout extends Component {
 	constructor(props)
 	{
 		super(props);
-
 		this.navigation = props.navigation;
 		this.load();
 	}
 
 	load()
 	{
-		TMDB.getPopularMovie().then(
+		defaults.kProvider.getPopularMovie().then(
 			(data :Pagination<MovieListResult[]>)=>{
 				this.setState({listData: data.results});
 			});
@@ -39,23 +41,29 @@ export default class MyLayout extends Component {
 			width={150}
 			height={200}
 			title={data.item.title}
-			onPress={()=>{
-				this.navigation.navigate("MovieScreen", data.item);
-				console.log(data.item)}
+			onPress={()=>
+				this.navigation.navigate("MovieScreen", data.item)
 			}/>;
 	}
+	openSearch() :void
+	{
+		this.navigation.navigate("SearchScreen");
+	}
 
-	render(){
+	render(): JSX.Element
+	{
 		return (
-			<View style={{backgroundColor: 'rgb(30, 30, 30)', flexDirection:"row"}}>
-				<View style={{ backgroundColor: "#f0f", flex:1, justifyContent: 'center', alignContent:'center', alignItems: 'center'}}>
-					<Text>Test</Text>
+			<View style={styles.container}>
+				<View style={styles.leftMenu}>
+					<TouchableOpacity onPress={()=>{this.openSearch()}}>
+						<Text>Search</Text>
+					</TouchableOpacity>
 				</View>
-				<View style={{ flex:4, justifyContent: 'center', alignContent:'center', alignItems: 'center'}}>
+				<View style={styles.cardsGrid}>
 					<FlatList
 						data={this.state.listData}
 						renderItem={(data)=>{return this.renderGridItem(data)}} // TODO: check if it can be remade
-						keyExtractor={(item) => item.title} // TODO: change to item.id
+						keyExtractor={(item) => item.id}
 						horizontal={false}
 						numColumns={this.columnsNumber}
 					/>
@@ -64,3 +72,23 @@ export default class MyLayout extends Component {
 		);
 	}
 };
+
+const styles = StyleSheet.create({
+	container: {
+		backgroundColor: 'rgb(30, 30, 30)',
+		flexDirection: "row"
+	},
+	cardsGrid: {
+		flex:4, 
+		justifyContent: 'center', 
+		alignContent:'center', 
+		alignItems: 'center'
+	},
+	leftMenu: {
+		backgroundColor: 'rgb(55, 55, 55)',
+		flex:1,
+		justifyContent: 'center',
+		alignContent:'center', 
+		alignItems: 'center'
+	}
+});

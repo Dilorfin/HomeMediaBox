@@ -2,10 +2,40 @@ import defaults from "../../defaults";
 import MovieDetails from "../../models/MovieDetails";
 import MovieListResult from "../../models/MovieListResult";
 import Pagination from "../../models/Pagination";
+import KnowledgeProvider from "../KnowledgeProvider";
 
-export default class TMDB {
+export default class TMDB implements KnowledgeProvider
+{
 	private static locale:string = 'ru-RU';//'en-US';
 	private static apikey:string = '3735813b72994d73278ea217e6a50dd0';
+
+	async getPopularMovie(): Promise<Pagination<MovieListResult[]>>
+	{
+		const url = `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB.apikey}&language=${TMDB.locale}&page=1`;
+		return TMDB.getJson<Pagination<MovieListResult[]>>(url)
+			.then((movies :Pagination<MovieListResult[]>)=>{
+				movies.results = TMDB.setFullImagePaths(movies.results);
+				return movies;
+			});
+	}
+	async search(text: string): Promise<Pagination<MovieListResult[]>> 
+	{
+		throw new Error("Method not implemented.");
+	}
+	async getMovieDetails(id: string): Promise<MovieDetails> 
+	{
+		const url :string = `https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB.apikey}&language=${TMDB.locale}&append_to_response=recommendations`;
+		console.log(url)
+		return TMDB.getJson<MovieDetails>(url)
+			.then((movie :MovieDetails)=>{
+				//TODO: check if empty
+				movie.poster_path = TMDB.getImageFullUrl(movie.poster_path);
+				movie.backdrop_path = TMDB.getImageFullUrl(movie.backdrop_path);
+				movie.recommendations.results = TMDB.setFullImagePaths(movie.recommendations.results);
+				return movie;
+			});
+	}
+
 	private static async getJson<TData>(url:string) :Promise<TData>
 	{
 		return await fetch(url, {
@@ -24,31 +54,7 @@ export default class TMDB {
 		});
 	}
 
-	static async getPopularMovie() :Promise<Pagination<MovieListResult[]>>
-	{
-		const url = `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB.apikey}&language=${TMDB.locale}&page=1`;
-		return TMDB.getJson<Pagination<MovieListResult[]>>(url)
-			.then((movies :Pagination<MovieListResult[]>)=>{
-				movies.results = TMDB.setFullImagePaths(movies.results);
-				return movies;
-			});
-	}
-
-	static async getDetails(id:number) :Promise<MovieDetails>
-	{
-		const url :string = `https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB.apikey}&language=${TMDB.locale}&append_to_response=recommendations`;
-		console.log(url)
-		return TMDB.getJson<MovieDetails>(url)
-			.then((movie :MovieDetails)=>{
-				//TODO: check if empty
-				movie.poster_path = TMDB.getImageFullUrl(movie.poster_path);
-				movie.backdrop_path = TMDB.getImageFullUrl(movie.backdrop_path);
-				movie.recommendations.results = TMDB.setFullImagePaths(movie.recommendations.results);
-				return movie;
-			});
-	}
-
-	static getImageFullUrl(shortUrl:string) :string{
+	private  static getImageFullUrl(shortUrl:string) :string{
 		return "https://image.tmdb.org/t/p/original"+shortUrl;
 	}
 }
