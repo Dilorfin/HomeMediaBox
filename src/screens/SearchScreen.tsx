@@ -1,60 +1,82 @@
+import React, { Component} from 'react';
+import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import Card from '../components/card';
+import defaults from '../defaults';
+import ListModel from '../models/ListModel';
+import PaginationModel from '../models/PaginationModel';
 
-import React, {useState, useEffect} from 'react';
-import Voice from '@react-native-voice/voice';
-import { Button, Text, View } from 'react-native';
-
-const SearchScreen = () => {
-	const [isRecord, setIsRecord] = useState<boolean>(false);
-	const [text, setText] = useState<string>('');
-	const buttonLabel = isRecord ? 'Stop' : 'Start';
-	const voiceLabel = text
-		? text
-		: isRecord
-		? 'Say something...'
-		: 'press Start button';
-
-	const _onSpeechStart = () => {
-		console.log('onSpeechStart');
-		setText('');
+export default class SearchScreen extends Component
+{
+	state = {
+		listData:null
 	};
-	const _onSpeechEnd = () => {
-		console.log('onSpeechEnd');
-	};
-	const _onSpeechResults = (event) => {
-		console.log('onSpeechResults');
-		setText(event.value[0]);
-	};
-	const _onSpeechError = (event) => {
-		console.log('_onSpeechError');
-		console.log(event.error);
-	};
+	navigation :any = null;
 
-	const _onRecordVoice = () => {
-		if (isRecord) {
-			Voice.stop();
-		} else {
-			//Voice.start('en-US');
-			Voice.start('ru-RU');
-		}
-		setIsRecord(!isRecord);
-	};
+	constructor(props)
+	{
+		super(props);
 
-	useEffect(() => {
-		Voice.onSpeechStart = _onSpeechStart;
-		Voice.onSpeechEnd = _onSpeechEnd;
-		Voice.onSpeechResults = _onSpeechResults;
-		Voice.onSpeechError = _onSpeechError;
+		this.navigation = props.navigation;
+	}
 
-		return () => {
-			Voice.destroy().then(Voice.removeAllListeners);
-		};
-	}, []);
-	return (
-		<View>
-			<Text>{voiceLabel}</Text>
-			<Button onPress={_onRecordVoice} title={buttonLabel} />
-		</View>
-	);
-};
+	search(text :string)
+	{
+		if (text.length <= 2) 
+			return;
 
-export default SearchScreen;
+		defaults.kProvider.search(text).then(
+			(data :PaginationModel<ListModel[]>)=>{
+				this.setState({listData: data.results});
+			});
+	}
+
+	render()
+	{
+		return (
+			<View style={styles.container}>
+				<TextInput
+					autoFocus={true}
+					onChangeText={(text:string)=>this.search(text)}
+				/>
+				<View style={styles.cardsGrid}>
+				{!this.state.listData?<Text>Nothing</Text>:
+					<FlatList
+						data={this.state.listData}
+						renderItem={(data)=>( // TODO: check if it can be remade
+						<Card imageUrl={data.item.poster_path}
+							width={150}
+							height={200}
+							title={data.item.title}
+							onPress={()=>
+								this.navigation.navigate("MovieScreen", data.item)
+							}/>)
+						}
+						keyExtractor={(item) => item.id}
+						horizontal={false}
+						numColumns={5}
+					/>}
+				</View>
+			</View>
+		);
+	}
+}
+
+const styles = StyleSheet.create({
+	container: {
+		backgroundColor: 'rgb(30, 30, 30)',
+		flexDirection: 'column',
+		width:'100%',
+		height:'100%'
+	},
+	cardsGrid: {
+		flex: 4,
+		justifyContent: 'center',
+		alignContent:'center',
+		alignItems: 'center'
+	},
+	textInput: {
+		backgroundColor: 'rgb(55, 55, 55)',
+		flex:1,
+		
+	}
+});

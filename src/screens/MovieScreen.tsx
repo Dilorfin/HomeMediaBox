@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { Button, Linking, Platform, Image, ImageBackground } from 'react-native';
 import SendIntentAndroid from 'react-native-send-intent';
 
-import MovieDetails from '../models/MovieDetails';
+import DetailsModel from '../models/DetailsModel';
 import defaults from '../defaults';
 import VideoCdnProvider from '../providers/video/VideoCdn';
+import ListModel from '../models/ListModel';
 
 function startVideo(title :string, url :string)
 {
@@ -35,7 +36,7 @@ function startVideo(title :string, url :string)
 
 export default class MovieScreen extends Component
 {
-	state : {movieModel:MovieDetails} = {
+	state : {movieModel:DetailsModel} = {
 		movieModel: null
 	};
 
@@ -47,12 +48,12 @@ export default class MovieScreen extends Component
 
 		this.navigation = inProp.navigation;
 		this.state.movieModel = inProp.route.params
-		this.load(this.state.movieModel.id)
+		this.load(inProp.route.params)
 	}
-	load(id:string)
+	load(model:ListModel)
 	{
-		defaults.kProvider.getMovieDetails(id).then(
-			(data :MovieDetails)=>{
+		defaults.kProvider.getDetails(model).then(
+			(data :DetailsModel)=>{
 				this.setState({movieModel: data});
 			});
 	}

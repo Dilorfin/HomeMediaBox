@@ -1,11 +1,13 @@
-import MovieListResult from "./MovieListResult";
-import Pagination from "./Pagination";
+import ListModel from "./ListModel";
+import PaginationModel from "./PaginationModel";
 
-export default interface MovieDetails
+export default interface DetailsModel
 {
 	id :string;
 	imdb_id :string;
 	
+	media_type :string;
+
 	title :string;
 	original_title: string;
 
@@ -28,5 +30,5 @@ export default interface MovieDetails
 
 	status :string;
 
-	recommendations :Pagination<MovieListResult[]>;
+	recommendations :PaginationModel<ListModel[]>;
 };

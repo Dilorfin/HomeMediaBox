@@ -1,8 +1,8 @@
 import defaults from "../../defaults";
-import MovieDetails from "../../models/MovieDetails";
+import DetailsModel from "../../models/DetailsModel";
 
 export default class VideoCdnProvider {
-	static async getVideoUrl(movieModel:MovieDetails) :Promise<string>
+	static async getVideoUrl(movieModel:DetailsModel) :Promise<string>
 	{
 		function tb(b) {
 			if (b.indexOf(".") == -1) {

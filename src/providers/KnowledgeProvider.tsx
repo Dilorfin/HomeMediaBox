@@ -1,12 +1,12 @@
-import MovieDetails from "../models/MovieDetails";
-import MovieListResult from "../models/MovieListResult";
-import Pagination from "../models/Pagination";
+import DetailsModel from "../models/DetailsModel";
+import ListModel from "../models/ListModel";
+import PaginationModel from "../models/PaginationModel";
 
 export default interface KnowledgeProvider
 {
-	search(text :string) :Promise<Pagination<MovieListResult[]>>;
+	search(text :string) :Promise<PaginationModel<ListModel[]>>;
 
-	getPopularMovie() :Promise<Pagination<MovieListResult[]>>
+	getPopularMovie() :Promise<PaginationModel<ListModel[]>>
 
-	getMovieDetails(id :string) :Promise<MovieDetails>;
+	getDetails(id :ListModel) :Promise<DetailsModel>;
 };

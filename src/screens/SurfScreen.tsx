@@ -1,20 +1,19 @@
 import React, { Component }  from 'react';
-import { 
+import {
 	FlatList,
 	ListRenderItemInfo,
 	View,
 	Text,
 	StyleSheet,
-	Button,
 	TouchableOpacity,
 } from 'react-native';
 
-import MovieListResult from '../models/MovieListResult';
-import Pagination from '../models/Pagination';
+import ListModel from '../models/ListModel';
+import PaginationModel from '../models/PaginationModel';
 import Card from '../components/card';
 import defaults from '../defaults';
 
-export default class SurfScreen extends Component 
+export default class SurfScreen extends Component
 {
 	state = { listData:null };
 	navigation :any = null;
@@ -30,21 +29,11 @@ export default class SurfScreen extends Component
 	load()
 	{
 		defaults.kProvider.getPopularMovie().then(
-			(data :Pagination<MovieListResult[]>)=>{
+			(data :PaginationModel<ListModel[]>)=>{
 				this.setState({listData: data.results});
 			});
 	}
 
-	renderGridItem(data :ListRenderItemInfo<MovieListResult>)
-	{
-		return <Card imageUrl={data.item.poster_path}
-			width={150}
-			height={200}
-			title={data.item.title}
-			onPress={()=>
-				this.navigation.navigate("MovieScreen", data.item)
-			}/>;
-	}
 	openSearch() :void
 	{
 		this.navigation.navigate("SearchScreen");
@@ -62,7 +51,15 @@ export default class SurfScreen extends Component
 				<View style={styles.cardsGrid}>
 					<FlatList
 						data={this.state.listData}
-						renderItem={(data)=>{return this.renderGridItem(data)}} // TODO: check if it can be remade
+						renderItem={(data:ListRenderItemInfo<ListModel>)=>( // TODO: check if it can be remade
+						<Card imageUrl={data.item.poster_path}
+							width={150}
+							height={200}
+							title={data.item.title}
+							onPress={()=>
+								this.navigation.navigate("MovieScreen", data.item)
+							}/>)
+						}
 						keyExtractor={(item) => item.id}
 						horizontal={false}
 						numColumns={this.columnsNumber}
@@ -79,16 +76,16 @@ const styles = StyleSheet.create({
 		flexDirection: "row"
 	},
 	cardsGrid: {
-		flex:4, 
-		justifyContent: 'center', 
-		alignContent:'center', 
+		flex:4,
+		justifyContent: 'center',
+		alignContent:'center',
 		alignItems: 'center'
 	},
 	leftMenu: {
 		backgroundColor: 'rgb(55, 55, 55)',
 		flex:1,
 		justifyContent: 'center',
-		alignContent:'center', 
+		alignContent:'center',
 		alignItems: 'center'
 	}
 });
