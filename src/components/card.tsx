@@ -6,14 +6,14 @@ const textPadding :number = 5;
 
 export default function Card (props)
 {
-	var textTicker:any;
+	var textTicker :any;
 
 	return (
 	<TouchableOpacity 
 			onPress={props.onPress}
 			onFocus={()=>textTicker.startAnimation()}
 			onBlur={()=>textTicker.stopAnimation()}
-			style={styles.container}>
+			style={{margin:props.margin}}>
 		<Image
 			source={{ uri: props.imageUrl }}
 			style={{
@@ -36,9 +36,6 @@ export default function Card (props)
 };
 
 const styles = StyleSheet.create({
-	container:{
-		margin: 10,
-	},
 	text:{
 		color: 'rgb(200, 200, 200)'
 	},

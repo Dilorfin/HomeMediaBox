@@ -7,14 +7,14 @@ import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 import MovieScreen from './src/screens/MovieScreen'
 import SurfScreen from './src/screens/SurfScreen'
 import SearchScreen from './src/screens/SearchScreen'
-import defaults from './src/defaults';
+import shared from './src/shared';
 import TMDB from './src/providers/knowledge/TMDB';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() 
 {
-	defaults.kProvider = new TMDB();
+	shared.kProvider = new TMDB();
 	
 	/*import { MMKV } from 'react-native-mmkv';
 	MMKV.set('test', 42);

@@ -1,4 +1,4 @@
-import defaults from "../../defaults";
+import shared from "../../shared";
 import DetailsModel from "../../models/DetailsModel";
 import ListModel from "../../models/ListModel";
 import PaginationModel from "../../models/PaginationModel";
@@ -42,7 +42,6 @@ export default class TMDB implements KnowledgeProvider
 	async getDetails(listModel: ListModel): Promise<DetailsModel> 
 	{
 		const url :string = `https://api.themoviedb.org/3/${listModel.media_type}/${listModel.id}?api_key=${TMDB.apikey}&language=${TMDB.locale}&append_to_response=external_ids,recommendations`;
-		console.log(url)
 		return TMDB.getJson<any>(url)
 			.then((model :any)=>{
 				model.media_type = listModel.media_type;
@@ -66,7 +65,7 @@ export default class TMDB implements KnowledgeProvider
 	private static async getJson<TData>(url:string) :Promise<TData>
 	{
 		return await fetch(url, {
-			headers: defaults.headers
+			headers: shared.headers
 		}).then((response: Response)=>{
 			return response.json();
 		});
@@ -97,6 +96,7 @@ export default class TMDB implements KnowledgeProvider
 			result.title = model.name;
 			result.original_title = model.original_name;
 			result.imdb_id = model.external_ids.imdb_id;
+			result.release_date = model.first_air_date;
 		}
 		return result;
 	}
@@ -111,6 +111,7 @@ export default class TMDB implements KnowledgeProvider
 		{
 			result.title = model.name;
 			result.original_title = model.original_name;
+			result.release_date = model.first_air_date;
 		}
 		return result;
 	}

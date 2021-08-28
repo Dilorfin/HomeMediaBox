@@ -1,9 +1,9 @@
 import React, { Component} from 'react';
-import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
-import Card from '../components/card';
-import defaults from '../defaults';
+import { StyleSheet, TextInput, View } from 'react-native';
+import shared from '../shared';
 import ListModel from '../models/ListModel';
 import PaginationModel from '../models/PaginationModel';
+import ListModelsView from '../components/ListModelsView';
 
 export default class SearchScreen extends Component
 {
@@ -24,7 +24,7 @@ export default class SearchScreen extends Component
 		if (text.length <= 2) 
 			return;
 
-		defaults.kProvider.search(text).then(
+		shared.kProvider.search(text).then(
 			(data :PaginationModel<ListModel[]>)=>{
 				this.setState({listData: data.results});
 			});
@@ -38,24 +38,13 @@ export default class SearchScreen extends Component
 					autoFocus={true}
 					onChangeText={(text:string)=>this.search(text)}
 				/>
-				<View style={styles.cardsGrid}>
-				{!this.state.listData?<Text>Nothing</Text>:
-					<FlatList
-						data={this.state.listData}
-						renderItem={(data)=>( // TODO: check if it can be remade
-						<Card imageUrl={data.item.poster_path}
-							width={150}
-							height={200}
-							title={data.item.title}
-							onPress={()=>
-								this.navigation.navigate("MovieScreen", data.item)
-							}/>)
-						}
-						keyExtractor={(item) => item.id}
-						horizontal={false}
-						numColumns={5}
-					/>}
-				</View>
+				<ListModelsView 
+					style={styles.cardsGrid}
+					data={this.state.listData}
+					onItemPress={(data)=>
+						this.navigation.navigate("MovieScreen", data.item)
+					}
+				/>
 			</View>
 		);
 	}

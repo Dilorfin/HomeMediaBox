@@ -1,4 +1,4 @@
-import defaults from "../../defaults";
+import shared from "../../shared";
 import DetailsModel from "../../models/DetailsModel";
 
 export default class VideoCdnProvider {
@@ -34,14 +34,14 @@ export default class VideoCdnProvider {
 		const api_token = "lyvhjadzMUnDErAS6l7zIAk0M2nMYpbb";
 		const url = `https://videocdn.tv/api/movies?api_token=${api_token}&field=imdb_id&query=${movieModel.imdb_id}`;
 		return await fetch(url, {
-			headers: defaults.headers
+			headers: shared.headers
 		}).then((response :Response)=>{
 			return response.json();
 		}).then((responseJson)=>{
 			return "https:"+responseJson.data[0].media[0].qualities[0].url;
 		}).then((playerUrl :string)=>{
 			return fetch(playerUrl, {
-				headers: defaults.headers
+				headers: shared.headers
 			});
 		}).then((response :Response)=>{
 			return response.text();

@@ -1,6 +1,6 @@
 import KnowledgeProvider from "./providers/KnowledgeProvider"
 
-export default class {
+export default class shared {
 	public static kProvider: KnowledgeProvider;
 
 	public static headers = {

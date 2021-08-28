@@ -3,7 +3,7 @@ import { Button, Linking, Platform, Image, ImageBackground } from 'react-native'
 import SendIntentAndroid from 'react-native-send-intent';
 
 import DetailsModel from '../models/DetailsModel';
-import defaults from '../defaults';
+import shared from '../shared';
 import VideoCdnProvider from '../providers/video/VideoCdn';
 import ListModel from '../models/ListModel';
 
@@ -52,7 +52,7 @@ export default class MovieScreen extends Component
 	}
 	load(model:ListModel)
 	{
-		defaults.kProvider.getDetails(model).then(
+		shared.kProvider.getDetails(model).then(
 			(data :DetailsModel)=>{
 				this.setState({movieModel: data});
 			});

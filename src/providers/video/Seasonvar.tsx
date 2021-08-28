@@ -1,5 +1,5 @@
 import base64 from 'react-native-base64';
-import defaults from '../../defaults';
+import shared from '../../shared';
 /*
 
 GetUrl('https://datalock.ru/player/14425')
@@ -10,7 +10,7 @@ GetUrl('https://datalock.ru/player/14425')
 */
 export async function GetUrl(playerUrl :string){
 	return fetch(playerUrl, {
-		headers: defaults.headers
+		headers: shared.headers
 	}).then((response :Response)=>{
 		console.log("first request", response.ok);
 		return response.text();
@@ -36,7 +36,7 @@ export async function GetUrl(playerUrl :string){
 		return "https://"+input.match(/datalock\.ru\/playlist\/.*\.txt\?time=\d+/g)[0];
 	}).then((playlistUrl :string) => {
 		console.log("playlistUrl", playlistUrl);
-		return fetch(playlistUrl, {headers: defaults.headers });
+		return fetch(playlistUrl, {headers: shared.headers });
 	}).then((response :Response)=>{
 		console.log("second request", response.ok);
 		return response.json();
