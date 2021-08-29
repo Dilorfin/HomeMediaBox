@@ -6,7 +6,7 @@ import DetailsModel from '../models/DetailsModel';
 import shared from '../shared';
 import VideoCdnProvider from '../providers/video/VideoCdn';
 import ListModel from '../models/ListModel';
-import VideoProvider, { SeriesModel } from '../providers/VideoProvider';
+import VideoProvider, { MovieModel, SeriesModel } from '../providers/VideoProvider';
 
 function startVideo(title :string, url :string)
 {
@@ -79,8 +79,8 @@ export default class MovieScreen extends Component
 						title="Start video"
 						onPress={() => {
 							this.videoProvider.getVideoModel(this.state.movieModel)
-								.then((res : SeriesModel)=>{
-									const url = res.episodes[0].files[0].url;
+								.then((res : SeriesModel|MovieModel)=>{
+									const url = res.voices[0].files[0].url;
 									console.log(url);
 									startVideo(this.state.movieModel.title, url);
 								});

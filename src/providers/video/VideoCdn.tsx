@@ -2,10 +2,10 @@ import shared from "../../shared";
 import DetailsModel from "../../models/DetailsModel";
 import VideoProvider, { MovieModel, SeriesModel } from "../VideoProvider";
 
-export default class VideoCdnProvider implements VideoProvider 
+export default class VideoCdnProvider implements VideoProvider
 {
-	static api_token:string = "lyvhjadzMUnDErAS6l7zIAk0M2nMYpbb";
-	private translations:string[] = [];
+	static api_token :string = "lyvhjadzMUnDErAS6l7zIAk0M2nMYpbb";
+	private translations :string[] = [];
 
 	constructor()
 	{
@@ -72,7 +72,7 @@ export default class VideoCdnProvider implements VideoProvider
 
 	async getVideoModel(movieModel: DetailsModel) :Promise<MovieModel | SeriesModel>
 	{
-		
+
 		function tb(b) {
 			if (b.indexOf(".") == -1) {
 				b = b.substr(1);
@@ -128,7 +128,7 @@ export default class VideoCdnProvider implements VideoProvider
 			{
 				throw `${movieModel.imdb_id} should be checked`;
 			}
-			
+
 			return matches[0].replace(/<input type=["']hidden["'] id=["']files["'] value=["']/g, '')
 				.replace(/["']>/g, '');
 		})
@@ -140,22 +140,24 @@ export default class VideoCdnProvider implements VideoProvider
 				playlist[key] = tb(value);
 
 				const tr_key: number = parseInt(key);
+				// TODO:
 				// tt4052886 had untitled translation on 0 id
-				if(!this.translations[tr_key])
+				/*if(!this.translations[tr_key])
 				{
 					this.translations[tr_key] = key + "-untitled";
-				}
+				}*/
 			}
 
 			return playlist;
 		}).then((playlist :any)=>{
-			// error on some videos https://cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[480p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[720p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[1080p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4
-
+			// TODO: error on some videos https://cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[480p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[720p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[1080p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4
+			var result :SeriesModel|MovieModel;
+			
 			if(movieModel.media_type == 'tv')
 			{
-				var result :SeriesModel = { episodes:[] };
+				result = { episodes:[] };
 
-				for (const [key, value] of Object.entries(playlist)) 
+				for (const [key, value] of Object.entries(playlist))
 				{
 					const tr_id :number = parseInt(key);
 					const obj = JSON.parse(value as string);
@@ -167,7 +169,7 @@ export default class VideoCdnProvider implements VideoProvider
 							const season_id :number = s_model.id;
 							return this.mapSeasonEpisodes(season_id, tr_id, s_model.folder);
 						})
-						
+
 						// TODO: remake to deal with array of arrays without this crutch
 						result.episodes = result.episodes.concat([].concat.apply([], e_temp));
 					}
@@ -180,15 +182,23 @@ export default class VideoCdnProvider implements VideoProvider
 						result.episodes = result.episodes.concat(e_temp);
 					}
 				}
-				console.log(result.episodes[0]);
-
-				return result
 			}
-			else 
+			else
 			{
+				result = { voices:[] };
+				for (const [key, value] of Object.entries(playlist))
+				{
+					const tr_id :number = parseInt(key);
+					const files = this.parseEpisodeFiles(value as string);
 
+					result.voices.push({
+						voice_id: tr_id,
+						title: this.translations[tr_id],
+						files: files
+					});
+				}
 			}
-			return playlist
+			return result;
 		})
 	}
 };

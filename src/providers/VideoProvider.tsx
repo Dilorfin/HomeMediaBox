@@ -8,6 +8,7 @@ import DetailsModel from "../models/DetailsModel";
 export interface MovieModel
 {
 	voices :{
+		voice_id :number, // TODO: check if it's needed
 		title :string,
 		files :{
 			quality :number,
