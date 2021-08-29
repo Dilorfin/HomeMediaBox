@@ -15,11 +15,6 @@ const Stack = createNativeStackNavigator();
 export default function App() 
 {
 	shared.kProvider = new TMDB();
-	
-	/*import { MMKV } from 'react-native-mmkv';
-	MMKV.set('test', 42);
-	console.log(MMKV.getNumber('test'));
-	MMKV.clearAll();*/
 
 	// testing network connectivity
 	NetInfo.fetch().then((state :NetInfoState) => {

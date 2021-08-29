@@ -11,11 +11,13 @@ export default class TMDB implements KnowledgeProvider
 
 	async getPopularMovie(): Promise<PaginationModel<ListModel[]>>
 	{
-		const url = `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB.apikey}&language=${TMDB.locale}&page=1`;
+		const temp:'tv'|'movie' = 'movie';
+		const url = `https://api.themoviedb.org/3/${temp}/popular?api_key=${TMDB.apikey}&language=${TMDB.locale}&page=1`;
 		return TMDB.getJson<PaginationModel<ListModel[]>>(url)
 			.then((movies :PaginationModel<ListModel[]>)=>{
 				movies.results = movies.results.map((m:ListModel)=>{
-					m.media_type = 'movie'
+					//m.media_type = 'movie'
+					m.media_type = temp
 					return m;
 				});
 				movies.results = TMDB.setFullImagePaths(movies.results);
@@ -48,7 +50,6 @@ export default class TMDB implements KnowledgeProvider
 				return TMDB.mapToDetails(model);
 			})
 			.then((movie :DetailsModel)=>{
-				console.log(movie);
 				if (movie.poster_path)
 				{
 					movie.poster_path = TMDB.getImageFullUrl(movie.poster_path);
