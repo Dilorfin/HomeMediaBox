@@ -80,7 +80,7 @@ export default class MovieScreen extends Component
 						onPress={() => {
 							this.videoProvider.getVideoModel(this.state.movieModel)
 								.then((res : SeriesModel)=>{
-									const url = res.seasons[0].voices[0].episodes[0].files[5].url;
+									const url = res.episodes[0].files[0].url;
 									console.log(url);
 									startVideo(this.state.movieModel.title, url);
 								});

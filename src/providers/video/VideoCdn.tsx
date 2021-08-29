@@ -5,7 +5,7 @@ import VideoProvider, { MovieModel, SeriesModel } from "../VideoProvider";
 export default class VideoCdnProvider implements VideoProvider 
 {
 	static api_token:string = "lyvhjadzMUnDErAS6l7zIAk0M2nMYpbb";
-	private translations:{id:number, title:string}[];
+	private translations:string[] = [];
 
 	constructor()
 	{
@@ -18,9 +18,9 @@ export default class VideoCdnProvider implements VideoProvider
 			return response.json();
 		})
 		.then((responseJson:{data:{id:number, smart_title:string}[]})=>{
-			this.translations = responseJson.data.map(({id, smart_title})=>{
-				return {id:id, title:smart_title};
-			})
+			responseJson.data.forEach((tr:{id:number, smart_title:string})=>{
+				this.translations[tr.id] = tr.smart_title;
+			});
 		})
 	}
 
@@ -29,44 +29,50 @@ export default class VideoCdnProvider implements VideoProvider
 		return "VideoCdn";
 	}
 
-	private parseSeason(model) :SeriesModel
+	private parseEpisodeFiles(file :string)
 	{
-		var voices:any[] = [];
-		
-		for (const [key, value] of Object.entries(model)) 
-		{
-			var episodes = JSON.parse(value as string)
-				.map((temp :{id :string, file :string})=>{
-					const id :number = parseInt(temp.id.split('_')[1]);
-					const files = temp.file.split(/\s+or\s+|\[\d+p\]\s*|,/g)
-						.map((url :string)=>url.trim().replace(/\s+or\s+|\[\d+p\]|,/g, '').trim())
-						.filter(s=>s)
-						.map((url :string)=>"https:"+url)
-						.map((url :string)=>{
-							const matches = url.match(/\/\d+\.mp4/g)
-								.map((name:string)=>{
-									return parseInt(name.match(/\d{3,}/g)[0]);
-								});
-							if(!matches || matches.length != 1)
-							{
-								console.error(`${this.getProviderTitle()} can't parse quality from url: ${url}`);
-							}
-							return {quality:matches[0], url:url}
-						});
-					return { id, files };
-				});
+		return file.split(/\s+or\s+|\[\d+p\]\s*|,/g)
+					.map((url :string)=>url.trim().replace(/\s+or\s+|\[\d+p\]|,/g, '').trim())
+					.filter(s=>s)
+					.map((url :string)=>"https:"+url)
+					.map((url :string)=>{
+						const matches = url.match(/\/\d+\.mp4/g)
+							.map((name:string)=>{
+								return parseInt(name.match(/\d{3,}/g)[0]);
+							});
+						if(!matches || matches.length != 1)
+						{
+							console.error(`${this.getProviderTitle()} can't parse quality from url: ${url}`);
+						}
+						return {quality:matches[0], url:url}
+					});
+	}
 
-			voices.push({
-				title: this.translations[key],
-				episodes: episodes
-			});
-		}
-
-		return { seasons:[{voices: voices}] };
+	private mapSeasonEpisodes(season_id, tr_id, obj)
+	{
+		return obj.map((e)=>{
+			const id :number = parseInt(e.id.split('_')[1]);
+			const files = this.parseEpisodeFiles(e.file);
+			return { id, files };
+		}).map((ep_model:{
+			id:number,
+			files:{
+				quality :number,
+				url :string
+			}[]})=>{
+				return {
+					voice_id: tr_id,
+					voice_title: this.translations[tr_id],
+					season_id: season_id,
+					episode_id: ep_model.id,
+					files: ep_model.files
+				}
+			})
 	}
 
 	async getVideoModel(movieModel: DetailsModel) :Promise<MovieModel | SeriesModel>
 	{
+		
 		function tb(b) {
 			if (b.indexOf(".") == -1) {
 				b = b.substr(1);
@@ -94,7 +100,7 @@ export default class VideoCdnProvider implements VideoProvider
 			});
 		}
 
-		const url = `https://videocdn.tv/api/short?api_token=${VideoCdnProvider.api_token}&imdb_id=${movieModel.imdb_id}`
+		const url = `https://videocdn.tv/api/short?api_token=${VideoCdnProvider.api_token}&imdb_id=${movieModel.imdb_id}`;
 		return await fetch(url, {
 			headers: shared.headers
 		})
@@ -129,24 +135,54 @@ export default class VideoCdnProvider implements VideoProvider
 		.then((encodedPlaylist :string)=>{
 			var playlist = JSON.parse(decodeEntities(encodedPlaylist));
 
+			// TODO: check performance of `Object.entries`
 			for (const [key, value] of Object.entries(playlist)) {
 				playlist[key] = tb(value);
+
+				const tr_key: number = parseInt(key);
+				// tt4052886 had untitled translation on 0 id
+				if(!this.translations[tr_key])
+				{
+					this.translations[tr_key] = key + "-untitled";
+				}
 			}
 
 			return playlist;
-		})
-		.then((playlist :any)=>{
-			// check for error https://cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[480p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[720p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[1080p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4
+		}).then((playlist :any)=>{
+			// error on some videos https://cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[480p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[720p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[1080p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4
+
 			if(movieModel.media_type == 'tv')
 			{
-				if(Array.isArray(playlist))
-				{
+				var result :SeriesModel = { episodes:[] };
 
-				}
-				else
+				for (const [key, value] of Object.entries(playlist)) 
 				{
-					return this.parseSeason(playlist);
+					const tr_id :number = parseInt(key);
+					const obj = JSON.parse(value as string);
+
+					if(obj[0].folder)
+					{
+						// array of seasons
+						const e_temp = obj.map((s_model)=>{
+							const season_id :number = s_model.id;
+							return this.mapSeasonEpisodes(season_id, tr_id, s_model.folder);
+						})
+						
+						// TODO: remake to deal with array of arrays without this crutch
+						result.episodes = result.episodes.concat([].concat.apply([], e_temp));
+					}
+					else
+					{
+						// array of episodes of the single season
+						const season_id :number = 0;
+						const e_temp = this.mapSeasonEpisodes(season_id, tr_id, obj);
+
+						result.episodes = result.episodes.concat(e_temp);
+					}
 				}
+				console.log(result.episodes[0]);
+
+				return result
 			}
 			else 
 			{

@@ -18,16 +18,14 @@ export interface MovieModel
 
 export interface SeriesModel
 {
-	seasons :{
-		voices :{
-			title :string,
-			episodes:{
-				id :number,
-				files :{
-					quality :number,
-					url :string
-				}[]
-			}[]
+	episodes :{
+		voice_id:number,
+		voice_title:string,
+		season_id:number,
+		episode_id:number,
+		files :{
+			quality :number,
+			url :string
 		}[]
 	}[];
 }
