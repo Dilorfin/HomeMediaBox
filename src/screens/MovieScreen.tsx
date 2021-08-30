@@ -6,6 +6,7 @@ import DetailsModel from '../models/DetailsModel';
 import shared from '../shared';
 import VideoCdnProvider from '../providers/video/VideoCdn';
 import ListModel from '../models/ListModel';
+import VideoProvider, { VideoFileModel } from '../providers/VideoProvider';
 
 function startVideo(title :string, url :string)
 {
@@ -41,6 +42,7 @@ export default class MovieScreen extends Component
 	};
 
 	navigation = null;
+	videoProvider :VideoProvider;
 
 	constructor(inProp)
 	{
@@ -49,7 +51,9 @@ export default class MovieScreen extends Component
 		this.navigation = inProp.navigation;
 		this.state.movieModel = inProp.route.params
 		this.load(inProp.route.params)
+		this.videoProvider = new VideoCdnProvider();
 	}
+
 	load(model:ListModel)
 	{
 		shared.kProvider.getDetails(model).then(
@@ -75,16 +79,12 @@ export default class MovieScreen extends Component
 					<Button
 						title="Start video"
 						onPress={() => {
-							VideoCdnProvider.getVideoUrl(this.state.movieModel)
-								.then((url:string)=>{
+							this.videoProvider.getVideos(this.state.movieModel)
+								.then((res : VideoFileModel[])=>{
+									const url = res[0].url;
 									console.log(url);
 									startVideo(this.state.movieModel.title, url);
 								});
-							/*GetUrl('https://datalock.ru/player/14425')
-								.then((fileUrl :string)=>{
-									console.log("fileUrl", fileUrl);
-									startVideo(fileUrl);
-								});*/
 						}}
 						/>
 				</ImageBackground>

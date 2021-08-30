@@ -11,6 +11,10 @@ import { ListRenderItemInfo,
 import ListModel from "../models/ListModel";
 import Card from "./Card";
 
+/*
+make manual focusing, check "nextFocus*" callbacks
+ */
+
 export default function ListModelsView(props : { 
 	data :readonly ListModel[], 
 	onItemPress :(data:ListRenderItemInfo<ListModel>)=> void, 
