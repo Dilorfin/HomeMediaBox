@@ -6,7 +6,7 @@ import DetailsModel from '../models/DetailsModel';
 import shared from '../shared';
 import VideoCdnProvider from '../providers/video/VideoCdn';
 import ListModel from '../models/ListModel';
-import VideoProvider, { VideoModel } from '../providers/VideoProvider';
+import VideoProvider, { VideoFileModel } from '../providers/VideoProvider';
 
 function startVideo(title :string, url :string)
 {
@@ -53,6 +53,7 @@ export default class MovieScreen extends Component
 		this.load(inProp.route.params)
 		this.videoProvider = new VideoCdnProvider();
 	}
+
 	load(model:ListModel)
 	{
 		shared.kProvider.getDetails(model).then(
@@ -79,8 +80,8 @@ export default class MovieScreen extends Component
 						title="Start video"
 						onPress={() => {
 							this.videoProvider.getVideos(this.state.movieModel)
-								.then((res : VideoModel[])=>{
-									const url = res[0].files[0].url;
+								.then((res : VideoFileModel[])=>{
+									const url = res[0].url;
 									console.log(url);
 									startVideo(this.state.movieModel.title, url);
 								});

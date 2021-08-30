@@ -1,6 +1,6 @@
 import shared from "../../shared";
 import DetailsModel from "../../models/DetailsModel";
-import VideoProvider, { VideoModel } from "../VideoProvider";
+import VideoProvider, { VideoFileModel } from "../VideoProvider";
 
 export default class VideoCdnProvider implements VideoProvider
 {
@@ -29,7 +29,7 @@ export default class VideoCdnProvider implements VideoProvider
 		return "VideoCdn";
 	}
 
-	public async getVideos(movieModel: DetailsModel) :Promise<VideoModel[]>
+	public async getVideos(movieModel: DetailsModel) :Promise<VideoFileModel[]>
 	{
 		if (!movieModel.imdb_id)
 		{
@@ -73,12 +73,13 @@ export default class VideoCdnProvider implements VideoProvider
 
 			// TODO: check performance of `Object.entries`
 			for (const [key, value] of Object.entries(playlist)) {
-				playlist[key] = VideoCdnProvider.tb(value);
+				playlist[key] = VideoCdnProvider.tb(value as string);
 
-				const tr_key: number = parseInt(key);
 				// TODO:
 				// tt4052886 had untitled translation on 0 id
-				/*if(!this.translations[tr_key])
+				/*
+				const tr_key: number = parseInt(key);
+				if(!this.translations[tr_key])
 				{
 					this.translations[tr_key] = key + "-untitled";
 				}*/
@@ -87,8 +88,8 @@ export default class VideoCdnProvider implements VideoProvider
 			return playlist;
 		}).then((playlist :any)=>{
 			// TODO: error on some videos https://cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[480p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[720p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[1080p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4
-			var result :VideoModel[] = [];
-			
+			var result :VideoFileModel[] = [];
+
 			if(movieModel.media_type == 'tv')
 			{
 				for (const [key, value] of Object.entries(playlist))
@@ -105,7 +106,7 @@ export default class VideoCdnProvider implements VideoProvider
 						})
 
 						// TODO: remake to deal with array of arrays without this crutch
-						result = result.concat([].concat.apply([], e_temp));
+						result = result.concat(e_temp).flat(2);
 					}
 					else
 					{
@@ -117,17 +118,20 @@ export default class VideoCdnProvider implements VideoProvider
 					}
 				}
 			}
-			else
+			else // movies
 			{
 				for (const [key, value] of Object.entries(playlist))
 				{
 					const tr_id :number = parseInt(key);
 					const files = this.parseEpisodeFiles(value as string);
 
-					result.push({
-						voice_title: this.translations[tr_id],
-						files: files
-					});
+					result = result.concat(files.map((file)=>{
+						return {
+							voice_title: this.translations[tr_id],
+							url: file.url,
+							quality: file.quality
+						}
+					})).flat();
 				}
 			}
 			return result;
@@ -160,19 +164,21 @@ export default class VideoCdnProvider implements VideoProvider
 			const files = this.parseEpisodeFiles(e.file);
 			return { id, files };
 		}).map(ep_model => {
-			return {
-				voice_id: tr_id,
-				voice_title: this.translations[tr_id],
-				season_id: season_id,
-				episode_id: ep_model.id,
-				files: ep_model.files
-			}
-		})
+			return ep_model.files.map((file)=>{
+				return {
+					voice_title: this.translations[tr_id],
+					season_id: season_id,
+					episode_id: ep_model.id,
+					quality: file.quality,
+					url: file.url
+				}
+			})
+		}).flat(2)
 	}
 
-	private static tb(b)
+	private static tb(b :string) :string
 	{
-		if (b.indexOf(".") != -1) 
+		if (b.indexOf(".") != -1)
 			return b;
 
 		b = b.substr(1);
@@ -180,9 +186,11 @@ export default class VideoCdnProvider implements VideoProvider
 		for (var j = 0; j < b.length; j += 3)
 			s2 += "%u0" + b.slice(j, j + 3);
 		b = unescape(s2);
+		return b;
 	}
 
-	private static decodeEntities(encodedString :string) {
+	private static decodeEntities(encodedString :string) :string
+	{
 		const translate_re = /&(nbsp|amp|quot|lt|gt);/g;
 		const translate = {
 			"nbsp": " ",

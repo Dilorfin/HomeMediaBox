@@ -5,22 +5,20 @@ import DetailsModel from "../models/DetailsModel";
 	console.log(MMKV.getNumber('test'));
 	MMKV.clearAll();*/
 
-export interface VideoModel
+export interface VideoFileModel
 {
 	voice_title :string,
 
 	season_id ?:number,
 	episode_id ?:number,
 
-	files :{
-		quality :number,
-		url :string
-	}[]
+	quality :number,
+	url :string
 }
 
 export default interface VideoProvider
 {
 	getProviderTitle() :string;
 
-	getVideos(movieModel:DetailsModel) :Promise<VideoModel[]>;
+	getVideos(movieModel:DetailsModel) :Promise<VideoFileModel[]>;
 };
