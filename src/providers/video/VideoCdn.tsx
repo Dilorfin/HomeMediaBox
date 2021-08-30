@@ -1,6 +1,6 @@
 import shared from "../../shared";
 import DetailsModel from "../../models/DetailsModel";
-import VideoProvider, { MovieModel, SeriesModel } from "../VideoProvider";
+import VideoProvider, { VideoModel } from "../VideoProvider";
 
 export default class VideoCdnProvider implements VideoProvider
 {
@@ -29,7 +29,7 @@ export default class VideoCdnProvider implements VideoProvider
 		return "VideoCdn";
 	}
 
-	public async getVideoModel(movieModel: DetailsModel) :Promise<MovieModel | SeriesModel>
+	public async getVideos(movieModel: DetailsModel) :Promise<VideoModel[]>
 	{
 		if (!movieModel.imdb_id)
 		{
@@ -87,12 +87,10 @@ export default class VideoCdnProvider implements VideoProvider
 			return playlist;
 		}).then((playlist :any)=>{
 			// TODO: error on some videos https://cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[480p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[720p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[1080p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4
-			var result :SeriesModel|MovieModel;
+			var result :VideoModel[] = [];
 			
 			if(movieModel.media_type == 'tv')
 			{
-				result = { episodes:[] };
-
 				for (const [key, value] of Object.entries(playlist))
 				{
 					const tr_id :number = parseInt(key);
@@ -107,7 +105,7 @@ export default class VideoCdnProvider implements VideoProvider
 						})
 
 						// TODO: remake to deal with array of arrays without this crutch
-						result.episodes = result.episodes.concat([].concat.apply([], e_temp));
+						result = result.concat([].concat.apply([], e_temp));
 					}
 					else
 					{
@@ -115,21 +113,19 @@ export default class VideoCdnProvider implements VideoProvider
 						const season_id :number = 0;
 						const e_temp = this.mapSeasonEpisodes(season_id, tr_id, obj);
 
-						result.episodes = result.episodes.concat(e_temp);
+						result = result.concat(e_temp);
 					}
 				}
 			}
 			else
 			{
-				result = { voices:[] };
 				for (const [key, value] of Object.entries(playlist))
 				{
 					const tr_id :number = parseInt(key);
 					const files = this.parseEpisodeFiles(value as string);
 
-					result.voices.push({
-						voice_id: tr_id,
-						title: this.translations[tr_id],
+					result.push({
+						voice_title: this.translations[tr_id],
 						files: files
 					});
 				}
