@@ -24,80 +24,16 @@ export default class VideoCdnProvider implements VideoProvider
 		})
 	}
 
-	getProviderTitle() :string
+	public getProviderTitle() :string
 	{
 		return "VideoCdn";
 	}
 
-	private parseEpisodeFiles(file :string)
+	public async getVideoModel(movieModel: DetailsModel) :Promise<MovieModel | SeriesModel>
 	{
-		return file.split(/\s+or\s+|\[\d+p\]\s*|,/g)
-					.map((url :string)=>url.trim().replace(/\s+or\s+|\[\d+p\]|,/g, '').trim())
-					.filter(s=>s)
-					.map((url :string)=>"https:"+url)
-					.map((url :string)=>{
-						const matches = url.match(/\/\d+\.mp4/g)
-							.map((name:string)=>{
-								return parseInt(name.match(/\d{3,}/g)[0]);
-							});
-						if(!matches || matches.length != 1)
-						{
-							console.error(`${this.getProviderTitle()} can't parse quality from url: ${url}`);
-						}
-						return {quality:matches[0], url:url}
-					});
-	}
-
-	private mapSeasonEpisodes(season_id, tr_id, obj)
-	{
-		return obj.map((e)=>{
-			const id :number = parseInt(e.id.split('_')[1]);
-			const files = this.parseEpisodeFiles(e.file);
-			return { id, files };
-		}).map((ep_model:{
-			id:number,
-			files:{
-				quality :number,
-				url :string
-			}[]})=>{
-				return {
-					voice_id: tr_id,
-					voice_title: this.translations[tr_id],
-					season_id: season_id,
-					episode_id: ep_model.id,
-					files: ep_model.files
-				}
-			})
-	}
-
-	async getVideoModel(movieModel: DetailsModel) :Promise<MovieModel | SeriesModel>
-	{
-
-		function tb(b) {
-			if (b.indexOf(".") == -1) {
-				b = b.substr(1);
-				var s2 = "";
-				for (var j = 0; j < b.length; j += 3)
-					s2 += "%u0" + b.slice(j, j + 3);
-				b = unescape(s2)
-			}
-			return b
-		}
-		function decodeEntities(encodedString :string) {
-			var translate_re = /&(nbsp|amp|quot|lt|gt);/g;
-			var translate = {
-				"nbsp": " ",
-				"amp" : "&",
-				"quot": "\"",
-				"lt"  : "<",
-				"gt"  : ">"
-			};
-			return encodedString.replace(translate_re, function(match, entity) {
-				return translate[entity];
-			}).replace(/&#(\d+);/gi, function(match, numStr) {
-				var num = parseInt(numStr, 10);
-				return String.fromCharCode(num);
-			});
+		if (!movieModel.imdb_id)
+		{
+			throw this.getProviderTitle() + ": no imdb id for " + movieModel.title;
 		}
 
 		const url = `https://videocdn.tv/api/short?api_token=${VideoCdnProvider.api_token}&imdb_id=${movieModel.imdb_id}`;
@@ -133,11 +69,11 @@ export default class VideoCdnProvider implements VideoProvider
 				.replace(/["']>/g, '');
 		})
 		.then((encodedPlaylist :string)=>{
-			var playlist = JSON.parse(decodeEntities(encodedPlaylist));
+			var playlist = JSON.parse(VideoCdnProvider.decodeEntities(encodedPlaylist));
 
 			// TODO: check performance of `Object.entries`
 			for (const [key, value] of Object.entries(playlist)) {
-				playlist[key] = tb(value);
+				playlist[key] = VideoCdnProvider.tb(value);
 
 				const tr_key: number = parseInt(key);
 				// TODO:
@@ -201,4 +137,70 @@ export default class VideoCdnProvider implements VideoProvider
 			return result;
 		})
 	}
+
+	private parseEpisodeFiles(file :string)
+	{
+		return file.split(/\s+or\s+|\[\d+p\]\s*|,/g)
+					.map((url :string)=>url.trim().replace(/\s+or\s+|\[\d+p\]|,/g, '').trim())
+					.filter(s=>s)
+					.map((url :string)=>"https:"+url)
+					.map((url :string)=>{
+						const matches = url.match(/\/\d+\.mp4/g)
+							.map((name:string)=>{
+								return parseInt(name.match(/\d{3,}/g)[0]);
+							});
+						if(!matches || matches.length != 1)
+						{
+							console.error(`${this.getProviderTitle()} can't parse quality from url: ${url}`);
+						}
+						return {quality:matches[0], url:url}
+					});
+	}
+
+	private mapSeasonEpisodes(season_id, tr_id, obj)
+	{
+		return obj.map(e => {
+			const id :number = parseInt(e.id.split('_')[1]);
+			const files = this.parseEpisodeFiles(e.file);
+			return { id, files };
+		}).map(ep_model => {
+			return {
+				voice_id: tr_id,
+				voice_title: this.translations[tr_id],
+				season_id: season_id,
+				episode_id: ep_model.id,
+				files: ep_model.files
+			}
+		})
+	}
+
+	private static tb(b)
+	{
+		if (b.indexOf(".") != -1) 
+			return b;
+
+		b = b.substr(1);
+		var s2 = "";
+		for (var j = 0; j < b.length; j += 3)
+			s2 += "%u0" + b.slice(j, j + 3);
+		b = unescape(s2);
+	}
+
+	private static decodeEntities(encodedString :string) {
+		const translate_re = /&(nbsp|amp|quot|lt|gt);/g;
+		const translate = {
+			"nbsp": " ",
+			"amp" : "&",
+			"quot": "\"",
+			"lt"  : "<",
+			"gt"  : ">"
+		};
+		return encodedString.replace(translate_re, (match, entity) => {
+			return translate[entity];
+		}).replace(/&#(\d+);/gi, (match, numStr) => {
+			var num = parseInt(numStr, 10);
+			return String.fromCharCode(num);
+		});
+	}
+
 };

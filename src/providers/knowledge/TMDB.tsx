@@ -52,11 +52,11 @@ export default class TMDB implements KnowledgeProvider
 			.then((movie :DetailsModel)=>{
 				if (movie.poster_path)
 				{
-					movie.poster_path = TMDB.getImageFullUrl(movie.poster_path);
+					movie.poster_path = TMDB.getPosterFullUrl(movie.poster_path);
 				}
 				if(movie.backdrop_path)
 				{
-					movie.backdrop_path = TMDB.getImageFullUrl(movie.backdrop_path);
+					movie.backdrop_path = TMDB.getBackdropFullUrl(movie.backdrop_path);
 				}
 				movie.recommendations.results = TMDB.setFullImagePaths(movie.recommendations.results);
 				return movie;
@@ -75,13 +75,25 @@ export default class TMDB implements KnowledgeProvider
 	private static setFullImagePaths(movies :ListModel[]) : ListModel[]
 	{
 		return movies.map((el:ListModel)=>{
-			el.poster_path = TMDB.getImageFullUrl(el.poster_path);
-			el.backdrop_path = TMDB.getImageFullUrl(el.backdrop_path);
+			if (el.poster_path)
+			{
+				el.poster_path = TMDB.getPosterFullUrl(el.poster_path);
+			}
+			if (el.backdrop_path)
+			{
+				el.backdrop_path = TMDB.getBackdropFullUrl(el.backdrop_path);
+			}
+
 			return el;
 		});
 	}
 
-	private static getImageFullUrl(shortUrl:string) :string
+	private static getPosterFullUrl(shortUrl :string, size:'w342'|'original' = 'w342') :string
+	{
+		return "https://image.tmdb.org/t/p/" + size + shortUrl;
+	}
+
+	private static getBackdropFullUrl(shortUrl:string, size:'w780'|'w1280'|'original' = 'w1280') :string
 	{
 		return "https://image.tmdb.org/t/p/original"+shortUrl;
 	}
