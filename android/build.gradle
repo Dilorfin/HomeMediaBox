@@ -2,7 +2,7 @@
 
 buildscript {
 	ext {
-		buildToolsVersion = "31.0.0"
+		buildToolsVersion = "30.0.2"
 		minSdkVersion = 24
 		compileSdkVersion = 30
 		targetSdkVersion = 30
@@ -33,6 +33,7 @@ allprojects {
 		}
 
 		google()
+		//jcenter()
 		maven { url 'https://www.jitpack.io' }
 	}
 }
