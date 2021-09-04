@@ -134,6 +134,15 @@ export default class VideoCdnProvider implements VideoProvider
 					})).flat();
 				}
 			}
+			/*result=result.filter((value: VideoFileModel, index: number, array: VideoFileModel[])=>{
+				const firstPosition = result.findIndex((searchValue: VideoFileModel, index: number)=>{
+					return value.url == searchValue.url;
+				});
+				return index == firstPosition;
+			});*/
+			result.sort((firstEl, secondEl) => {
+				return firstEl.url.localeCompare(secondEl.url);
+			});
 			return result;
 		})
 	}
