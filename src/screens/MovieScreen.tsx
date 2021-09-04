@@ -20,6 +20,7 @@ import VideoCdnProvider from '../providers/video/VideoCdn';
 import ListModel from '../models/ListModel';
 import VideoProvider, { VideoFileModel } from '../providers/VideoProvider';
 import { Dimensions } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 function startVideo(title: string, url: string) {
 	const m = url.match(/http(s)?:\/\//g);
@@ -56,20 +57,26 @@ export default class MovieScreen extends Component {
 		movieModel: DetailsModel,
 		videos: VideoFileModel[],
 		videoQuery: VideoFileModel[],
-		tab: 'list' | 'info'
+		tab: 'list' | 'info',
+		currentVoice: string,
+		currentQuality: number,
+		currentSeason?: number
 	} = {
 			movieModel: null,
 			videos: null,
 			videoQuery: null,
-			tab: 'info'
+			tab: 'info',
+			currentVoice: '',
+			currentQuality: 0,
+			currentSeason: null
 		};
 
 	navigation = null;
 	videoProvider: VideoProvider;
-	
-	voiceTitles :string[];
-	seasons :number[];
-	qualities :number[];
+
+	voiceTitles: string[];
+	seasons: number[];
+	qualities: number[];
 
 	constructor(inProp) {
 		super(inProp);
@@ -97,11 +104,25 @@ export default class MovieScreen extends Component {
 						this.qualities = this.state.videos.map((value: VideoFileModel) => value.quality);
 						this.qualities = filterUnique(this.qualities);
 
-						console.log(this.voiceTitles);
-						console.log(this.seasons);
-						console.log(this.qualities);
+						this.queryUrls(this.qualities[0], this.voiceTitles[0], this.seasons[0]);
 					});
 			});
+	}
+
+	queryUrls(quality: number, voice: string, season: number) {
+		const query = this.state.videos.filter((value: VideoFileModel) => {
+			/*if (!value.season_id || !season || value.season_id != season) {
+				return false;
+			}*/
+			return value.quality == quality && value.voice_title == voice;
+		});
+		query.sort((a, b)=> `${a.season_id}${a.episode_id}${a.quality}${a.voice_title}`.localeCompare(`${b.season_id}${b.episode_id}${b.quality}${b.voice_title}`));
+		this.setState({
+			videoQuery: query,
+			currentQuality: quality,
+			currentVoice: voice,
+			currentSeason: season
+		});
 	}
 
 	render() {
@@ -113,7 +134,7 @@ export default class MovieScreen extends Component {
 				<SafeAreaView >
 					<View style={{
 						width: "100%",
-						height: Dimensions.get("window").height / 2
+						height: 0//Dimensions.get("window").height / 2
 					}} />
 					<View style={{
 						flexDirection: 'row',
@@ -122,7 +143,7 @@ export default class MovieScreen extends Component {
 						<View style={{
 							padding: 25,
 							backgroundColor: 'rgba(20,20,20,0.85)',
-							width: '75%'
+							width: '100%'
 						}}>
 							{this.state.tab == 'info' ? this.renderInfo() : this.renderVideosList()}
 						</View>
@@ -132,7 +153,7 @@ export default class MovieScreen extends Component {
 
 		);
 	}
-	renderVideosList() {/*{!this.state.videos ? <View /> : this.buttons()} */
+	renderVideosList() {
 		return (<View style={{ minHeight: Dimensions.get("window").height / 2 }}>
 			<View style={{ flexDirection: 'row' }}>
 				<View>
@@ -158,37 +179,38 @@ export default class MovieScreen extends Component {
 					}}>
 						{this.videoProvider.getProviderTitle()}
 					</Text>
-					<Text style={{
-						minWidth: 150,
-						padding: 5,
-						borderRadius: 10,
-						marginRight: 10,
-						color: '#fff'
-					}}>
-						{this.voiceTitles[0]}
-					</Text>
-					<Text style={{
-						minWidth: 150,
-						padding: 5,
-						borderRadius: 10,
-						marginRight: 10,
-						color: '#fff'
-					}}>
-						{this.seasons.length}
-					</Text>
-					<Text style={{
-						minWidth: 150,
-						padding: 5,
-						borderRadius: 10,
-						marginRight: 10,
-						color: '#fff'
-					}}>
-						{this.qualities[0]}
-					</Text>
+					<Picker
+						style={{ color: "#fff" }}
+						selectedValue={this.state.currentVoice}
+						onValueChange={(itemValue) => {
+							this.queryUrls(this.state.currentQuality, itemValue, this.state.currentSeason);
+						}}>
+						{this.voiceTitles.map((voice: string) => <Picker.Item style={{ color: "#fff" }} label={voice} value={voice} />)}
+					</Picker>
+					{this.seasons.length <= 1 ? null :
+						<Picker
+							style={{ color: "#fff" }}
+							selectedValue={this.state.currentSeason}
+							onValueChange={(itemValue) => {
+								this.queryUrls(this.state.currentQuality, this.state.currentVoice, itemValue);
+							}}>
+								{this.seasons.map((season: number) => <Picker.Item style={{ color: "#fff" }} label={season.toString()} value={season} />)
+							}
+						</Picker>}
+
+					<Picker
+						style={{ color: "#fff" }}
+						selectedValue={this.state.currentQuality}
+						onValueChange={(itemValue) => {
+							this.queryUrls(itemValue, this.state.currentVoice, this.state.currentSeason);
+						}}>
+						{this.qualities.map((quality: number) => <Picker.Item style={{ color: "#fff" }} label={quality.toString()} value={quality} />)}
+					</Picker>
 				</View>
 				<FlatList
 					horizontal={false}
-					data={this.state.videos}
+					data={this.state.videoQuery}
+					key={this.state.currentVoice}
 					renderItem={(data: ListRenderItemInfo<VideoFileModel>) => {
 						return (
 							<TouchableOpacity onPress={() => {
@@ -216,7 +238,7 @@ export default class MovieScreen extends Component {
 					{this.state.movieModel.title}
 				</Text>
 				<View style={{ flexDirection: 'row', marginBottom: 20 }}>
-					<TouchableOpacity
+					{!this.state.videos ? null : <TouchableOpacity
 						style={{
 							backgroundColor: '#aaaaaaaa',
 							padding: 5,
@@ -227,7 +249,7 @@ export default class MovieScreen extends Component {
 							this.setState({ tab: 'list' });
 						}}>
 						<Text style={{ color: '#fff' }}>Videos</Text>
-					</TouchableOpacity>
+					</TouchableOpacity>}
 				</View>
 
 
