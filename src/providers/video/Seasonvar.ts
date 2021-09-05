@@ -6,39 +6,45 @@ GetUrl('https://datalock.ru/player/14425')
 		startVideo(fileUrl);
 	});
 */
-export async function GetUrl(playerUrl :string){
+export async function GetUrl(playerUrl: string)
+{
 	return fetch(playerUrl, {
 		headers: shared.headers
-	}).then((response :Response)=>{
+	}).then((response: Response) =>
+	{
 		console.log("first request", response.ok);
 		return response.text();
-	}).then((htmlText :string) =>{
-		var matches :RegExpMatchArray = htmlText.match(/<script type="text\/javascript">.*eval.*<\/script>/);
-		
-		if(!matches || matches.length != 1)
+	}).then((htmlText: string) =>
+	{
+		var matches: RegExpMatchArray = htmlText.match(/<script type="text\/javascript">.*eval.*<\/script>/);
+
+		if (!matches || matches.length != 1)
 		{
 			throw 'cannot load datalock player';
 		}
 
-		var input :string = matches[0].replace('<script type="text/javascript">', '')
+		var input: string = matches[0].replace('<script type="text/javascript">', '')
 			.replace('</script>', '');
 		matches = input.match(/.*eval\(function\(\w,\w,\w,\w\).*/g);
-		while(matches && matches.length != 0)
+		while (matches && matches.length != 0)
 		{
-			input = "(" + input.substr(0, input.length-2)
+			input = "(" + input.substr(0, input.length - 2)
 				.replace(/.*eval\(/g, "")
 				.replace("}('", "})('");
 			input = eval(input)
 			matches = input.match(/.*eval\(function\(\w,\w,\w,\w\).*/g);
 		}
-		return "https://"+input.match(/datalock\.ru\/playlist\/.*\.txt\?time=\d+/g)[0];
-	}).then((playlistUrl :string) => {
+		return "https://" + input.match(/datalock\.ru\/playlist\/.*\.txt\?time=\d+/g)[0];
+	}).then((playlistUrl: string) =>
+	{
 		console.log("playlistUrl", playlistUrl);
-		return fetch(playlistUrl, {headers: shared.headers });
-	}).then((response :Response)=>{
+		return fetch(playlistUrl, { headers: shared.headers });
+	}).then((response: Response) =>
+	{
 		console.log("second request", response.ok);
 		return response.json();
-	}).then((playlist)=>{
+	}).then((playlist) =>
+	{
 		if (playlist[0].folder) 
 		{
 			return playlist[0].folder[0].file;
@@ -47,7 +53,8 @@ export async function GetUrl(playerUrl :string){
 		{
 			return playlist[0].file;
 		}
-	}).then((fileDecodedUrl :string)=>{
+	}).then((fileDecodedUrl: string) =>
+	{
 		console.log("fileDecodedUrl", fileDecodedUrl);
 		fileDecodedUrl = fileDecodedUrl.replace(/(\/\/.*?==)/g, '');
 
