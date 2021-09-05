@@ -1,0 +1,7 @@
+{
+  "name": "HomeMediaBox",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
