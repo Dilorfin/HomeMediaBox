@@ -1,5 +1,6 @@
 {
-  "name": "HomeMediaBox",
+  "name": "Home Media Box",
+  "appId": "com.dilorfin.homemediabox",
   "integrations": {
     "capacitor": {}
   },

@@ -1,0 +1,6 @@
+{
+	"appId": "com.dilorfin.homemediabox",
+	"appName": "Home Media Box",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}
