@@ -28,6 +28,7 @@
     "@ionic/angular": "^5.5.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
+    "yarn": "^1.22.11",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
