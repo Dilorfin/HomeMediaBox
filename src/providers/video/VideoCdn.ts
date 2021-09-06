@@ -1,4 +1,3 @@
-import { TestBed } from "@angular/core/testing";
 import VideoFileModel from "src/models/VideoFileModel";
 import DetailsModel from "../../models/DetailsModel";
 import VideoProvider from "../VideoProvider";
@@ -8,12 +7,18 @@ export default class VideoCdnProvider implements VideoProvider
 	static api_token: string = "lyvhjadzMUnDErAS6l7zIAk0M2nMYpbb";
 	private translations: string[] = [];
 
+	private headers: HeadersInit = {
+		'Accept': '*/*',
+		'Connection': 'keep-alive',
+		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
+	};
+
 	constructor()
 	{
 		const url = `https://videocdn.tv/api/translations?api_token=${VideoCdnProvider.api_token}`;
 
 		fetch(url, {
-			headers: shared.headers
+			headers: this.headers
 		})
 			.then((response: Response) =>
 			{
@@ -42,7 +47,7 @@ export default class VideoCdnProvider implements VideoProvider
 
 		const url = `https://videocdn.tv/api/short?api_token=${VideoCdnProvider.api_token}&imdb_id=${movieModel.imdb_id}`;
 		return await fetch(url, {
-			headers: shared.headers
+			headers: this.headers
 		})
 			.then((response: Response) =>
 			{
@@ -59,7 +64,7 @@ export default class VideoCdnProvider implements VideoProvider
 			.then((iframe_url: string) =>
 			{
 				return fetch(iframe_url, {
-					headers: shared.headers
+					headers: this.headers
 				});
 			})
 			.then((response: Response) =>
