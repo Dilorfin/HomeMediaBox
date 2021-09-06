@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import ListModel from 'src/models/ListModel';
 import { KnowledgeService } from '../_services/knowledge.service';
 
 @Component({
@@ -8,7 +9,17 @@ import { KnowledgeService } from '../_services/knowledge.service';
 })
 export class SurfingComponent implements OnInit
 {
+	list :ListModel[];
 	constructor(private knService: KnowledgeService) { }
 
-	ngOnInit() { }
+	ngOnInit() {
+		this.knService.getPopularMovie()
+			.then((result)=>{
+				this.list = result.results;
+			});
+	}
+	onCardClick(model: ListModel)
+	{
+		console.log(model);
+	}
 }

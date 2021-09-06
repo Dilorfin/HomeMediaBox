@@ -1,3 +1,14 @@
-<p>
-	surfing works!
-</p>
+<ion-content>
+	<div *ngIf="!list">
+		loading...
+	</div>
+	<main class="grid" *ngIf="list">
+		<ion-card *ngFor="let item of list" (click)="onCardClick(item)">
+			<img [src]="item.poster_path" />
+			<ion-card-header>
+				<ion-card-subtitle>{{item.original_title}}</ion-card-subtitle>
+				<ion-card-title>{{item.title}}</ion-card-title>
+			</ion-card-header>
+		</ion-card>
+	</main>
+</ion-content>

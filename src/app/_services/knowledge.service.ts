@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import ListModel from 'src/models/ListModel';
+import PaginationModel from 'src/models/PaginationModel';
 import TMDB from 'src/providers/knowledge/TMDB';
 import KnowledgeProvider from 'src/providers/KnowledgeProvider';
 
@@ -12,5 +14,10 @@ export class KnowledgeService
 	constructor()
 	{
 		this.knowledgeProvider = new TMDB();
+	}
+
+	async getPopularMovie(): Promise<PaginationModel<ListModel[]>>
+	{
+		return this.knowledgeProvider.getPopularMovie()
 	}
 }

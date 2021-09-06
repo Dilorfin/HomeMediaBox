@@ -57,7 +57,7 @@ export default class VideoCdnProvider implements VideoProvider
 			{
 				if (responseJson.data.length <= 0)
 				{
-					console.log(`videocdn has no imdb_id: ${movieModel.imdb_id}`);
+					console.error(`videocdn has no imdb_id: ${movieModel.imdb_id}`);
 				}
 				return 'https:' + responseJson.data[0].iframe_src;
 			})
