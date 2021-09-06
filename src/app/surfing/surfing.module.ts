@@ -6,10 +6,10 @@ import { SurfingComponent } from './surfing.component';
 
 
 @NgModule({
-  declarations: [ SurfingComponent ],
-  imports: [
-    CommonModule,
-    SurfingRoutingModule
-  ]
+	declarations: [SurfingComponent],
+	imports: [
+		CommonModule,
+		SurfingRoutingModule
+	]
 })
 export class SurfingModule { }

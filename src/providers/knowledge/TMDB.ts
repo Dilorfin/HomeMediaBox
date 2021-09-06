@@ -6,12 +6,12 @@ import KnowledgeProvider from "../KnowledgeProvider";
 export default class TMDB implements KnowledgeProvider
 {
 	private static locale: string = 'ru-RU';//'en-US';
-	private static apikey: string = '3735813b72994d73278ea217e6a50dd0';
+	private static apiKey: string = '3735813b72994d73278ea217e6a50dd0';
 
 	async getPopularMovie(): Promise<PaginationModel<ListModel[]>>
 	{
 		const temp: 'tv' | 'movie' = 'movie';
-		const url = `https://api.themoviedb.org/3/${temp}/popular?api_key=${TMDB.apikey}&language=${TMDB.locale}&page=1`;
+		const url = `https://api.themoviedb.org/3/${temp}/popular?api_key=${TMDB.apiKey}&language=${TMDB.locale}&page=1`;
 		return TMDB.getJson<PaginationModel<ListModel[]>>(url)
 			.then((movies: PaginationModel<ListModel[]>) =>
 			{
@@ -28,7 +28,7 @@ export default class TMDB implements KnowledgeProvider
 
 	async search(text: string): Promise<PaginationModel<ListModel[]>>
 	{
-		const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB.apikey}&language=${TMDB.locale}&query=${text}&page=1&include_adult=false`
+		const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB.apiKey}&language=${TMDB.locale}&query=${text}&page=1&include_adult=false`
 
 		return TMDB.getJson<PaginationModel<any[]>>(url)
 			.then((cards: PaginationModel<any[]>) =>
@@ -46,7 +46,7 @@ export default class TMDB implements KnowledgeProvider
 
 	async getDetails(listModel: ListModel): Promise<DetailsModel>
 	{
-		const url: string = `https://api.themoviedb.org/3/${listModel.media_type}/${listModel.id}?api_key=${TMDB.apikey}&language=${TMDB.locale}&append_to_response=external_ids,recommendations`;
+		const url: string = `https://api.themoviedb.org/3/${listModel.media_type}/${listModel.id}?api_key=${TMDB.apiKey}&language=${TMDB.locale}&append_to_response=external_ids,recommendations`;
 		return TMDB.getJson<any>(url)
 			.then((model: any) =>
 			{
@@ -70,12 +70,18 @@ export default class TMDB implements KnowledgeProvider
 
 	private static async getJson<TData>(url: string): Promise<TData>
 	{
+		const headers: HeadersInit = {
+			'Accept': '*/*',
+			'Connection': 'keep-alive',
+			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
+		};
+
 		return await fetch(url, {
-			headers: shared.headers
+			headers: headers
 		}).then((response: Response) =>
-		{
-			return response.json();
-		});
+			{
+				return response.json();
+			});
 	}
 
 	private static setFullImagePaths(movies: ListModel[]): ListModel[]
