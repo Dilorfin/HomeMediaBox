@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import DetailsModel from 'src/models/DetailsModel';
 import ListModel from 'src/models/ListModel';
 import PaginationModel from 'src/models/PaginationModel';
 import TMDB from 'src/providers/knowledge/TMDB';
@@ -18,6 +19,11 @@ export class KnowledgeService
 
 	async getPopularMovie(): Promise<PaginationModel<ListModel[]>>
 	{
-		return this.knowledgeProvider.getPopularMovie()
+		return this.knowledgeProvider.getPopularMovie();
+	}
+
+	async getDetails(listModel: ListModel): Promise<DetailsModel>
+	{
+		return this.knowledgeProvider.getDetails(listModel);
 	}
 }

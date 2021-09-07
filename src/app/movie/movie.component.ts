@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import DetailsModel from 'src/models/DetailsModel';
+import ListModel from 'src/models/ListModel';
 import { KnowledgeService } from '../_services/knowledge.service';
 
 @Component({
@@ -8,8 +11,17 @@ import { KnowledgeService } from '../_services/knowledge.service';
 })
 export class MovieComponent implements OnInit
 {
-	constructor(private knService: KnowledgeService) { }
+	movie: DetailsModel;
 
-	ngOnInit() { }
+	constructor(public router: Router, private knService: KnowledgeService)
+	{ }
 
+	ngOnInit()
+	{
+		this.movie = this.router.getCurrentNavigation().extras.state as DetailsModel;
+		this.knService.getDetails(this.movie as unknown as ListModel)// ???
+			.then((value: DetailsModel)=>{
+				this.movie = value;
+			}); 
+	}
 }

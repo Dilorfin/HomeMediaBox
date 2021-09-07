@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import ListModel from 'src/models/ListModel';
 import { KnowledgeService } from '../_services/knowledge.service';
 
@@ -10,7 +11,9 @@ import { KnowledgeService } from '../_services/knowledge.service';
 export class SurfingComponent implements OnInit
 {
 	list :ListModel[];
-	constructor(private knService: KnowledgeService) { }
+	
+	constructor(public router: Router, private knService: KnowledgeService)
+	{ }
 
 	ngOnInit() {
 		this.knService.getPopularMovie()
@@ -18,8 +21,9 @@ export class SurfingComponent implements OnInit
 				this.list = result.results;
 			});
 	}
+
 	onCardClick(model: ListModel)
 	{
-		console.log(model);
+		this.router.navigate(['/movie'], { state: model});
 	}
 }

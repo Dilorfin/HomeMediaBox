@@ -1,6 +1,12 @@
-<p>
-  movie works!
-</p>
+<div id="movie-main" [ngStyle]="{ 'background-image': 'url('+movie.backdrop_path+')', 'background-size': 'cover' }">
+	<div *ngIf="!movie">loading...</div>
+	<div *ngIf="movie">
+		<p>{{movie.id}}</p>
+		<p>{{movie.imdb_id}}</p>
+		<p>{{movie.title}}</p>
+		<p>{{movie.original_title}}</p>
+	</div>
 
-<movie-info></movie-info>
-<movie-videos></movie-videos>
+	<movie-info></movie-info>
+	<movie-videos></movie-videos>
+</div>
