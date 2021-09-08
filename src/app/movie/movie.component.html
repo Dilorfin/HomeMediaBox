@@ -7,6 +7,15 @@
 		<p>{{movie.original_title}}</p>
 	</div>
 
+	<div *ngIf="providers">
+		<div *ngFor="let provider of providers">
+			{{provider.title}}
+			<div *ngFor="let video of provider.videos">
+				<a [href]="video.url">q:{{video.quality}} t:{{video.voice_title}} s:{{video.season_id}} e:{{video.episode_id}}</a>
+			</div>
+		</div>
+	</div>
+
 	<movie-info></movie-info>
 	<movie-videos></movie-videos>
 </div>
