@@ -5,7 +5,6 @@ import { SurfingRoutingModule } from './surfing-routing.module';
 import { SurfingComponent } from './surfing.component';
 import { IonicModule } from '@ionic/angular';
 
-
 @NgModule({
 	declarations: [SurfingComponent],
 	imports: [
