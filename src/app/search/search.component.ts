@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import ListModel from 'src/models/ListModel';
 import { KnowledgeService } from '../_services/knowledge.service';
 
 @Component({
@@ -8,6 +10,28 @@ import { KnowledgeService } from '../_services/knowledge.service';
 })
 export class SearchComponent implements OnInit
 {
-	constructor(private knService: KnowledgeService) { }
+	constructor(public router: Router, private knService: KnowledgeService) { }
+
+	searchText: string;
+	list: ListModel[];
+
 	ngOnInit() { }
+
+	onSearchChange(event: any)
+	{
+		const searchText: string = event.detail.value;
+
+		if(searchText.length < 3)
+			return;
+
+		this.knService.search(searchText)
+			.then(list =>
+				this.list = list.results
+			);
+	}
+
+	onCardClick(model: ListModel)
+	{
+		this.router.navigate(['/movie'], { state: model });
+	}
 }

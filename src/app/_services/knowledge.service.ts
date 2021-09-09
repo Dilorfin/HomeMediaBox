@@ -26,4 +26,9 @@ export class KnowledgeService
 	{
 		return this.knowledgeProvider.getDetails(listModel);
 	}
+
+	async search(text :string): Promise<PaginationModel<ListModel[]>>
+	{
+		return this.knowledgeProvider.search(text);
+	}
 }

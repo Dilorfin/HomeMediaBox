@@ -1,3 +1,16 @@
-<p>
-	search works!
-</p>
+<div>
+	<ion-item>
+		<ion-label position="floating">Search</ion-label>
+		<ion-input (ionChange)="onSearchChange($event)"></ion-input>
+	</ion-item>
+
+	<div class="grid" *ngIf="list">
+		<ion-card *ngFor="let item of list" (click)="onCardClick(item)">
+			<img [src]="item.poster_path" />
+			<ion-card-header>
+				<ion-card-subtitle>{{item.original_title}}</ion-card-subtitle>
+				<ion-card-title>{{item.title}}</ion-card-title>
+			</ion-card-header>
+		</ion-card>
+	</div>
+</div>
