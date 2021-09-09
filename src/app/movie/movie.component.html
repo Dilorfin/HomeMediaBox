@@ -1,56 +1,5 @@
+<div *ngIf="!movie">loading...</div>
 <div id="movie-main" [ngStyle]="{ 'background-image': 'url('+movie.backdrop_path+')', 'background-size': 'cover' }">
-	<div *ngIf="!movie">loading...</div>
-	<div *ngIf="movie">
-		<p>{{movie.id}}</p>
-		<p>{{movie.imdb_id}}</p>
-		<p>{{movie.title}}</p>
-		<p>{{movie.original_title}}</p>
-	</div>
-
-	<ion-item *ngIf="providers && providers.length > 0">
-		<ion-label>Provider</ion-label>
-		<ion-select [value]="currentProvider.title">
-			<ion-select-option *ngFor="let provider of providers" [value]="provider.title">
-				{{provider.title}}
-			</ion-select-option>
-		</ion-select>
-	</ion-item>
-
-	<ion-item *ngIf="providers && providers.length > 0">
-		<ion-label>Qualities</ion-label>
-		<ion-select (ionChange)="setFilterProperty('quality', $event)" [value]="currentFilter.quality">
-			<ion-select-option *ngFor="let quality of filters[currentProvider.title].qualities" [value]="quality">
-				{{quality}}
-			</ion-select-option>
-		</ion-select>
-	</ion-item>
-
-	<ion-item *ngIf="providers && providers.length > 0">
-		<ion-label>Translation</ion-label>
-		<ion-select (ionChange)="setFilterProperty('translation', $event)" [value]="currentFilter.translation">
-			<ion-select-option *ngFor="let translation of filters[currentProvider.title].translations" [value]="translation">
-				{{translation}}
-			</ion-select-option>
-		</ion-select>
-	</ion-item>
-
-	<ion-item *ngIf="providers && providers.length > 0
-		 && filters[currentProvider.title].seasons && filters[currentProvider.title].seasons.length > 0">
-		<ion-label>Seasons</ion-label>
-		<ion-select (ionChange)="setFilterProperty('season', $event)" [value]="currentFilter.season">
-			<ion-select-option *ngFor="let season of filters[currentProvider.title].seasons" [value]="season">
-				{{season}}
-			</ion-select-option>
-		</ion-select>
-	</ion-item>
-
-	<div *ngIf="currentProvider">
-		<div *ngFor="let video of currentProvider.videos">
-			<a [href]="video.url">q:{{video.quality}} t:{{video.voice_title}} s:{{video.season_id}}
-				e:{{video.episode_id}}</a>
-		</div>
-	</div>
-
-	<movie-info></movie-info>
-	<movie-videos></movie-videos>
+	<movie-info [movie]="movie"></movie-info>
+	<movie-videos [movie]="movie"></movie-videos>
 </div>

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { KnowledgeService } from 'src/app/_services/knowledge.service';
+import { Component, Input, OnInit } from '@angular/core';
+import DetailsModel from 'src/models/DetailsModel';
 
 @Component({
 	selector: 'movie-info',
@@ -8,6 +8,11 @@ import { KnowledgeService } from 'src/app/_services/knowledge.service';
 })
 export class InfoComponent implements OnInit
 {
-	constructor(private knService: KnowledgeService) { }
-	ngOnInit() { }
+	@Input() movie: DetailsModel;
+
+	constructor()
+	{ }
+
+	ngOnInit()
+	{ }
 }
