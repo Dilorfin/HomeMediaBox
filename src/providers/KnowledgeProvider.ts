@@ -8,5 +8,5 @@ export default interface KnowledgeProvider
 
 	getPopularMovie() :Promise<PaginationModel<ListModel[]>>
 
-	getDetails(id :ListModel) :Promise<DetailsModel>;
+	getDetails(model :ListModel) :Promise<DetailsModel>;
 };

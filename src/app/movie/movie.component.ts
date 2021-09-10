@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import DetailsModel from 'src/models/DetailsModel';
 import ListModel from 'src/models/ListModel';
 import { KnowledgeService } from '../_services/knowledge.service';
@@ -11,16 +11,30 @@ import { KnowledgeService } from '../_services/knowledge.service';
 })
 export class MovieComponent implements OnInit
 {
+	private movieId: string;
+	private movieType: string;
+
 	movie: DetailsModel;
 
-	constructor(public router: Router, private knService: KnowledgeService)
-	{ }
+	constructor(public router: Router,
+		private knService: KnowledgeService,
+		activateRoute: ActivatedRoute)
+	{
+
+		this.movieId = activateRoute.snapshot.params['id'];
+
+		this.movieType = activateRoute.snapshot.params['type'];
+	}
 
 	ngOnInit()
 	{
 		this.movie = this.router.getCurrentNavigation().extras.state as DetailsModel;
+		const tempMovie: ListModel = (this.movie ? this.movie : {
+			id: this.movieId,
+			media_type: this.movieType
+		}) as unknown as ListModel; // ???
 
-		this.knService.getDetails(this.movie as unknown as ListModel)// ???
+		this.knService.getDetails(tempMovie)
 			.then((value: DetailsModel) =>
 			{
 				this.movie = value;

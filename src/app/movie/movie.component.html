@@ -1,5 +1,6 @@
 <div *ngIf="!movie">loading...</div>
-<div id="movie-main" [ngStyle]="{ 'background-image': 'url('+movie.backdrop_path+')', 'background-size': 'cover' }">
+<div *ngIf="movie" id="movie-main"
+	[ngStyle]="{ 'background-image': 'url('+movie.backdrop_path+')', 'background-size': 'cover' }">
 	<movie-info [movie]="movie"></movie-info>
-	<movie-videos [movie]="movie"></movie-videos>
+	<movie-videos *ngIf="movie.imdb_id" [movie]="movie"></movie-videos>
 </div>

@@ -32,6 +32,6 @@ export class SearchComponent implements OnInit
 
 	onCardClick(model: ListModel)
 	{
-		this.router.navigate(['/movie'], { state: model });
+		this.router.navigate(['/movie', model.media_type, model.id], { state: model });
 	}
 }

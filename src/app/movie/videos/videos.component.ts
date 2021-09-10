@@ -47,7 +47,6 @@ export class VideosComponent implements OnInit, OnChanges
 
 	ngOnChanges(changes: SimpleChanges): void
 	{
-		console.log(changes);
 		this.videoService.getVideos(this.movie)
 			.forEach(provider =>
 				provider.videos.then(videos =>
@@ -68,8 +67,6 @@ export class VideosComponent implements OnInit, OnChanges
 					};
 					if (!this.currentFilter)
 					{
-						console.log(this.filters[provider.title].seasons);
-
 						this.currentFilter = {
 							quality: this.filters[provider.title].qualities[0],
 							translation: this.filters[provider.title].translations[0],
@@ -98,7 +95,6 @@ export class VideosComponent implements OnInit, OnChanges
 			return videoModel.voice_title == this.currentFilter.translation
 				&& videoModel.quality == this.currentFilter.quality
 				&& videoModel.season_id == this.currentFilter.season;
-		})
-			.sort((a, b) => a.episode_id - b.episode_id);
+		}).sort((a, b) => a.episode_id - b.episode_id);
 	}
 }
