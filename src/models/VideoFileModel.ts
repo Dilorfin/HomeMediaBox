@@ -2,7 +2,7 @@ export default interface VideoFileModel
 {
 	voice_title :string,
 
-	season_id ?:number,
+	season_id ?:string,
 	episode_id ?:number,
 
 	quality :number,

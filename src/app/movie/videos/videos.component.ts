@@ -26,12 +26,12 @@ export class VideosComponent implements OnInit, OnChanges
 	currentFilter: {
 		quality: number,
 		translation: string,
-		season: number
+		season: string
 	};
 	filters: Record<string, {
 		qualities: number[],
 		translations: string[],
-		seasons: number[]
+		seasons: string[]
 	}> = {};
 
 	currentProvider: { title: string, videos: VideoFileModel[] };
