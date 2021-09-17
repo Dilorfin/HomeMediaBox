@@ -15,7 +15,7 @@ export class VideoService
 	constructor()
 	{
 		this.videoProviders = [
-			//new VideoCdnProvider(),
+			new VideoCdnProvider(),
 			new AnilibriaProvider()
 		];
 	}

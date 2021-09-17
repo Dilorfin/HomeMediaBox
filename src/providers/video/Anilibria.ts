@@ -19,7 +19,6 @@ export default class AnilibriaProvider implements VideoProvider
 
 	public async getVideos(movieModel: DetailsModel): Promise<VideoFileModel[]>
 	{
-		console.log(movieModel);
 		const kitsu_url: string = `https://kitsu.io/api/edge/anime?filter[text]=${movieModel.original_title}`;
 
 		return await fetch(kitsu_url, {

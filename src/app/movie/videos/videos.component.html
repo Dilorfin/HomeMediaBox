@@ -1,6 +1,6 @@
 <ion-item *ngIf="providers && providers.length > 0">
 	<ion-label>Provider</ion-label>
-	<ion-select [value]="currentProvider.title">
+	<ion-select (ionChange)="setProvider($event)" [value]="currentProvider.title">
 		<ion-select-option *ngFor="let provider of providers" [value]="provider.title">
 			{{provider.title}}
 		</ion-select-option>
