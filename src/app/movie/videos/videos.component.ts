@@ -36,15 +36,12 @@ export class VideosComponent implements OnInit, OnChanges
 		translation: string,
 		season: string
 	};
-	providers: { title: string, videos: VideoFileModel[] }[];
+	providers: { title: string, videos: VideoFileModel[] }[] = [];
 
-	constructor(private videoService: VideoService) 
+	constructor(private videoService: VideoService)
 	{ }
 
-	ngOnInit()
-	{
-		this.providers = [];
-	}
+	ngOnInit() { }
 
 	ngOnChanges(changes: SimpleChanges): void
 	{
@@ -52,6 +49,9 @@ export class VideosComponent implements OnInit, OnChanges
 			.forEach(provider =>
 				provider.videos.then(videos =>
 				{
+					if (!videos || videos.length <= 0)
+						return null;
+
 					const value = { title: provider.title, videos: videos };
 					if (!this.currentProvider)
 					{
@@ -61,6 +61,7 @@ export class VideosComponent implements OnInit, OnChanges
 					return value;
 				}).then((provider) =>
 				{
+					if (!provider) return;
 					this.filters[provider.title] = {
 						qualities: filterUnique(provider.videos.map(video => video.quality)),
 						seasons: filterUnique(provider.videos.map(video => video.season_id)),
@@ -75,7 +76,7 @@ export class VideosComponent implements OnInit, OnChanges
 
 	setProvider(event: any)
 	{
-		const provider = this.providers.filter((provider)=>provider.title == event.detail.value)[0];
+		const provider = this.providers.filter(provider => provider.title == event.detail.value)[0];
 		this.currentProvider = JSON.parse(JSON.stringify(provider));
 		this.setDefaultFilter();
 		this.filterVideos();
