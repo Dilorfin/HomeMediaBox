@@ -2,6 +2,17 @@ import VideoFileModel from "src/models/VideoFileModel";
 import DetailsModel from "../../models/DetailsModel";
 import VideoProvider from "../VideoProvider";
 
+function filterUnique<T>(array: T[], getValue?: any): T[]
+{
+	if (getValue)
+	{
+		return array.filter((value: T, index: number) => index == array.findIndex((el) => getValue(el) == getValue(value)))
+			.filter((value: T) => value != null);
+	}
+	return array.filter((value: T, index: number) => index == array.findIndex((el) => el == value))
+		.filter((value: T) => value != null);
+}
+
 export default class VideoCdnProvider implements VideoProvider
 {
 	static api_token: string = "lyvhjadzMUnDErAS6l7zIAk0M2nMYpbb";
@@ -16,6 +27,9 @@ export default class VideoCdnProvider implements VideoProvider
 	constructor()
 	{
 		const url = `https://videocdn.tv/api/translations?api_token=${VideoCdnProvider.api_token}`;
+
+		//v https://cloud.cdnland.in/movies/948c7e42326668b9461a4d6af8f54cc1bcaa5912/ea5c0da5f7a0801c720c4ee1075b66b3:2021091620/240.mp4
+		//n https://cloud.cdnland.in/movies/1410aa07cab27f372bac1e087fb9d88e3263b2a7/98fe5beeedbd417bb0afe55fec325c63:2021091617/240.mp4
 
 		fetch(url, {
 			headers: this.headers
@@ -153,18 +167,35 @@ export default class VideoCdnProvider implements VideoProvider
 						})).flat();
 					}
 				}
-				/*result=result.filter((value: VideoFileModel, index: number, array: VideoFileModel[])=>{
-					const firstPosition = result.findIndex((searchValue: VideoFileModel, index: number)=>{
-						return value.url == searchValue.url;
-					});
-					return index == firstPosition;
-				});*/
+
 				result.sort((firstEl, secondEl) =>
 				{
 					return firstEl.url.localeCompare(secondEl.url);
 				});
 				return result;
-			})
+			})/*.then(async videoFiles=>{
+				// TODO: THIS SHOULD BE OPTIMIZED.... AND REMADE.. or at least cached
+				var result:VideoFileModel[] = [];
+				var promises:Promise<void>[] = [];
+
+				videoFiles.forEach(el => {
+					promises.push(fetch(el.url, {
+						method: 'HEAD',
+						headers: {
+							'Accept': 'video/*',
+							'Connection': 'keep-alive',
+							'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
+						}
+					}).then(res => {
+						if(res.ok){
+							result.push(el);
+						}
+					}).catch((r)=>console.log(r)));
+				});
+				await Promise.all(promises);
+				//result = filterUnique(result, (file:VideoFileModel)=>file.url);
+				return result;
+			})*/
 	}
 
 	private parseEpisodeFiles(file: string)
