@@ -9,7 +9,7 @@
 
 <ion-item *ngIf="providers && providers.length > 0">
 	<ion-label>Qualities</ion-label>
-	<ion-select (ionChange)="setFilterProperty('quality', $event)" [value]="currentFilter.quality">
+	<ion-select (ionChange)="setFilterProperty('quality', $event)" [value]="currentProvider.quality">
 		<ion-select-option *ngFor="let quality of filters[currentProvider.title].qualities" [value]="quality">
 			{{quality}}
 		</ion-select-option>
@@ -18,7 +18,7 @@
 
 <ion-item *ngIf="providers && providers.length > 0">
 	<ion-label>Translation</ion-label>
-	<ion-select (ionChange)="setFilterProperty('translation', $event)" [value]="currentFilter.translation">
+	<ion-select (ionChange)="setFilterProperty('translation', $event)" [value]="currentProvider.translation">
 		<ion-select-option *ngFor="let translation of filters[currentProvider.title].translations" [value]="translation">
 			{{translation}}
 		</ion-select-option>
@@ -28,7 +28,7 @@
 <ion-item *ngIf="providers && providers.length > 0
 	 && filters[currentProvider.title].seasons && filters[currentProvider.title].seasons.length > 0">
 	<ion-label>Seasons</ion-label>
-	<ion-select (ionChange)="setFilterProperty('season', $event)" [value]="currentFilter.season">
+	<ion-select (ionChange)="setFilterProperty('season', $event)" [value]="currentProvider.season">
 		<ion-select-option *ngFor="let season of filters[currentProvider.title].seasons" [value]="season">
 			{{season}}
 		</ion-select-option>
