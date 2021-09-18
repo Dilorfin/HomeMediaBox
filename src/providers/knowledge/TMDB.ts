@@ -17,9 +17,8 @@ export default class TMDB implements KnowledgeProvider
 			{
 				movies.results = movies.results.map((m: ListModel) =>
 				{
-					//m.media_type = 'movie'
 					m.media_type = temp
-					return m;
+					return TMDB.mapToListModel(m);
 				});
 				movies.results = TMDB.setFullImagePaths(movies.results);
 				return movies;
