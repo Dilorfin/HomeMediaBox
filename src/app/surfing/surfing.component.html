@@ -1,20 +1,51 @@
 <ion-content>
-	<div *ngIf="!list">
-		loading...
-	</div>
-	<div>
-		<ion-button expand="full" color="dark" routerLink="../search">
-			<ion-icon name="search-outline"></ion-icon>
-			Search
-		</ion-button>
-		<div class="grid" *ngIf="list">
-			<ion-card *ngFor="let item of list" (click)="onCardClick(item)">
-				<img [src]="item.poster_path" />
-				<ion-card-header>
-					<ion-card-subtitle>{{item.original_title}}</ion-card-subtitle>
-					<ion-card-title>{{item.title}}</ion-card-title>
-				</ion-card-header>
-			</ion-card>
+	<ion-split-pane when="sm" contentId="main-content">
+		<ion-menu contentId="main-content">
+			<ion-header>
+				<ion-toolbar color="dark">
+					<ion-title>Menu</ion-title>
+				</ion-toolbar>
+			</ion-header>
+			<ion-content>
+				<ion-list style="height: 100%;">
+					<ion-menu-toggle [autoHide]="false">
+						<ion-item button routerLink="../search">
+							<ion-icon slot="start" name="search-outline"></ion-icon>
+							<ion-label>
+								Search
+							</ion-label>
+						</ion-item>
+					</ion-menu-toggle>
+				</ion-list>
+			</ion-content>
+		</ion-menu>
+		<div class="ion-page" id="main-content">
+			<ion-header>
+				<ion-toolbar>
+				  <ion-buttons slot="start">
+					<ion-menu-toggle>
+					  <ion-button>
+						<ion-icon slot="icon-only" name="menu"></ion-icon>
+					  </ion-button>
+					</ion-menu-toggle>
+				  </ion-buttons>
+				  <ion-title>Trending films</ion-title>
+				</ion-toolbar>
+			  </ion-header>
+			<ion-content class="ion-padding">
+				<div *ngIf="!list">
+					loading...
+				</div>
+				<div class="grid" *ngIf="list">
+					<ion-card *ngFor="let item of list" (click)="onCardClick(item)">
+						<ion-img [src]="item.poster_path" ></ion-img>
+						<ion-card-header>
+							<ion-card-subtitle>{{item.original_title}}</ion-card-subtitle>
+							<ion-card-title>{{item.title}}</ion-card-title>
+						</ion-card-header>
+					</ion-card>
+				</div>
+			</ion-content>
 		</div>
-	</div>
+	</ion-split-pane>
 </ion-content>

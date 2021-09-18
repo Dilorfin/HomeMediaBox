@@ -1,16 +1,18 @@
-<div>
-	<ion-item color="light">
-		<ion-label position="floating">Search</ion-label>
-		<ion-input inputmode="search" (ionChange)="onSearchChange($event)" clearInput></ion-input>
-	</ion-item>
+<ion-content>
+	<ion-header translucent>
+		<ion-item color="light">
+			<ion-label position="floating">Search</ion-label>
+			<ion-input inputmode="search" (ionChange)="onSearchChange($event)" clearInput></ion-input>
+		</ion-item>
+	  </ion-header>
 
 	<div class="grid" *ngIf="list">
-		<div *ngFor="let item of list" (click)="onCardClick(item)">
+		<ion-card *ngFor="let item of list" (click)="onCardClick(item)">
 			<img [src]="item.poster_path" />
-			<div>
-				<span>{{item.original_title}}</span>
-				<span>{{item.title}}</span>
-			</div>
-		</div>
+			<ion-card-header>
+				<ion-card-subtitle>{{item.original_title}}</ion-card-subtitle>
+				<ion-card-title>{{item.title}}</ion-card-title>
+			</ion-card-header>
+		</ion-card>
 	</div>
-</div>
+</ion-content>
