@@ -3,9 +3,10 @@
 		loading...
 	</div>
 	<div>
-		<div style="width: 200px;">
-			<a routerLink="../search">Search</a>
-		</div>
+		<ion-button expand="full" color="dark" routerLink="../search">
+			<ion-icon name="search-outline"></ion-icon>
+			Search
+		</ion-button>
 		<div class="grid" *ngIf="list">
 			<ion-card *ngFor="let item of list" (click)="onCardClick(item)">
 				<img [src]="item.poster_path" />
