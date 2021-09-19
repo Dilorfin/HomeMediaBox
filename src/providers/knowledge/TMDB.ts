@@ -14,7 +14,6 @@ export default class TMDB implements KnowledgeProvider
 		const movieGenresUrl:string = `https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB.apiKey}&language=${TMDB.locale}`;
 		TMDB.getJson<{genres:{id:number,name:string}[]}>(movieGenresUrl)
 			.then((result)=>{
-				
 				this.genres.movie = result.genres;
 			});
 		const tvGenresUrl:string = `https://api.themoviedb.org/3/genre/tv/list?api_key=${TMDB.apiKey}&language=${TMDB.locale}`;
@@ -48,8 +47,9 @@ export default class TMDB implements KnowledgeProvider
 		return TMDB.getJson<PaginationModel<any[]>>(url)
 			.then((cards: PaginationModel<any[]>) =>
 			{
-				cards.results = cards.results.map(this.mapToListModel)
-					.filter((card) => card);
+				cards.results = cards.results.map((card)=>{
+					return this.mapToListModel(card);
+				}).filter((card) => card);
 				return cards;
 			})
 			.then((cards: PaginationModel<ListModel[]>) =>
@@ -93,10 +93,9 @@ export default class TMDB implements KnowledgeProvider
 
 		return await fetch(url, {
 			headers: headers
-		}).then((response: Response) =>
-			{
-				return response.json();
-			});
+		}).then((response: Response) => {
+			return response.json();
+		});
 	}
 
 	private static setFullImagePaths(movies: ListModel[]): ListModel[]
@@ -111,19 +110,18 @@ export default class TMDB implements KnowledgeProvider
 			{
 				el.backdrop_path = TMDB.getBackdropFullUrl(el.backdrop_path);
 			}
-
 			return el;
 		});
 	}
 
 	private static getPosterFullUrl(shortUrl: string, size: 'w342' | 'original' = 'w342'): string
 	{
-		return "https://image.tmdb.org/t/p/" + size + shortUrl;
+		return `https://image.tmdb.org/t/p/${size}${shortUrl}`;
 	}
 
 	private static getBackdropFullUrl(shortUrl: string, size: 'w780' | 'w1280' | 'original' = 'w1280'): string
 	{
-		return "https://image.tmdb.org/t/p/original" + shortUrl;
+		return `https://image.tmdb.org/t/p/${size}${shortUrl}`;
 	}
 
 	private static mapToDetails(model: any): DetailsModel
@@ -151,8 +149,9 @@ export default class TMDB implements KnowledgeProvider
 		if (model.genre_ids)
 		{
 			result.genres = model.genre_ids.map((gid)=>{
-				return this.genres[model.media_type].filter((e)=>e.id == gid)[0];
-			})
+				return this.genres[model.media_type]
+					.filter(e=>e.id == gid)[0];
+			});
 		}
 
 		if (model.media_type == 'tv')

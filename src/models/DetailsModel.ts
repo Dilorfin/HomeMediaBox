@@ -13,6 +13,8 @@ export default interface DetailsModel
 
 	original_language: string;
 
+	overview: string;
+
 	backdrop_path :string;
 	poster_path :string;
 

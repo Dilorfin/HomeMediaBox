@@ -14,7 +14,7 @@ export class MovieComponent implements OnInit
 	private movieId: string;
 	private movieType: string;
 
-	tab :'info'|'video' = 'info';
+	tab: 'info' | 'video' = 'info';
 
 	movie: DetailsModel;
 
@@ -22,9 +22,7 @@ export class MovieComponent implements OnInit
 		private knService: KnowledgeService,
 		activateRoute: ActivatedRoute)
 	{
-
 		this.movieId = activateRoute.snapshot.params['id'];
-
 		this.movieType = activateRoute.snapshot.params['type'];
 	}
 
