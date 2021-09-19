@@ -9,10 +9,12 @@ import DetailsModel from 'src/models/DetailsModel';
 export class InfoComponent implements OnInit
 {
 	@Input() movie: DetailsModel;
-
+	genres:string;
 	constructor()
 	{ }
 
 	ngOnInit()
-	{ }
+	{ 
+		this.genres = this.movie.genres.map(g=>g.name).join(", ");
+	}
 }

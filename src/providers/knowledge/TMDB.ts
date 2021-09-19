@@ -7,6 +7,23 @@ export default class TMDB implements KnowledgeProvider
 {
 	private static locale: string = 'ru-RU';//'en-US';
 	private static apiKey: string = '3735813b72994d73278ea217e6a50dd0';
+	private genres:any = {};
+
+	constructor()
+	{
+		const movieGenresUrl:string = `https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB.apiKey}`;
+		TMDB.getJson<{genres:{id:number,name:string}[]}>(movieGenresUrl)
+			.then((result)=>{
+				
+				this.genres.movie = result.genres;
+			});
+		const tvGenresUrl:string = `https://api.themoviedb.org/3/genre/tv/list?api_key=${TMDB.apiKey}`;
+		TMDB.getJson<{genres:{id:number,name:string}[]}>(tvGenresUrl)
+			.then((result)=>{
+				console.log(result.genres);
+				this.genres.tv = result.genres;
+			})
+	}
 
 	async getPopularMovie(): Promise<PaginationModel<ListModel[]>>
 	{
@@ -18,7 +35,7 @@ export default class TMDB implements KnowledgeProvider
 				movies.results = movies.results.map((m: ListModel) =>
 				{
 					m.media_type = temp
-					return TMDB.mapToListModel(m);
+					return this.mapToListModel(m);
 				});
 				movies.results = TMDB.setFullImagePaths(movies.results);
 				return movies;
@@ -32,7 +49,7 @@ export default class TMDB implements KnowledgeProvider
 		return TMDB.getJson<PaginationModel<any[]>>(url)
 			.then((cards: PaginationModel<any[]>) =>
 			{
-				cards.results = cards.results.map(TMDB.mapToListModel)
+				cards.results = cards.results.map(this.mapToListModel)
 					.filter((card) => card);
 				return cards;
 			})
@@ -126,12 +143,19 @@ export default class TMDB implements KnowledgeProvider
 		return result;
 	}
 
-	private static mapToListModel(model: any): ListModel
+	private mapToListModel(model: any): ListModel
 	{
 		if (model.media_type != 'tv' && model.media_type != 'movie')
 			return null;
 
 		var result: ListModel = model;
+		if (model.genre_ids)
+		{
+			result.genres = model.genre_ids.map((gid)=>{
+				return this.genres[model.media_type].filter((e)=>e.id == gid)[0];
+			})
+		}
+
 		if (model.media_type == 'tv')
 		{
 			result.title = model.name;

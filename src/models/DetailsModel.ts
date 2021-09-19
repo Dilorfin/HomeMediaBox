@@ -16,7 +16,7 @@ export default interface DetailsModel
 	backdrop_path :string;
 	poster_path :string;
 
-	genres :{id:number,name:string};
+	genres :{id:number,name:string}[];
 
 	production_countries :{iso_3166_1:string,name:string}[];
 
