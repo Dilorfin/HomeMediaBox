@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { VideoService } from 'src/app/_services/video.service';
 import DetailsModel from 'src/models/DetailsModel';
 import VideoFileModel from 'src/models/VideoFileModel';
@@ -22,6 +22,7 @@ function filterUnique<T>(array: T[], getValue?: any): T[]
 export class VideosComponent implements OnInit, OnChanges
 {
 	@Input() movie: DetailsModel;
+	@Output() openInfo = new EventEmitter<void>();
 
 	currentFilter: {
 		provider_title: string,

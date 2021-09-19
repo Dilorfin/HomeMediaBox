@@ -14,6 +14,8 @@ export class MovieComponent implements OnInit
 	private movieId: string;
 	private movieType: string;
 
+	tab :'info'|'video' = 'info';
+
 	movie: DetailsModel;
 
 	constructor(public router: Router,

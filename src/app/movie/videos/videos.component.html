@@ -1,3 +1,5 @@
+<button (click)="openInfo.emit()">Open info</button>
+
 <ion-item *ngIf="providers && providers.length > 0">
 	<ion-label>Provider</ion-label>
 	<ion-select (ionChange)="setProvider($event)" [value]="currentFilter.provider_title">

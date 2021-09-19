@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import DetailsModel from 'src/models/DetailsModel';
 
 @Component({
@@ -9,7 +9,7 @@ import DetailsModel from 'src/models/DetailsModel';
 export class InfoComponent implements OnInit
 {
 	@Input() movie: DetailsModel;
-	genres:string;
+	@Output() openVideos = new EventEmitter<void>();
 
 	genres: string;
 
