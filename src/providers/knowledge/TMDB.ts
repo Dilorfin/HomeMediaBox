@@ -11,13 +11,13 @@ export default class TMDB implements KnowledgeProvider
 
 	constructor()
 	{
-		const movieGenresUrl:string = `https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB.apiKey}`;
+		const movieGenresUrl:string = `https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB.apiKey}&language=${TMDB.locale}`;
 		TMDB.getJson<{genres:{id:number,name:string}[]}>(movieGenresUrl)
 			.then((result)=>{
 				
 				this.genres.movie = result.genres;
 			});
-		const tvGenresUrl:string = `https://api.themoviedb.org/3/genre/tv/list?api_key=${TMDB.apiKey}`;
+		const tvGenresUrl:string = `https://api.themoviedb.org/3/genre/tv/list?api_key=${TMDB.apiKey}&language=${TMDB.locale}`;
 		TMDB.getJson<{genres:{id:number,name:string}[]}>(tvGenresUrl)
 			.then((result)=>{
 				console.log(result.genres);

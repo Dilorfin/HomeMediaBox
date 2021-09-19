@@ -10,11 +10,14 @@ export class InfoComponent implements OnInit
 {
 	@Input() movie: DetailsModel;
 	genres:string;
+
+	genres: string;
+
 	constructor()
 	{ }
 
 	ngOnInit()
-	{ 
-		this.genres = this.movie.genres.map(g=>g.name).join(", ");
+	{
+		this.genres = this.movie.genres.map(g => g.name).join(", ");
 	}
 }
