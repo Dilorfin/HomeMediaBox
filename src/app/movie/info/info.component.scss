@@ -5,10 +5,40 @@ ion-content{
 
 #centered-container {
 	text-align: center;
-	
-	&>div {
+	width: 100%;
+	height: 100%;
+
+	& .inside-padding {
+		padding: 15px 35px;
+	}
+
+	& > div {
 		width: 60vw;
 		height: 100%;
 		display: inline-block;
+	}
+}
+
+.cards-row {
+	display: flex;
+	flex-wrap: nowrap;
+	overflow-x: scroll;
+
+	&>ion-card{
+		flex-shrink: 0;
+		width: 250px;
+	}
+}
+
+@media only screen and (max-width: 992px) {
+	// TODO: add different paddings for different sizes
+	#centered-container {
+		& .inside-padding {
+			padding: 15px 15px;
+		}
+
+		& > div {
+			width: 100%;
+		}
 	}
 }
