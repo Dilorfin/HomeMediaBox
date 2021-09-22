@@ -1,11 +1,10 @@
+<ion-header slot="fixed">
+	<ion-item color="light">
+		<ion-label position="floating">Search</ion-label>
+		<ion-input inputmode="search" (ionChange)="onSearchChange($event)" clearInput></ion-input>
+	</ion-item>
+</ion-header>
 <ion-content>
-	<ion-header translucent>
-		<ion-item color="light">
-			<ion-label position="floating">Search</ion-label>
-			<ion-input inputmode="search" (ionChange)="onSearchChange($event)" clearInput></ion-input>
-		</ion-item>
-	</ion-header>
-
 	<div class="grid" *ngIf="list">
 		<ion-card *ngFor="let item of list" routerLink="/movie/{{item.media_type}}/{{item.id}}" [state]="item">
 			<ion-img [src]="item.poster_path"></ion-img>
