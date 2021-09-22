@@ -23,15 +23,15 @@ export class VideosComponent implements OnInit, OnChanges
 {
 	@Input() movie: DetailsModel;
 
-	currentProvider: {
-		title: string,
+	currentFilter: {
+		provider_title: string,
 		videos: VideoFileModel[],
 		quality: number,
 		translation: string,
 		season: string
 	};
 
-	providers: { title: string, videos: VideoFileModel[] }[] = [];
+	providers: { provider_title: string, videos: VideoFileModel[] }[] = [];
 	filters: Record<string, {
 		qualities: number[],
 		translations: string[],
@@ -52,17 +52,17 @@ export class VideosComponent implements OnInit, OnChanges
 					if (!videos || videos.length <= 0)
 						return null;
 
-					const value = { title: provider.title, videos: videos };
-					if (!this.currentProvider)
+					const value = { provider_title: provider.title, videos: videos };
+					if (!this.currentFilter)
 					{
-						this.currentProvider = JSON.parse(JSON.stringify(value));
+						this.currentFilter = JSON.parse(JSON.stringify(value));
 					}
 					this.providers.push(value);
 					return value;
 				}).then((provider) =>
 				{
 					if (!provider) return;
-					this.filters[provider.title] = {
+					this.filters[provider.provider_title] = {
 						qualities: filterUnique(provider.videos.map(video => video.quality)),
 						seasons: filterUnique(provider.videos.map(video => video.season)),
 						translations: filterUnique(provider.videos.map(video => video.voice_title))
@@ -76,8 +76,8 @@ export class VideosComponent implements OnInit, OnChanges
 
 	setProvider(event: any)
 	{
-		const provider = this.providers.filter(provider => provider.title == event.detail.value)[0];
-		this.currentProvider = JSON.parse(JSON.stringify(provider));
+		const provider = this.providers.filter(provider => provider.provider_title == event.detail.value)[0];
+		this.currentFilter = JSON.parse(JSON.stringify(provider));
 		this.setDefaultFilter();
 		this.filterVideos();
 	}
@@ -85,25 +85,25 @@ export class VideosComponent implements OnInit, OnChanges
 	setFilterProperty(property: string, event: any)
 	{
 		const value = event.detail.value;
-		this.currentProvider[property] = value;
+		this.currentFilter[property] = value;
 		this.filterVideos();
 	}
 
 	setDefaultFilter()
 	{
-		this.currentProvider.quality = this.filters[this.currentProvider.title].qualities[0];
-		this.currentProvider.translation = this.filters[this.currentProvider.title].translations[0];
-		this.currentProvider.season = this.filters[this.currentProvider.title].seasons.length > 0 ? this.filters[this.currentProvider.title].seasons[0] : null
+		this.currentFilter.quality = this.filters[this.currentFilter.provider_title].qualities[0];
+		this.currentFilter.translation = this.filters[this.currentFilter.provider_title].translations[0];
+		this.currentFilter.season = this.filters[this.currentFilter.provider_title].seasons.length > 0 ? this.filters[this.currentFilter.provider_title].seasons[0] : null
 	}
 
 	filterVideos()
 	{
-		const provider = this.providers.find((pr) => pr.title == this.currentProvider.title);
-		this.currentProvider.videos = provider.videos.filter(videoModel =>
+		const provider = this.providers.find((pr) => pr.provider_title == this.currentFilter.provider_title);
+		this.currentFilter.videos = provider.videos.filter(videoModel =>
 		{
-			return videoModel.voice_title == this.currentProvider.translation
-				&& videoModel.quality == this.currentProvider.quality
-				&& videoModel.season == this.currentProvider.season;
+			return videoModel.voice_title == this.currentFilter.translation
+				&& videoModel.quality == this.currentFilter.quality
+				&& videoModel.season == this.currentFilter.season;
 		}).sort((a, b) => a.episode_id - b.episode_id);
 	}
 }
