@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import DetailsModel from 'src/models/DetailsModel';
 import VideoFileModel from 'src/models/VideoFileModel';
 import VideoCdnProvider from 'src/providers/video/VideoCdn';
+import KinobProvider from 'src/providers/video/Kinob';
 import VideoProvider from 'src/providers/VideoProvider';
 
 @Injectable({
@@ -14,7 +15,8 @@ export class VideoService
 	constructor()
 	{
 		this.videoProviders = [
-			new VideoCdnProvider()
+			//new VideoCdnProvider()
+			new KinobProvider()
 		];
 	}
 
