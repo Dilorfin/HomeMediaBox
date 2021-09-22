@@ -23,12 +23,6 @@ export class VideosComponent implements OnInit, OnChanges
 {
 	@Input() movie: DetailsModel;
 
-	filters: Record<string, {
-		qualities: number[],
-		translations: string[],
-		seasons: string[]
-	}> = {};
-
 	currentProvider: {
 		title: string,
 		videos: VideoFileModel[],
@@ -36,7 +30,13 @@ export class VideosComponent implements OnInit, OnChanges
 		translation: string,
 		season: string
 	};
+
 	providers: { title: string, videos: VideoFileModel[] }[] = [];
+	filters: Record<string, {
+		qualities: number[],
+		translations: string[],
+		seasons: string[]
+	}> = {};
 
 	constructor(private videoService: VideoService)
 	{ }
@@ -64,7 +64,7 @@ export class VideosComponent implements OnInit, OnChanges
 					if (!provider) return;
 					this.filters[provider.title] = {
 						qualities: filterUnique(provider.videos.map(video => video.quality)),
-						seasons: filterUnique(provider.videos.map(video => video.season_id)),
+						seasons: filterUnique(provider.videos.map(video => video.season)),
 						translations: filterUnique(provider.videos.map(video => video.voice_title))
 					};
 
@@ -103,7 +103,7 @@ export class VideosComponent implements OnInit, OnChanges
 		{
 			return videoModel.voice_title == this.currentProvider.translation
 				&& videoModel.quality == this.currentProvider.quality
-				&& videoModel.season_id == this.currentProvider.season;
+				&& videoModel.season == this.currentProvider.season;
 		}).sort((a, b) => a.episode_id - b.episode_id);
 	}
 }

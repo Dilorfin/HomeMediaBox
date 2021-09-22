@@ -81,7 +81,7 @@ export default class AnilibriaProvider implements VideoProvider
 		return {
 			voice_title: item.team.voice.join(", "),
 			episode_id: Number(series.serie),
-			season_id: item.names.ru,
+			season: item.names.ru,
 			quality: quality_number,
 			url: `https://${item.player.host}${series.hls[quality]}`,
 		};
