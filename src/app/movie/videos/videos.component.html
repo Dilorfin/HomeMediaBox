@@ -35,8 +35,8 @@
 	</ion-select>
 </ion-item>
 
-<div *ngIf="currentProvider" style="background-color:black; color:whitesmoke;">
-	<div *ngFor="let video of currentProvider.videos" style="padding-top: 2px; padding-bottom: 2px;">
+<div *ngIf="currentProvider">
+	<div *ngFor="let video of currentProvider.videos">
 		<a [href]="video.url">q:{{video.quality}} t:{{video.voice_title}} s:{{video.season_id}}
 			e:{{video.episode_id}}</a>
 	</div>
