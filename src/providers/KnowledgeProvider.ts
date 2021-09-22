@@ -4,9 +4,9 @@ import PaginationModel from "src/models/PaginationModel";
 
 export default interface KnowledgeProvider
 {
-	search(text :string) :Promise<PaginationModel<ListModel[]>>;
+	search(text: string): Promise<PaginationModel<ListModel[]>>;
 
-	getPopularMovie() :Promise<PaginationModel<ListModel[]>>
+	getPopularMovie(): Promise<PaginationModel<ListModel[]>>
 
-	getDetails(model :ListModel) :Promise<DetailsModel>;
+	getDetails(model: ListModel): Promise<DetailsModel>;
 };

@@ -10,7 +10,8 @@ import { KnowledgeService } from '../_services/knowledge.service';
 })
 export class SearchComponent implements OnInit
 {
-	constructor(public router: Router, private knService: KnowledgeService) { }
+	constructor(private knService: KnowledgeService)
+	{}
 
 	searchText: string;
 	list: ListModel[];

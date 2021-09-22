@@ -7,20 +7,28 @@ export default class TMDB implements KnowledgeProvider
 {
 	private static locale: string = 'ru-RU';//'en-US';
 	private static apiKey: string = '3735813b72994d73278ea217e6a50dd0';
-	private genres:any = {};
+	private genres: any = {};
 
 	constructor()
 	{
-		const movieGenresUrl:string = `https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB.apiKey}&language=${TMDB.locale}`;
-		TMDB.getJson<{genres:{id:number,name:string}[]}>(movieGenresUrl)
-			.then((result)=>{
-				this.genres.movie = result.genres;
+		this.loadGenres();
+	}
+
+	private async loadGenres()
+	{
+		const movies = this.loadGenre('movie');
+		const tvs = this.loadGenre('tv');
+		await Promise.all([movies, tvs]);
+	}
+
+	private async loadGenre(media_type: 'movie' | 'tv')
+	{
+		const url: string = `https://api.themoviedb.org/3/genre/${media_type}/list?api_key=${TMDB.apiKey}&language=${TMDB.locale}`;
+		return TMDB.getJson<{ genres: { id: number, name: string }[] }>(url)
+			.then((result) =>
+			{
+				this.genres[media_type] = result.genres;
 			});
-		const tvGenresUrl:string = `https://api.themoviedb.org/3/genre/tv/list?api_key=${TMDB.apiKey}&language=${TMDB.locale}`;
-		TMDB.getJson<{genres:{id:number,name:string}[]}>(tvGenresUrl)
-			.then((result)=>{
-				this.genres.tv = result.genres;
-			})
 	}
 
 	async getPopularMovie(): Promise<PaginationModel<ListModel[]>>
@@ -47,7 +55,8 @@ export default class TMDB implements KnowledgeProvider
 		return TMDB.getJson<PaginationModel<any[]>>(url)
 			.then((cards: PaginationModel<any[]>) =>
 			{
-				cards.results = cards.results.map((card)=>{
+				cards.results = cards.results.map((card) =>
+				{
 					return this.mapToListModel(card);
 				}).filter((card) => card);
 				return cards;
@@ -93,7 +102,8 @@ export default class TMDB implements KnowledgeProvider
 
 		return await fetch(url, {
 			headers: headers
-		}).then((response: Response) => {
+		}).then((response: Response) =>
+		{
 			return response.json();
 		});
 	}
@@ -140,8 +150,10 @@ export default class TMDB implements KnowledgeProvider
 				result.imdb_id = model.external_ids.imdb_id;
 			}
 		}
+		
 		model.recommendations.results = model.recommendations.results
-			.map(rec=>this.mapToListModel(rec));
+			.map(rec => this.mapToListModel(rec));
+
 		return result;
 	}
 
@@ -151,11 +163,12 @@ export default class TMDB implements KnowledgeProvider
 			return null;
 
 		var result: ListModel = model;
-		if (model.genre_ids)
+		if (model.genre_ids && this.genres[model.media_type])
 		{
-			result.genres = model.genre_ids.map((gid)=>{
+			result.genres = model.genre_ids.map((gid) =>
+			{
 				return this.genres[model.media_type]
-					.filter(e=>e.id == gid)[0];
+					.filter(e => e.id == gid)[0];
 			});
 		}
 
