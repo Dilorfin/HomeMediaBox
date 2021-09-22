@@ -37,9 +37,9 @@
 	</ion-select>
 </ion-item>
 <ion-content style="height: 75vh;">
-	<ion-list *ngIf="currentProvider">
-		<ion-item *ngFor="let video of currentProvider.videos">
-			<a [href]="video.url">q:{{video.quality}} t:{{video.voice_title}} s:{{video.season_id}}
+	<ion-list *ngIf="currentFilter">
+		<ion-item *ngFor="let video of currentFilter.videos">
+			<a [href]="video.url">q:{{video.quality}} t:{{video.voice_title}} s:{{video.season}}
 				e:{{video.episode_id}}</a>
 		</ion-item>
 	</ion-list>
