@@ -66,7 +66,7 @@ export default class TMDB implements KnowledgeProvider
 			.then((model: any) =>
 			{
 				model.media_type = listModel.media_type;
-				return TMDB.mapToDetails(model);
+				return this.mapToDetails(model);
 			})
 			.then((movie: DetailsModel) =>
 			{
@@ -124,7 +124,7 @@ export default class TMDB implements KnowledgeProvider
 		return `https://image.tmdb.org/t/p/${size}${shortUrl}`;
 	}
 
-	private static mapToDetails(model: any): DetailsModel
+	private mapToDetails(model: any): DetailsModel
 	{
 		if (model.media_type != 'tv' && model.media_type != 'movie')
 			return null;
@@ -134,9 +134,14 @@ export default class TMDB implements KnowledgeProvider
 		{
 			result.title = model.name;
 			result.original_title = model.original_name;
-			result.imdb_id = model.external_ids.imdb_id;
 			result.release_date = model.first_air_date;
+			if (!result.imdb_id)
+			{
+				result.imdb_id = model.external_ids.imdb_id;
+			}
 		}
+		model.recommendations.results = model.recommendations.results
+			.map(rec=>this.mapToListModel(rec));
 		return result;
 	}
 
