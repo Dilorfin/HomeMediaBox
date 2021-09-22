@@ -24,26 +24,24 @@ export class VideosComponent implements OnInit, OnChanges
 	@Input() movie: DetailsModel;
 
 	currentFilter: {
+		provider_title: string,
+		videos: VideoFileModel[],
 		quality: number,
 		translation: string,
-		season: number
+		season: string
 	};
+
+	providers: { provider_title: string, videos: VideoFileModel[] }[] = [];
 	filters: Record<string, {
 		qualities: number[],
 		translations: string[],
-		seasons: number[]
+		seasons: string[]
 	}> = {};
 
-	currentProvider: { title: string, videos: VideoFileModel[] };
-	providers: { title: string, videos: VideoFileModel[] }[];
-
-	constructor(private videoService: VideoService) 
+	constructor(private videoService: VideoService)
 	{ }
 
-	ngOnInit()
-	{
-		this.providers = [];
-	}
+	ngOnInit() { }
 
 	ngOnChanges(changes: SimpleChanges): void
 	{
@@ -51,33 +49,37 @@ export class VideosComponent implements OnInit, OnChanges
 			.forEach(provider =>
 				provider.videos.then(videos =>
 				{
-					const value = { title: provider.title, videos: videos };
-					if (!this.currentProvider)
+					if (!videos || videos.length <= 0)
+						return null;
+
+					const value = { provider_title: provider.title, videos: videos };
+					if (!this.currentFilter)
 					{
-						this.currentProvider = JSON.parse(JSON.stringify(value));
+						this.currentFilter = JSON.parse(JSON.stringify(value));
 					}
 					this.providers.push(value);
 					return value;
 				}).then((provider) =>
 				{
-					this.filters[provider.title] = {
+					if (!provider) return;
+					this.filters[provider.provider_title] = {
 						qualities: filterUnique(provider.videos.map(video => video.quality)),
-						seasons: filterUnique(provider.videos.map(video => video.season_id)),
+						seasons: filterUnique(provider.videos.map(video => video.season)),
 						translations: filterUnique(provider.videos.map(video => video.voice_title))
 					};
-					if (!this.currentFilter)
-					{
-						this.currentFilter = {
-							quality: this.filters[provider.title].qualities[0],
-							translation: this.filters[provider.title].translations[0],
-							season: this.filters[provider.title].seasons.length > 0 ? this.filters[provider.title].seasons[0] : null
-						}
-					}
-				}).then(() =>
-				{
+
+					this.setDefaultFilter();
 					this.filterVideos();
 				})
 			);
+	}
+
+	setProvider(event: any)
+	{
+		const provider = this.providers.filter(provider => provider.provider_title == event.detail.value)[0];
+		this.currentFilter = JSON.parse(JSON.stringify(provider));
+		this.setDefaultFilter();
+		this.filterVideos();
 	}
 
 	setFilterProperty(property: string, event: any)
@@ -87,14 +89,21 @@ export class VideosComponent implements OnInit, OnChanges
 		this.filterVideos();
 	}
 
+	setDefaultFilter()
+	{
+		this.currentFilter.quality = this.filters[this.currentFilter.provider_title].qualities[0];
+		this.currentFilter.translation = this.filters[this.currentFilter.provider_title].translations[0];
+		this.currentFilter.season = this.filters[this.currentFilter.provider_title].seasons.length > 0 ? this.filters[this.currentFilter.provider_title].seasons[0] : null
+	}
+
 	filterVideos()
 	{
-		const provider = this.providers.find((pr) => pr.title == this.currentProvider.title);
-		this.currentProvider.videos = provider.videos.filter(videoModel =>
+		const provider = this.providers.find((pr) => pr.provider_title == this.currentFilter.provider_title);
+		this.currentFilter.videos = provider.videos.filter(videoModel =>
 		{
 			return videoModel.voice_title == this.currentFilter.translation
 				&& videoModel.quality == this.currentFilter.quality
-				&& videoModel.season_id == this.currentFilter.season;
+				&& videoModel.season == this.currentFilter.season;
 		}).sort((a, b) => a.episode_id - b.episode_id);
 	}
 }
