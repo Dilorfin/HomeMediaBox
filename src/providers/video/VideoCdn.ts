@@ -27,24 +27,15 @@ export default class VideoCdnProvider implements VideoProvider
 	constructor()
 	{
 		const url = `https://videocdn.tv/api/translations?api_token=${VideoCdnProvider.api_token}`;
-
-		//v https://cloud.cdnland.in/movies/948c7e42326668b9461a4d6af8f54cc1bcaa5912/ea5c0da5f7a0801c720c4ee1075b66b3:2021091620/240.mp4
-		//n https://cloud.cdnland.in/movies/1410aa07cab27f372bac1e087fb9d88e3263b2a7/98fe5beeedbd417bb0afe55fec325c63:2021091617/240.mp4
-
-		fetch(url, {
-			headers: this.headers
-		})
-			.then((response: Response) =>
-			{
-				return response.json();
-			})
+		fetch(url, { headers: this.headers })
+			.then((response: Response) => response.json())
 			.then((responseJson: { data: { id: number, smart_title: string }[] }) =>
 			{
 				responseJson.data.forEach((tr: { id: number, smart_title: string }) =>
 				{
 					this.translations[tr.id] = tr.smart_title;
 				});
-			})
+			});
 	}
 
 	public getProviderTitle(): string
@@ -56,35 +47,25 @@ export default class VideoCdnProvider implements VideoProvider
 	{
 		if (!movieModel.imdb_id)
 		{
-			throw this.getProviderTitle() + ": no imdb id for " + movieModel.title;
+			throw `${this.getProviderTitle()}: no imdb id for ${movieModel.title}`;
 		}
 
 		const url = `https://videocdn.tv/api/short?api_token=${VideoCdnProvider.api_token}&imdb_id=${movieModel.imdb_id}`;
-		return await fetch(url, {
-			headers: this.headers
-		})
-			.then((response: Response) =>
-			{
-				return response.json();
-			})
+		return await fetch(url, { headers: this.headers })
+			.then((response: Response) => response.json())
 			.then((responseJson) =>
 			{
 				if (responseJson.data.length <= 0)
 				{
-					console.error(`videocdn has no imdb_id: ${movieModel.imdb_id}`);
+					throw `videocdn has no imdb_id: ${movieModel.imdb_id}`;
 				}
-				return 'https:' + responseJson.data[0].iframe_src;
+				return `https:${responseJson.data[0].iframe_src}`;
 			})
 			.then((iframe_url: string) =>
 			{
-				return fetch(iframe_url, {
-					headers: this.headers
-				});
+				return fetch(iframe_url, { headers: this.headers });
 			})
-			.then((response: Response) =>
-			{
-				return response.text();
-			})
+			.then((response: Response) => response.text())
 			.then((htmlText: string) =>
 			{
 				var matches: RegExpMatchArray = htmlText.match(/<input type=["']hidden["'] id=["']files["'] value=["'].*\}">/g);
@@ -104,47 +85,35 @@ export default class VideoCdnProvider implements VideoProvider
 				for (const [key, value] of Object.entries(playlist))
 				{
 					playlist[key] = VideoCdnProvider.tb(value as string);
-
-					// TODO:
-					// tt4052886 had untitled translation on 0 id
-					/*
-					const tr_key: number = parseInt(key);
-					if(!this.translations[tr_key])
-					{
-						this.translations[tr_key] = key + "-untitled";
-					}*/
 				}
 
 				return playlist;
 			}).then((playlist: any) =>
 			{
-				// TODO: error on some videos https://cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[480p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[720p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4,[1080p]//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/720.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/480.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/360.mp4%20or%20//cloud.cdnland.in/tvseries/5e20363c611a52e737b0891d5c038799f474b4ef/b1b24c3a2dd248037f6344a52ad4b507:2021082921/240.mp4
+				// TODO: 404 error on some videos 
 				var result: VideoFileModel[] = [];
 
 				if (movieModel.media_type == 'tv')
 				{
 					for (const [key, value] of Object.entries(playlist))
 					{
-						const tr_id: number = parseInt(key);
+						const tr_title: string = this.getTranslationTitle(parseInt(key));
 						const obj = JSON.parse(value as string);
 
-						if (obj[0].folder)
+						if (obj[0].folder) // array of seasons
 						{
-							// array of seasons
-							const e_temp = obj.map((s_model) =>
+							const e_temp: VideoFileModel[] = obj.map((s_model) =>
 							{
-								const season_id: number = s_model.id;
-								return this.mapSeasonEpisodes(season_id, tr_id, s_model.folder);
+								return this.mapSeasonEpisodes(s_model.id, tr_title, s_model.folder);
 							})
 
 							// TODO: remake to deal with array of arrays without this crutch
 							result = result.concat(e_temp).flat(2);
 						}
-						else
+						else // array of episodes of the single season
 						{
-							// array of episodes of the single season
 							const season_id: number = 0;
-							const e_temp = this.mapSeasonEpisodes(season_id, tr_id, obj);
+							const e_temp = this.mapSeasonEpisodes(season_id, tr_title, obj);
 
 							result = result.concat(e_temp);
 						}
@@ -154,13 +123,13 @@ export default class VideoCdnProvider implements VideoProvider
 				{
 					for (const [key, value] of Object.entries(playlist))
 					{
-						const tr_id: number = parseInt(key);
+						const tr_title: string = this.getTranslationTitle(parseInt(key));
 						const files = this.parseEpisodeFiles(value as string);
 
 						result = result.concat(files.map((file) =>
 						{
 							return {
-								voice_title: this.translations[tr_id],
+								voice_title: tr_title,
 								url: file.url,
 								quality: file.quality
 							}
@@ -168,45 +137,30 @@ export default class VideoCdnProvider implements VideoProvider
 					}
 				}
 
+				result = filterUnique(result, (el: VideoFileModel) => el.url);
+
 				result.sort((firstEl, secondEl) =>
 				{
 					return firstEl.url.localeCompare(secondEl.url);
 				});
 				return result;
-			})/*.then(async videoFiles=>{
-				// TODO: THIS SHOULD BE OPTIMIZED.... AND REMADE.. or at least cached
-				var result:VideoFileModel[] = [];
-				var promises:Promise<void>[] = [];
-
-				videoFiles.forEach(el => {
-					promises.push(fetch(el.url, {
-						method: 'HEAD',
-						headers: {
-							'Accept': 'video/*',
-							'Connection': 'keep-alive',
-							'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
-						}
-					}).then(res => {
-						if(res.ok){
-							result.push(el);
-						}
-					}).catch((r)=>console.log(r)));
-				});
-				await Promise.all(promises);
-				//result = filterUnique(result, (file:VideoFileModel)=>file.url);
-				return result;
-			})*/
+			})
+			.catch((reason) =>
+			{
+				console.error(reason);
+				return [];
+			});
 	}
 
-	private parseEpisodeFiles(file: string)
+	private parseEpisodeFiles(file: string): { quality: number, url: string }[]
 	{
 		return file.split(/\s+or\s+|\[\d+p\]\s*|,/g)
 			.map((url: string) => url.trim().replace(/\s+or\s+|\[\d+p\]|,/g, '').trim())
 			.filter(s => s)
-			.map((url: string) => "https:" + url)
+			.map((url: string) => `https:${url}`)
 			.map((url: string) =>
 			{
-				const matches = url.match(/\/\d+\.mp4/g)
+				const matches: number[] = url.match(/\/\d+\.mp4/g)
 					.map((name: string) =>
 					{
 						return parseInt(name.match(/\d{3,}/g)[0]);
@@ -215,11 +169,11 @@ export default class VideoCdnProvider implements VideoProvider
 				{
 					console.error(`${this.getProviderTitle()} can't parse quality from url: ${url}`);
 				}
-				return { quality: matches[0], url: url }
+				return { quality: matches[0], url: url };
 			});
 	}
 
-	private mapSeasonEpisodes(season_id, tr_id, obj)
+	private mapSeasonEpisodes(season_id, tr_title, obj): VideoFileModel
 	{
 		return obj.map(e =>
 		{
@@ -231,14 +185,19 @@ export default class VideoCdnProvider implements VideoProvider
 			return ep_model.files.map((file) =>
 			{
 				return {
-					voice_title: this.translations[tr_id],
+					voice_title: tr_title,
 					season_id: season_id,
 					episode_id: ep_model.id,
 					quality: file.quality,
 					url: file.url
 				}
 			})
-		}).flat(2)
+		}).flat(2);
+	}
+
+	private getTranslationTitle(tr_id: number): string
+	{
+		return this.translations[tr_id] || `${tr_id}-untitled`;
 	}
 
 	private static tb(b: string): string
@@ -264,14 +223,12 @@ export default class VideoCdnProvider implements VideoProvider
 			"lt": "<",
 			"gt": ">"
 		};
-		return encodedString.replace(translate_re, (match, entity) =>
-		{
-			return translate[entity];
-		}).replace(/&#(\d+);/gi, (match, numStr) =>
+		return encodedString.replace(translate_re,
+			(match, entity) => translate[entity]
+		).replace(/&#(\d+);/gi, (match, numStr) =>
 		{
 			var num = parseInt(numStr, 10);
 			return String.fromCharCode(num);
 		});
 	}
-
 };
