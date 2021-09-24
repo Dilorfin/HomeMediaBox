@@ -19,6 +19,11 @@ export default class AnilibriaProvider implements VideoProvider
 	{
 		return await this.requestForEngJpTitle(movieModel).then((title) =>
 		{
+			if (!title)
+			{
+				return [];
+			}
+
 			const url = `https://api.anilibria.tv/v2/searchTitles?search=${title}`;
 			return fetch(url, { headers: this.headers })
 				.then((response: Response) => response.json())
@@ -51,7 +56,7 @@ export default class AnilibriaProvider implements VideoProvider
 
 					return videos;
 				});
-			});
+		});
 	}
 
 	private requestForEngJpTitle(movieModel: DetailsModel): Promise<string>
@@ -62,6 +67,11 @@ export default class AnilibriaProvider implements VideoProvider
 			.then((responseJson) =>
 			{
 				const animes = responseJson.data.filter(d => d.type == 'anime');
+				if (animes.length <= 0)
+				{
+					console.log(`${movieModel.title} wasn't found at kitsu db (Anilibria.tv)`);
+					return null;
+				}
 				return animes[0].attributes.canonicalTitle;
 			});
 	}

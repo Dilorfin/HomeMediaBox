@@ -12,16 +12,36 @@
 							<div>
 								<h1>{{movie.title}}</h1>
 								<h4>{{movie.original_title}}</h4>
-								<ion-button color="dark" (click)="openVideos.emit()">Open videos</ion-button>
-								<p *ngIf="movie.production_countries && movie.production_countries.length > 0">
+								
+								<ion-button color="dark" (click)="openVideos.emit()">
+									Open videos
+								</ion-button>
+								
+								<p *ngIf="movie.production_countries 
+											&& movie.production_countries.length > 0">
 									<span>Countries: </span>
-									{{countries}}
+									<span>{{countries}}</span>
 								</p>
-								<p><span>Genres:</span> {{genres}}</p>
-								<p><span>Release date:</span> {{movie.release_date}}</p>
-								<p><span>Runtime:</span> {{movie.runtime}}m</p>
-								<p><span>Vote average:</span> {{movie.vote_average}}</p>
-								<p><span>Status:</span> {{movie.status}}</p>
+								<p>
+									<span>Genres: </span>
+									<span>{{genres}}</span>
+								</p>
+								<p>
+									<span>Release date: </span>
+									<span>{{movie.release_date}}</span>
+								</p>
+								<p>
+									<span>Runtime: </span>
+									<span>{{movie.runtime}}m</span>
+								</p>
+								<p>
+									<span>Vote average: </span>
+									<span>{{movie.vote_average}} ({{movie.vote_count}})</span>
+								</p>
+								<p>
+									<span>Status: </span>
+									<span>{{movie.status}}</span>
+								</p>
 
 								<p *ngIf="movie.number_of_seasons">
 									<span>Seasons: </span>

@@ -47,7 +47,8 @@ export default class VideoCdnProvider implements VideoProvider
 	{
 		if (!movieModel.imdb_id)
 		{
-			throw `${this.getProviderTitle()}: no imdb id for ${movieModel.title}`;
+			console.log(`${this.getProviderTitle()}: no imdb id for ${movieModel.title}`);
+			return [];
 		}
 
 		const url = `https://videocdn.tv/api/short?api_token=${VideoCdnProvider.api_token}&imdb_id=${movieModel.imdb_id}`;
@@ -90,7 +91,7 @@ export default class VideoCdnProvider implements VideoProvider
 				return playlist;
 			}).then((playlist: any) =>
 			{
-				// TODO: 404 error on some videos 
+				// TODO: 404 error on some videos
 				var result: VideoFileModel[] = [];
 
 				if (movieModel.media_type == 'tv')
@@ -147,7 +148,7 @@ export default class VideoCdnProvider implements VideoProvider
 			})
 			.catch((reason) =>
 			{
-				console.error(reason);
+				console.log(reason);
 				return [];
 			});
 	}
