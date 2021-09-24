@@ -6,12 +6,7 @@
 </ion-header>
 <ion-content>
 	<div class="grid" *ngIf="list">
-		<ion-card *ngFor="let item of list" routerLink="/movie/{{item.media_type}}/{{item.id}}" [state]="item">
-			<ion-img [src]="item.poster_path"></ion-img>
-			<ion-card-header>
-				<ion-card-subtitle>{{item.original_title}}</ion-card-subtitle>
-				<ion-card-title>{{item.title}}</ion-card-title>
-			</ion-card-header>
-		</ion-card>
+		<app-card *ngFor="let item of list" [movie]="item">
+		</app-card>
 	</div>
 </ion-content>

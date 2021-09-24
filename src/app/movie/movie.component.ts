@@ -26,6 +26,15 @@ export class MovieComponent implements OnInit
 		this.movieType = activateRoute.snapshot.params['type'];
 	}
 
+	get dynamic_style()
+	{
+		if (!this.movie.backdrop_path)
+			return {};
+		return {
+			'background-image': `url(${this.movie.backdrop_path})`
+		};
+	}
+
 	ngOnInit()
 	{
 		this.movie = this.router.getCurrentNavigation().extras.state as ListModel;

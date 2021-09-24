@@ -4,7 +4,7 @@
 		<ion-label>Loading...</ion-label>
 	</ion-item>
 </div>
-<div *ngIf="movie" id="movie-main" [ngStyle]="{ 'background-image': 'url('+movie.backdrop_path+')' }">
+<div *ngIf="movie" id="movie-main" [ngStyle]="dynamic_style">
 	<movie-info *ngIf="tab=='info'" (openVideos)="tab = 'video'" [movie]="movie"></movie-info>
 	<movie-videos *ngIf="tab=='video'" (openInfo)="tab = 'info'" [movie]="movie"></movie-videos>
 </div>

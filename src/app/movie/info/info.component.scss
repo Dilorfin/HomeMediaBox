@@ -24,7 +24,7 @@ ion-content{
 	flex-wrap: nowrap;
 	overflow-x: scroll;
 
-	&>ion-card{
+	&>*{
 		flex-shrink: 0;
 		width: 250px;
 	}

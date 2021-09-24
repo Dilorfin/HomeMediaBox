@@ -1,0 +1,7 @@
+<ion-card tabindex="0" (keyup)="onKeyUp($event)" (click)="onClick($event)">
+	<ion-img [src]="movie.poster_path"></ion-img>
+	<ion-card-header>
+		<ion-card-subtitle>{{movie.original_title}}</ion-card-subtitle>
+		<ion-card-title>{{movie.title}}</ion-card-title>
+	</ion-card-header>
+</ion-card>

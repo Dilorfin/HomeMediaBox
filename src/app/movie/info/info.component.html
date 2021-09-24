@@ -31,24 +31,20 @@
 									<span>Episodes: </span>
 									{{movie.number_of_episodes}}
 								</p>
-								<p>Description:</p>
-								<p>{{movie.overview}}</p>
-
+								<div *ngIf="movie.overview">
+									<p>Description:</p>
+									<p>{{movie.overview}}</p>
+								</div>
 							</div>
 						</ion-col>
 					</ion-row>
 				</ion-grid>
-				<div *ngIf="movie.recommendations">
+				<div *ngIf="movie.recommendations && movie.recommendations.results.length > 0">
 					<p>Recommendations:</p>
 					<div class="cards-row">
-						<ion-card *ngFor="let item of movie.recommendations.results"
-							routerLink="/movie/{{item.media_type}}/{{item.id}}" [state]="item">
-							<ion-img [src]="item.poster_path"></ion-img>
-							<ion-card-header>
-								<ion-card-subtitle>{{item.original_title}}</ion-card-subtitle>
-								<ion-card-title>{{item.title}}</ion-card-title>
-							</ion-card-header>
-						</ion-card>
+						<app-card *ngFor="let item of movie.recommendations.results"
+							[movie]="item">
+						</app-card>
 					</div>
 				</div>
 			</div>
