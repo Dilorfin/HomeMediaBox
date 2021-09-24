@@ -1,3 +1,4 @@
+import KPFilterModel from "src/models/KPFilterModel";
 import DetailsModel from "../../models/DetailsModel";
 import ListModel from "../../models/ListModel";
 import PaginationModel from "../../models/PaginationModel";
@@ -31,16 +32,43 @@ export default class TMDB implements KnowledgeProvider
 			});
 	}
 
-	async getPopularMovie(): Promise<PaginationModel<ListModel[]>>
+	public getFilters() :KPFilterModel[]
 	{
-		const temp: 'tv' | 'movie' = 'movie';
-		const url = `https://api.themoviedb.org/3/${temp}/popular?api_key=${TMDB.apiKey}&language=${TMDB.locale}&page=1`;
+		return [
+			{
+				id: 'movie',
+				title:'Films',
+				icon: 'film'
+			},
+			{
+				id: 'tv',
+				title:'Serials',
+				icon: 'albums'
+			}
+		];
+	}
+
+	async getFiltered(filter: KPFilterModel): Promise<PaginationModel<ListModel[]>>
+	{
+		if (filter.title != 'Films' && filter.title != 'Serials')
+		{
+			return {
+				results: [],
+				total_pages: 0,
+				total_results: 0,
+				page: 0
+			}
+		}
+
+		const media_type: string = filter.id;
+
+		const url = `https://api.themoviedb.org/3/${media_type}/popular?api_key=${TMDB.apiKey}&language=${TMDB.locale}&page=1`;
 		return TMDB.getJson<PaginationModel<ListModel[]>>(url)
 			.then((movies: PaginationModel<ListModel[]>) =>
 			{
 				movies.results = movies.results.map((m: ListModel) =>
 				{
-					m.media_type = temp
+					m.media_type = media_type
 					return this.mapToListModel(m);
 				});
 				movies.results = TMDB.setFullImagePaths(movies.results);
@@ -150,7 +178,7 @@ export default class TMDB implements KnowledgeProvider
 				result.imdb_id = model.external_ids.imdb_id;
 			}
 		}
-		
+
 		model.recommendations.results = model.recommendations.results
 			.map(rec => this.mapToListModel(rec));
 

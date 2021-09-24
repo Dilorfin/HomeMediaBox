@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import KPFilterModel from 'src/models/KPFilterModel';
 import ListModel from 'src/models/ListModel';
 import { KnowledgeService } from '../_services/knowledge.service';
 
@@ -10,14 +10,30 @@ import { KnowledgeService } from '../_services/knowledge.service';
 })
 export class SurfingComponent implements OnInit
 {
-	list :ListModel[];
-	
-	constructor(public router: Router, private knService: KnowledgeService)
-	{ }
+	list: ListModel[];
 
-	ngOnInit() {
-		this.knService.getPopularMovie()
-			.then((result)=>{
+	currentTab: KPFilterModel;
+
+	private filters:KPFilterModel[];
+
+	constructor(public knService: KnowledgeService)
+	{
+		this.filters = knService.getFilters();
+		this.openTab(this.filters[0]);
+	}
+
+	ngOnInit()
+	{}
+
+	openTab(tab: KPFilterModel): void
+	{
+		if(this.currentTab && this.currentTab.id == tab.id)
+			return;
+
+		this.currentTab = tab;
+		this.knService.getFiltered(this.currentTab)
+			.then((result) =>
+			{
 				this.list = result.results;
 			});
 	}
