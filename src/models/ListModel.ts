@@ -1,27 +1,27 @@
 export default interface ListModel
 {
-	id :string;
-	
-	media_type :string;
+	id: string;
 
-	title :string;
-	original_title :string;
+	media_type: string;
 
-	original_language :string;
-	
-	overview :string;
+	title: string;
+	original_title: string;
 
-	poster_path :string;
-	backdrop_path :string;
-	
-	genre_ids :number[];
+	original_language: string;
 
-	adult :boolean;
-	
-	release_date :string;
+	overview: string;
 
-	popularity :number;
+	poster_path: string;
+	backdrop_path: string;
 
-	vote_count :number;
-	vote_average :number;
+	genres: { id: number, name: string }[];
+
+	adult: boolean;
+
+	release_date: string;
+
+	popularity: number;
+
+	vote_count: number;
+	vote_average: number;
 };

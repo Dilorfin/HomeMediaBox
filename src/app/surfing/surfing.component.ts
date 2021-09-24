@@ -21,9 +21,4 @@ export class SurfingComponent implements OnInit
 				this.list = result.results;
 			});
 	}
-
-	onCardClick(model: ListModel)
-	{
-		this.router.navigate(['/movie', model.media_type, model.id], { state: model});
-	}
 }

@@ -1,16 +1,17 @@
-<div>
-	<ion-item>
+<ion-header slot="fixed">
+	<ion-item color="light">
 		<ion-label position="floating">Search</ion-label>
-		<ion-input (ionChange)="onSearchChange($event)"></ion-input>
+		<ion-input inputmode="search" (ionChange)="onSearchChange($event)" clearInput></ion-input>
 	</ion-item>
-
+</ion-header>
+<ion-content>
 	<div class="grid" *ngIf="list">
-		<ion-card *ngFor="let item of list" (click)="onCardClick(item)">
-			<img [src]="item.poster_path" />
+		<ion-card *ngFor="let item of list" routerLink="/movie/{{item.media_type}}/{{item.id}}" [state]="item">
+			<ion-img [src]="item.poster_path"></ion-img>
 			<ion-card-header>
 				<ion-card-subtitle>{{item.original_title}}</ion-card-subtitle>
 				<ion-card-title>{{item.title}}</ion-card-title>
 			</ion-card-header>
 		</ion-card>
 	</div>
-</div>
+</ion-content>

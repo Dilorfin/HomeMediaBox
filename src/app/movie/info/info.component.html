@@ -1,6 +1,57 @@
-<div *ngIf="movie">
-	<p>{{movie.id}}</p>
-	<p>{{movie.imdb_id}}</p>
-	<p>{{movie.title}}</p>
-	<p>{{movie.original_title}}</p>
+<div id="centered-container">
+	<div>
+		<ion-content>
+			<div class="inside-padding">
+				<!--TODO: remake to div aligning for UHD+ -->
+				<ion-grid>
+					<ion-row>
+						<ion-col size="12" size-md>
+							<img [src]="movie.poster_path" />
+						</ion-col>
+						<ion-col size="12" size-md>
+							<div>
+								<h1>{{movie.title}}</h1>
+								<h4>{{movie.original_title}}</h4>
+								<ion-button color="dark" (click)="openVideos.emit()">Open videos</ion-button>
+								<p *ngIf="movie.production_countries && movie.production_countries.length > 0">
+									<span>Countries: </span>
+									{{countries}}
+								</p>
+								<p><span>Genres:</span> {{genres}}</p>
+								<p><span>Release date:</span> {{movie.release_date}}</p>
+								<p><span>Runtime:</span> {{movie.runtime}}m</p>
+								<p><span>Vote average:</span> {{movie.vote_average}}</p>
+								<p><span>Status:</span> {{movie.status}}</p>
+
+								<p *ngIf="movie.number_of_seasons">
+									<span>Seasons: </span>
+									{{movie.number_of_seasons}}
+								</p>
+								<p *ngIf="movie.number_of_episodes">
+									<span>Episodes: </span>
+									{{movie.number_of_episodes}}
+								</p>
+								<p>Description:</p>
+								<p>{{movie.overview}}</p>
+
+							</div>
+						</ion-col>
+					</ion-row>
+				</ion-grid>
+				<div *ngIf="movie.recommendations">
+					<p>Recommendations:</p>
+					<div class="cards-row">
+						<ion-card *ngFor="let item of movie.recommendations.results"
+							routerLink="/movie/{{item.media_type}}/{{item.id}}" [state]="item">
+							<ion-img [src]="item.poster_path"></ion-img>
+							<ion-card-header>
+								<ion-card-subtitle>{{item.original_title}}</ion-card-subtitle>
+								<ion-card-title>{{item.title}}</ion-card-title>
+							</ion-card-header>
+						</ion-card>
+					</div>
+				</div>
+			</div>
+		</ion-content>
+	</div>
 </div>

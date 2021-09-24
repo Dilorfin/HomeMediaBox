@@ -1,3 +1,5 @@
+<button (click)="openInfo.emit()">Open info</button>
+
 <ion-item *ngIf="providers && providers.length > 0">
 	<ion-label>Provider</ion-label>
 	<ion-select (ionChange)="setProvider($event)" [value]="currentFilter.provider_title">
@@ -34,10 +36,11 @@
 		</ion-select-option>
 	</ion-select>
 </ion-item>
-
-<div *ngIf="currentFilter">
-	<div *ngFor="let video of currentFilter.videos">
-		<a [href]="video.url">q:{{video.quality}} t:{{video.voice_title}} s:{{video.season}}
-			e:{{video.episode_id}}</a>
-	</div>
-</div>
+<ion-content style="height: 75vh;">
+	<ion-list *ngIf="currentFilter">
+		<ion-item *ngFor="let video of currentFilter.videos">
+			<a [href]="video.url">q:{{video.quality}} t:{{video.voice_title}} s:{{video.season}}
+				e:{{video.episode_id}}</a>
+		</ion-item>
+	</ion-list>
+</ion-content>

@@ -10,7 +10,8 @@ import { KnowledgeService } from '../_services/knowledge.service';
 })
 export class SearchComponent implements OnInit
 {
-	constructor(public router: Router, private knService: KnowledgeService) { }
+	constructor(private knService: KnowledgeService)
+	{}
 
 	searchText: string;
 	list: ListModel[];
@@ -28,10 +29,5 @@ export class SearchComponent implements OnInit
 			.then(list =>
 				this.list = list.results
 			);
-	}
-
-	onCardClick(model: ListModel)
-	{
-		this.router.navigate(['/movie', model.media_type, model.id], { state: model });
 	}
 }

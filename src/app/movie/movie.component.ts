@@ -14,25 +14,25 @@ export class MovieComponent implements OnInit
 	private movieId: string;
 	private movieType: string;
 
-	movie: DetailsModel;
+	tab: 'info' | 'video' = 'info';
+
+	movie: DetailsModel | ListModel;
 
 	constructor(public router: Router,
 		private knService: KnowledgeService,
 		activateRoute: ActivatedRoute)
 	{
-
 		this.movieId = activateRoute.snapshot.params['id'];
-
 		this.movieType = activateRoute.snapshot.params['type'];
 	}
 
 	ngOnInit()
 	{
-		this.movie = this.router.getCurrentNavigation().extras.state as DetailsModel;
+		this.movie = this.router.getCurrentNavigation().extras.state as ListModel;
 		const tempMovie: ListModel = (this.movie ? this.movie : {
 			id: this.movieId,
 			media_type: this.movieType
-		}) as unknown as ListModel; // ???
+		}) as ListModel;
 
 		this.knService.getDetails(tempMovie)
 			.then((value: DetailsModel) =>

@@ -7,6 +7,29 @@ export default class TMDB implements KnowledgeProvider
 {
 	private static locale: string = 'ru-RU';//'en-US';
 	private static apiKey: string = '3735813b72994d73278ea217e6a50dd0';
+	private genres: any = {};
+
+	constructor()
+	{
+		this.loadGenres();
+	}
+
+	private async loadGenres()
+	{
+		const movies = this.loadGenre('movie');
+		const tvs = this.loadGenre('tv');
+		await Promise.all([movies, tvs]);
+	}
+
+	private async loadGenre(media_type: 'movie' | 'tv')
+	{
+		const url: string = `https://api.themoviedb.org/3/genre/${media_type}/list?api_key=${TMDB.apiKey}&language=${TMDB.locale}`;
+		return TMDB.getJson<{ genres: { id: number, name: string }[] }>(url)
+			.then((result) =>
+			{
+				this.genres[media_type] = result.genres;
+			});
+	}
 
 	async getPopularMovie(): Promise<PaginationModel<ListModel[]>>
 	{
@@ -17,9 +40,8 @@ export default class TMDB implements KnowledgeProvider
 			{
 				movies.results = movies.results.map((m: ListModel) =>
 				{
-					//m.media_type = 'movie'
 					m.media_type = temp
-					return m;
+					return this.mapToListModel(m);
 				});
 				movies.results = TMDB.setFullImagePaths(movies.results);
 				return movies;
@@ -33,8 +55,10 @@ export default class TMDB implements KnowledgeProvider
 		return TMDB.getJson<PaginationModel<any[]>>(url)
 			.then((cards: PaginationModel<any[]>) =>
 			{
-				cards.results = cards.results.map(TMDB.mapToListModel)
-					.filter((card) => card);
+				cards.results = cards.results.map((card) =>
+				{
+					return this.mapToListModel(card);
+				}).filter((card) => card);
 				return cards;
 			})
 			.then((cards: PaginationModel<ListModel[]>) =>
@@ -51,7 +75,7 @@ export default class TMDB implements KnowledgeProvider
 			.then((model: any) =>
 			{
 				model.media_type = listModel.media_type;
-				return TMDB.mapToDetails(model);
+				return this.mapToDetails(model);
 			})
 			.then((movie: DetailsModel) =>
 			{
@@ -79,9 +103,9 @@ export default class TMDB implements KnowledgeProvider
 		return await fetch(url, {
 			headers: headers
 		}).then((response: Response) =>
-			{
-				return response.json();
-			});
+		{
+			return response.json();
+		});
 	}
 
 	private static setFullImagePaths(movies: ListModel[]): ListModel[]
@@ -96,22 +120,21 @@ export default class TMDB implements KnowledgeProvider
 			{
 				el.backdrop_path = TMDB.getBackdropFullUrl(el.backdrop_path);
 			}
-
 			return el;
 		});
 	}
 
 	private static getPosterFullUrl(shortUrl: string, size: 'w342' | 'original' = 'w342'): string
 	{
-		return "https://image.tmdb.org/t/p/" + size + shortUrl;
+		return `https://image.tmdb.org/t/p/${size}${shortUrl}`;
 	}
 
 	private static getBackdropFullUrl(shortUrl: string, size: 'w780' | 'w1280' | 'original' = 'w1280'): string
 	{
-		return "https://image.tmdb.org/t/p/original" + shortUrl;
+		return `https://image.tmdb.org/t/p/${size}${shortUrl}`;
 	}
 
-	private static mapToDetails(model: any): DetailsModel
+	private mapToDetails(model: any): DetailsModel
 	{
 		if (model.media_type != 'tv' && model.media_type != 'movie')
 			return null;
@@ -121,18 +144,34 @@ export default class TMDB implements KnowledgeProvider
 		{
 			result.title = model.name;
 			result.original_title = model.original_name;
-			result.imdb_id = model.external_ids.imdb_id;
 			result.release_date = model.first_air_date;
+			if (!result.imdb_id)
+			{
+				result.imdb_id = model.external_ids.imdb_id;
+			}
 		}
+		
+		model.recommendations.results = model.recommendations.results
+			.map(rec => this.mapToListModel(rec));
+
 		return result;
 	}
 
-	private static mapToListModel(model: any): ListModel
+	private mapToListModel(model: any): ListModel
 	{
 		if (model.media_type != 'tv' && model.media_type != 'movie')
 			return null;
 
 		var result: ListModel = model;
+		if (model.genre_ids && this.genres[model.media_type])
+		{
+			result.genres = model.genre_ids.map((gid) =>
+			{
+				return this.genres[model.media_type]
+					.filter(e => e.id == gid)[0];
+			});
+		}
+
 		if (model.media_type == 'tv')
 		{
 			result.title = model.name;
