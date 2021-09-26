@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { HistoryService } from 'src/app/_services/history.service';
 import { VideoService } from 'src/app/_services/video.service';
 import DetailsModel from 'src/models/DetailsModel';
 import VideoFileModel from 'src/models/VideoFileModel';
@@ -39,7 +40,8 @@ export class VideosComponent implements OnInit, OnChanges
 		seasons: string[]
 	}> = {};
 
-	constructor(private videoService: VideoService)
+	constructor(private videoService: VideoService,
+		private historyService: HistoryService)
 	{ }
 
 	ngOnInit() { }
@@ -73,6 +75,12 @@ export class VideosComponent implements OnInit, OnChanges
 					this.filterVideos();
 				})
 			);
+	}
+
+	openVideo(video: VideoFileModel)
+	{
+		this.historyService.watchMovie(this.movie, video);
+		this.historyService.getWatchedMovies();
 	}
 
 	setProvider(event: any)

@@ -38,9 +38,8 @@
 </ion-item>
 <ion-content style="height: 75vh;">
 	<ion-list *ngIf="currentFilter">
-		<ion-item *ngFor="let video of currentFilter.videos">
-			<a [href]="video.url">q:{{video.quality}} t:{{video.voice_title}} s:{{video.season}}
-				e:{{video.episode_id}}</a>
+		<ion-item *ngFor="let video of currentFilter.videos" button (click)="openVideo(video)">
+			<ion-label>q:{{video.quality}} t:{{video.voice_title}} s:{{video.season}} e:{{video.episode_id}}</ion-label>
 		</ion-item>
 	</ion-list>
 </ion-content>
