@@ -3,9 +3,12 @@ import { CommonModule } from '@angular/common';
 
 import { SettingsRoutingModule } from './settings-routing.module';
 import { IonicModule } from '@ionic/angular';
+import { SettingsComponent } from './settings.component';
 
 @NgModule({
-	declarations: [],
+	declarations: [ 
+		SettingsComponent
+	],
 	imports: [
 		IonicModule,
 		CommonModule,
