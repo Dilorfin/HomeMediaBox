@@ -32,17 +32,17 @@ export default class TMDB implements KnowledgeProvider
 			});
 	}
 
-	public getFilters() :KPFilterModel[]
+	public getFilters(): KPFilterModel[]
 	{
 		return [
 			{
 				id: 'movie',
-				title:'Films',
+				title: 'Films',
 				icon: 'film'
 			},
 			{
 				id: 'tv',
-				title:'Serials',
+				title: 'Serials',
 				icon: 'albums'
 			}
 		];
@@ -176,6 +176,10 @@ export default class TMDB implements KnowledgeProvider
 			if (!result.imdb_id)
 			{
 				result.imdb_id = model.external_ids.imdb_id;
+			}
+			if (model.episode_run_time.length > 0)
+			{
+				result.runtime = Math.max(...model.episode_run_time);
 			}
 		}
 

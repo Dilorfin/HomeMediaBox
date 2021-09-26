@@ -21,8 +21,8 @@
 						</ion-label>
 						<ion-note slot="end" color="danger">TBD</ion-note>
 					</ion-item>
-					<ion-item *ngFor="let filter of knService.getFilters()" 
-							(click)="openTab(filter)" button>
+					<ion-item *ngFor="let filter of knService.getFilters()" (click)="openTab(filter)"
+						[disabled]="currentTab.id == filter.id" button>
 						<ion-icon slot="start" [name]="filter.icon"></ion-icon>
 						<ion-label>
 							{{filter.title}}

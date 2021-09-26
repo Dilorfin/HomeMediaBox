@@ -225,8 +225,8 @@ export default class VideoCdnProvider implements VideoProvider
 			"gt": ">"
 		};
 		return encodedString.replace(translate_re,
-			(match, entity) => translate[entity]
-		).replace(/&#(\d+);/gi, (match, numStr) =>
+			(_match, entity) => translate[entity]
+		).replace(/&#(\d+);/gi, (_match, numStr) =>
 		{
 			var num = parseInt(numStr, 10);
 			return String.fromCharCode(num);
