@@ -23,10 +23,12 @@ ion-content{
 	display: flex;
 	flex-wrap: nowrap;
 	overflow-x: scroll;
+	gap: 0 15px;
 
-	&>*{
+	& > * {
 		flex-shrink: 0;
 		width: 250px;
+		height: 100%;
 	}
 }
 
