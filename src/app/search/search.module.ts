@@ -9,9 +9,9 @@ import { SharedComponentsModule } from '../_shared-components/shared-components.
 @NgModule({
 	declarations: [SearchComponent],
 	imports: [
+		IonicModule,
 		CommonModule,
 		SearchRoutingModule,
-		IonicModule,
 		SharedComponentsModule
 	]
 })
