@@ -50,4 +50,10 @@ export class HistoryService
 	{
 		return Object.values(this.watched).map(w=>w.movie);
 	}
+
+	clear()
+	{
+		this.watched = {};
+		localStorage.setItem(this.storageKey, JSON.stringify(this.watched));
+	}
 }
