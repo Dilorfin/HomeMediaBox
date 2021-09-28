@@ -15,7 +15,7 @@ function filterUnique<T>(array: T[], getValue?: any): T[]
 
 export default class VideoCdnProvider implements VideoProvider
 {
-	static api_token: string = "lyvhjadzMUnDErAS6l7zIAk0M2nMYpbb";
+	static api_token: string = "7WK0ouTGfe2s9BCIGhHs73ythAab09sg";
 	private translations: string[] = [];
 
 	private headers: HeadersInit = {
