@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import { HistoryService } from 'src/app/_services/history.service';
 import { VideoService } from 'src/app/_services/video.service';
 import DetailsModel from 'src/models/DetailsModel';
@@ -40,7 +41,8 @@ export class VideosComponent implements OnInit, OnChanges
 		seasons: string[]
 	}> = {};
 
-	constructor(private videoService: VideoService,
+	constructor(private router: Router,
+		private videoService: VideoService,
 		private historyService: HistoryService)
 	{ }
 
@@ -81,6 +83,8 @@ export class VideosComponent implements OnInit, OnChanges
 	{
 		this.historyService.watchMovie(this.movie, video);
 		this.historyService.getWatchedMovies();
+
+		this.router.navigate([video.url]);
 	}
 
 	setProvider(event: any)
