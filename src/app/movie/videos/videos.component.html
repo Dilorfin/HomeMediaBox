@@ -1,45 +1,61 @@
-<button (click)="openInfo.emit()">Open info</button>
-
-<ion-item *ngIf="providers && providers.length > 0">
-	<ion-label>Provider</ion-label>
-	<ion-select (ionChange)="setProvider($event)" [value]="currentFilter.provider_title">
-		<ion-select-option *ngFor="let provider of providers" [value]="provider.provider_title">
-			{{provider.provider_title}}
-		</ion-select-option>
-	</ion-select>
-</ion-item>
-
-<ion-item *ngIf="providers && providers.length > 0">
-	<ion-label>Qualities</ion-label>
-	<ion-select (ionChange)="setFilterProperty('quality', $event)" [value]="currentFilter.quality">
-		<ion-select-option *ngFor="let quality of filters[currentFilter.provider_title].qualities" [value]="quality">
-			{{quality}}
-		</ion-select-option>
-	</ion-select>
-</ion-item>
-
-<ion-item *ngIf="providers && providers.length > 0">
-	<ion-label>Translation</ion-label>
-	<ion-select (ionChange)="setFilterProperty('translation', $event)" [value]="currentFilter.translation">
-		<ion-select-option *ngFor="let translation of filters[currentFilter.provider_title].translations" [value]="translation">
-			{{translation}}
-		</ion-select-option>
-	</ion-select>
-</ion-item>
-
-<ion-item *ngIf="providers && providers.length > 0
-	 && filters[currentFilter.provider_title].seasons && filters[currentFilter.provider_title].seasons.length > 0">
-	<ion-label>Seasons</ion-label>
-	<ion-select (ionChange)="setFilterProperty('season', $event)" [value]="currentFilter.season">
-		<ion-select-option *ngFor="let season of filters[currentFilter.provider_title].seasons" [value]="season">
-			{{season}}
-		</ion-select-option>
-	</ion-select>
-</ion-item>
-<ion-content style="height: 75vh;">
-	<ion-list *ngIf="currentFilter">
-		<ion-item *ngFor="let video of currentFilter.videos" button (click)="openVideo(video)">
-			<ion-label>q:{{video.quality}} t:{{video.voice_title}} s:{{video.season}} e:{{video.episode_id}}</ion-label>
+<ion-content id="centered-container">
+	<div>
+		<ion-item button (click)="openInfo.emit()">
+			<ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+			<ion-label>Open info</ion-label>
 		</ion-item>
-	</ion-list>
+
+		<ion-item *ngIf="providers && providers.length > 0">
+			<ion-label>Provider</ion-label>
+			<ion-select (ionChange)="setProvider($event)" [value]="currentFilter.provider_title">
+				<ion-select-option *ngFor="let provider of providers" [value]="provider.provider_title">
+					{{provider.provider_title}}
+				</ion-select-option>
+			</ion-select>
+		</ion-item>
+
+		<ion-item *ngIf="providers && providers.length > 0">
+			<ion-label>Qualities</ion-label>
+			<ion-select (ionChange)="setFilterProperty('quality', $event)" [value]="currentFilter.quality">
+				<ion-select-option *ngFor="let quality of filters[currentFilter.provider_title].qualities"
+					[value]="quality">
+					{{quality}}
+				</ion-select-option>
+			</ion-select>
+		</ion-item>
+
+		<ion-item *ngIf="providers && providers.length > 0">
+			<ion-label>Translation</ion-label>
+			<ion-select (ionChange)="setFilterProperty('translation', $event)" [value]="currentFilter.translation">
+				<ion-select-option *ngFor="let translation of filters[currentFilter.provider_title].translations"
+					[value]="translation">
+					{{translation}}
+				</ion-select-option>
+			</ion-select>
+		</ion-item>
+
+		<ion-item *ngIf="providers && providers.length > 0
+				&& filters[currentFilter.provider_title].seasons 
+				&& filters[currentFilter.provider_title].seasons.length > 0">
+			<ion-label>Seasons</ion-label>
+			<ion-select (ionChange)="setFilterProperty('season', $event)" [value]="currentFilter.season">
+				<ion-select-option *ngFor="let season of filters[currentFilter.provider_title].seasons"
+					[value]="season">
+					{{season}}
+				</ion-select-option>
+			</ion-select>
+		</ion-item>
+
+		<div>
+			<!--<ion-content> -->
+				<ion-list *ngIf="currentFilter">
+					<ion-item *ngFor="let video of currentFilter.videos" button (click)="openVideo(video)">
+						<ion-label color="success">
+							{{!video.episode_id ? 'Watch now :)' : 'Episode ' + video.episode_id }}
+						</ion-label>
+					</ion-item>
+				</ion-list>
+			<!--</ion-content>-->
+		</div>
+	</div>
 </ion-content>

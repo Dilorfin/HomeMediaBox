@@ -1,0 +1,34 @@
+ion-content{
+	--ion-background-color:rgba(0, 0, 0, 0);
+}
+
+#centered-container {
+	text-align: center;
+	width: 100%;
+	height: 100%;
+
+	& .inside-padding {
+		padding: 15px 35px;
+	}
+
+	& > div {
+		background-color:rgba(0, 0, 0, 0.7);
+		width: 60vw;
+		height: 100%;
+		display: inline-block;
+	}
+}
+
+@media only screen and (max-width: 992px) {
+	// TODO: add different paddings for different sizes
+	#centered-container {
+		& .inside-padding {
+			padding: 15px 15px;
+		}
+
+		& > div {
+			width: 100%;
+		}
+	}
+}
+
