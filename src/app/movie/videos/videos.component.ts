@@ -118,5 +118,15 @@ export class VideosComponent implements OnInit, OnChanges
 				&& videoModel.quality == this.currentFilter.quality
 				&& videoModel.season == this.currentFilter.season;
 		}).sort((a, b) => a.episode_id - b.episode_id);
+
+		const watchedVideos:VideoFileModel[] = this.historyService.getWatchedVideos(this.movie);
+		this.currentFilter.videos = this.currentFilter.videos.map((video:VideoFileModel) => {
+			const wasWatched:VideoFileModel = watchedVideos.find(w=>{
+				return video.episode_id == w.episode_id 
+						&& video.season == w.season;
+			});
+			(video as any).watched = !!wasWatched;
+			return video;
+		});
 	}
 }

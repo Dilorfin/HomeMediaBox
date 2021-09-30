@@ -28,7 +28,7 @@ export class HistoryService
 	watchMovie(movie: ListModel | DetailsModel, video: VideoFileModel): void
 	{
 		const full_id: string = `${movie.media_type}/${movie.id}`;
-		
+
 		if (!this.watched[full_id])
 		{
 			this.watched[full_id] = {
@@ -43,12 +43,14 @@ export class HistoryService
 	getWatchedVideos(movie: ListModel | DetailsModel): VideoFileModel[]
 	{
 		const full_id: string = `${movie.media_type}/${movie.id}`;
+		if (!this.watched[full_id])
+			return [];
 		return this.watched[full_id].videos;
 	}
 
 	getWatchedMovies(): (ListModel | DetailsModel)[]
 	{
-		return Object.values(this.watched).map(w=>w.movie);
+		return Object.values(this.watched).map(w => w.movie);
 	}
 
 	clear()
