@@ -61,7 +61,8 @@ export class VideosComponent implements OnInit, OnChanges
 		this.historyService.watchMovie(this.movie, video);
 		this.historyService.getWatchedMovies();
 
-		video.watched = true;
+		this.providers.forEach(p => this.markWatched(p))
+
 		window.open(video.url);
 	}
 
