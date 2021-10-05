@@ -138,12 +138,8 @@ export default class VideoCdnProvider implements VideoProvider
 					}
 				}
 
-				result = filterUnique(result, (el: VideoFileModel) => el.url);
-
-				result.sort((firstEl, secondEl) =>
-				{
-					return firstEl.url.localeCompare(secondEl.url);
-				});
+				result = filterUnique(result, (el: VideoFileModel) => `${el.voice_title}${el.url}`);
+				
 				return result;
 			})
 			.catch((reason) =>
