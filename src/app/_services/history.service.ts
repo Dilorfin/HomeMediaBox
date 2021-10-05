@@ -16,7 +16,7 @@ export class HistoryService
 	constructor()
 	{
 		const savedHistory = localStorage.getItem(this.storageKey);
-		if(savedHistory)
+		if (savedHistory)
 		{
 			this.watched = JSON.parse(savedHistory);
 		}
@@ -32,10 +32,25 @@ export class HistoryService
 				movie: movie,
 				videos: []
 			} as HistoryModel;
+		}		
+		
+		if (!this.wasWatched(movie, video))
+		{
+			this.watched[full_id].videos.push(video);
+			localStorage.setItem(this.storageKey, JSON.stringify(this.watched));
 		}
+
 		this.watched[full_id].date = new Date();
-		this.watched[full_id].videos.push(video);
-		localStorage.setItem(this.storageKey, JSON.stringify(this.watched));
+	}
+
+	wasWatched(movie: ListModel | DetailsModel, video: VideoFileModel): boolean
+	{
+		const watchedVideos = this.getWatchedVideos(movie);
+		const wasWatched: VideoFileModel = watchedVideos.find(w =>
+		{
+			return HistoryService.compareWatchedVideos(video, w);
+		});
+		return !!wasWatched;
 	}
 
 	getWatchedVideos(movie: ListModel | DetailsModel): VideoFileModel[]
@@ -55,5 +70,11 @@ export class HistoryService
 	{
 		this.watched = {};
 		localStorage.setItem(this.storageKey, JSON.stringify(this.watched));
+	}
+
+	private static compareWatchedVideos(a: VideoFileModel, b: VideoFileModel)
+	{
+		return a.episode_id === b.episode_id
+			&& a.season === b.season;
 	}
 }

@@ -121,7 +121,8 @@ export default class VideoCdnProvider implements VideoProvider
 							return {
 								voice_title: tr_title,
 								url: file.url,
-								quality: file.quality
+								quality: file.quality,
+								watched: false
 							}
 						})).flat();
 					}

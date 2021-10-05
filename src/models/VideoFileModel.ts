@@ -1,10 +1,12 @@
 export default interface VideoFileModel
 {
-	voice_title :string,
+	voice_title: string,
 
-	season ?:string,
-	episode_id ?:number,
+	season?: string,
+	episode_id?: number,
 
-	quality :number,
-	url :string
+	quality: number,
+	url: string,
+
+	watched: boolean
 };

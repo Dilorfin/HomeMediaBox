@@ -94,6 +94,7 @@ export default class AnilibriaProvider implements VideoProvider
 			season: item.names.ru,
 			quality: quality_number,
 			url: `https://${item.player.host}${series.hls[quality]}`,
+			watched: false
 		};
 	}
 };

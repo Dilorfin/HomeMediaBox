@@ -1,20 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
 import { HistoryService } from 'src/app/_services/history.service';
 import { VideoService } from 'src/app/_services/video.service';
 import DetailsModel from 'src/models/DetailsModel';
 import VideoFileModel from 'src/models/VideoFileModel';
-
-function filterUnique<T>(array: T[], getValue?: any): T[]
-{
-	if (getValue)
-	{
-		return array.filter((value: T, index: number) => index == array.findIndex((el) => getValue(el) == getValue(value)))
-			.filter((value: T) => value != null);
-	}
-	return array.filter((value: T, index: number) => index == array.findIndex((el) => el == value))
-		.filter((value: T) => value != null);
-}
 
 @Component({
 	selector: 'movie-videos',
@@ -41,8 +29,7 @@ export class VideosComponent implements OnInit, OnChanges
 		seasons: string[]
 	}> = {};
 
-	constructor(private router: Router,
-		private videoService: VideoService,
+	constructor(private videoService: VideoService,
 		private historyService: HistoryService)
 	{ }
 
@@ -55,7 +42,7 @@ export class VideosComponent implements OnInit, OnChanges
 				provider.videos.then(videos =>
 				{
 					if (!videos || videos.length <= 0)
-						return null;
+						return;
 
 					const value = { provider_title: provider.title, videos: videos };
 					if (!this.currentFilter)
@@ -64,18 +51,8 @@ export class VideosComponent implements OnInit, OnChanges
 					}
 					this.providers.push(value);
 					return value;
-				}).then((provider) =>
-				{
-					if (!provider) return;
-					this.filters[provider.provider_title] = {
-						qualities: filterUnique(provider.videos.map(video => video.quality)),
-						seasons: filterUnique(provider.videos.map(video => video.season)),
-						translations: filterUnique(provider.videos.map(video => video.voice_title))
-					};
-
-					this.setDefaultFilter();
-					this.filterVideos();
-				})
+				}).then((provider) => this.createFilters(provider))
+				.then(provider => this.markWatched(provider))
 			);
 	}
 
@@ -84,7 +61,7 @@ export class VideosComponent implements OnInit, OnChanges
 		this.historyService.watchMovie(this.movie, video);
 		this.historyService.getWatchedMovies();
 
-		(video as any).watched = true;
+		video.watched = true;
 		window.open(video.url);
 	}
 
@@ -119,14 +96,33 @@ export class VideosComponent implements OnInit, OnChanges
 				&& videoModel.quality == this.currentFilter.quality
 				&& videoModel.season == this.currentFilter.season;
 		}).sort((a, b) => a.episode_id - b.episode_id);
+	}
 
-		const watchedVideos:VideoFileModel[] = this.historyService.getWatchedVideos(this.movie);
-		this.currentFilter.videos = this.currentFilter.videos.map((video:VideoFileModel) => {
-			const wasWatched:VideoFileModel = watchedVideos.find(w=>{
-				return video.episode_id == w.episode_id 
-						&& video.season == w.season;
-			});
-			(video as any).watched = !!wasWatched;
+	private createFilters(provider : { provider_title: string, videos: VideoFileModel[] })
+	{
+		if (!provider)
+			return;
+
+		this.filters[provider.provider_title] = {
+			qualities: provider.videos.map(video => video.quality).filterUnique(),
+			seasons: provider.videos.map(video => video.season).filterUnique(),
+			translations: provider.videos.map(video => video.voice_title).filterUnique()
+		};
+
+		this.setDefaultFilter();
+		this.filterVideos();
+
+		return provider;
+	}
+
+	private markWatched(provider)
+	{
+		if (!provider)
+			return;
+
+		provider.videos = provider.videos.map((video: VideoFileModel) =>
+		{
+			video.watched = this.historyService.wasWatched(this.movie, video);
 			return video;
 		});
 	}
