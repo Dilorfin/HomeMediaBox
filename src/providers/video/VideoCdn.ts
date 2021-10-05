@@ -5,7 +5,7 @@ import VideoProvider from "../VideoProvider";
 export default class VideoCdnProvider implements VideoProvider
 {
 	static api_token: string = "7WK0ouTGfe2s9BCIGhHs73ythAab09sg";
-	private translations: string[] = [];
+	private translations: Promise<string[]>;
 
 	private headers: HeadersInit = {
 		'Accept': '*/*',
@@ -16,14 +16,16 @@ export default class VideoCdnProvider implements VideoProvider
 	constructor()
 	{
 		const url = `https://videocdn.tv/api/translations?api_token=${VideoCdnProvider.api_token}`;
-		fetch(url, { headers: this.headers })
+		this.translations = fetch(url, { headers: this.headers })
 			.then((response: Response) => response.json())
 			.then((responseJson: { data: { id: number, smart_title: string }[] }) =>
 			{
+				var result:string[] = [];
 				responseJson.data.forEach((tr: { id: number, smart_title: string }) =>
 				{
-					this.translations[tr.id] = tr.smart_title;
+					result[tr.id] = tr.smart_title;
 				});
+				return result;
 			});
 	}
 
@@ -78,7 +80,7 @@ export default class VideoCdnProvider implements VideoProvider
 				}
 
 				return playlist;
-			}).then((playlist: any) =>
+			}).then(async (playlist: any) =>
 			{
 				// TODO: 404 error on some videos
 				var result: VideoFileModel[] = [];
@@ -87,7 +89,7 @@ export default class VideoCdnProvider implements VideoProvider
 				{
 					for (const [key, value] of Object.entries(playlist))
 					{
-						const tr_title: string = this.getTranslationTitle(parseInt(key));
+						const tr_title: string = await this.getTranslationTitle(parseInt(key));
 						const obj = JSON.parse(value as string);
 
 						if (obj[0].folder) // array of seasons
@@ -113,7 +115,7 @@ export default class VideoCdnProvider implements VideoProvider
 				{
 					for (const [key, value] of Object.entries(playlist))
 					{
-						const tr_title: string = this.getTranslationTitle(parseInt(key));
+						const tr_title: string = await this.getTranslationTitle(parseInt(key));
 						const files = this.parseEpisodeFiles(value as string);
 
 						result = result.concat(files.map((file) =>
@@ -182,9 +184,10 @@ export default class VideoCdnProvider implements VideoProvider
 		}).flat(2);
 	}
 
-	private getTranslationTitle(tr_id: number): string
+	private async getTranslationTitle(tr_id: number): Promise<string>
 	{
-		return this.translations[tr_id] || `${tr_id}-untitled`;
+		return this.translations
+			.then(translations => translations[tr_id] || `${tr_id}-untitled`);
 	}
 
 	private static tb(b: string): string
