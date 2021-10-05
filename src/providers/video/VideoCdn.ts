@@ -2,17 +2,6 @@ import VideoFileModel from "src/models/VideoFileModel";
 import DetailsModel from "../../models/DetailsModel";
 import VideoProvider from "../VideoProvider";
 
-function filterUnique<T>(array: T[], getValue?: any): T[]
-{
-	if (getValue)
-	{
-		return array.filter((value: T, index: number) => index == array.findIndex((el) => getValue(el) == getValue(value)))
-			.filter((value: T) => value != null);
-	}
-	return array.filter((value: T, index: number) => index == array.findIndex((el) => el == value))
-		.filter((value: T) => value != null);
-}
-
 export default class VideoCdnProvider implements VideoProvider
 {
 	static api_token: string = "7WK0ouTGfe2s9BCIGhHs73ythAab09sg";
@@ -138,8 +127,8 @@ export default class VideoCdnProvider implements VideoProvider
 					}
 				}
 
-				result = filterUnique(result, (el: VideoFileModel) => `${el.voice_title}${el.url}`);
-				
+				result = result.filterUnique((el: VideoFileModel) => `${el.voice_title}${el.url}`);
+
 				return result;
 			})
 			.catch((reason) =>
