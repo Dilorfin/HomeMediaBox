@@ -13,7 +13,7 @@ export class SurfingComponent implements OnInit
 {
 	list: ListModel[];
 
-	currentTab: KPFilterModel;
+	currentFilter: KPFilterModel;
 
 	filters: KPFilterModel[];
 
@@ -29,7 +29,7 @@ export class SurfingComponent implements OnInit
 	openHistory()
 	{
 		this.list = this.historyService.getWatchedMovies() as ListModel[];
-		this.currentTab = {
+		this.currentFilter = {
 			id: 'history',
 			title: 'History'
 		} as KPFilterModel;
@@ -37,11 +37,11 @@ export class SurfingComponent implements OnInit
 
 	openTab(tab: KPFilterModel): void
 	{
-		if (this.currentTab && this.currentTab.id == tab.id)
+		if (this.currentFilter && this.currentFilter.id == tab.id)
 			return;
 
-		this.currentTab = tab;
-		this.knService.getFiltered(this.currentTab)
+		this.currentFilter = tab;
+		this.knService.getFiltered(this.currentFilter)
 			.then((result) =>
 			{
 				this.list = result.results;

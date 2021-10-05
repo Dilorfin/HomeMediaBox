@@ -23,7 +23,7 @@ export class KnowledgeService
 		return this.knowledgeProvider.getFilters();
 	}
 
-	async getFiltered(filter: KPFilterModel): Promise<PaginationModel<ListModel[]>>
+	async getFiltered(filter: KPFilterModel): Promise<PaginationModel<ListModel>>
 	{
 		return this.knowledgeProvider.getFiltered(filter);
 	}
@@ -33,7 +33,7 @@ export class KnowledgeService
 		return this.knowledgeProvider.getDetails(listModel);
 	}
 
-	async search(text: string): Promise<PaginationModel<ListModel[]>>
+	async search(text: string): Promise<PaginationModel<ListModel>>
 	{
 		return this.knowledgeProvider.search(text);
 	}

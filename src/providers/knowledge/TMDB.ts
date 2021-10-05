@@ -48,9 +48,9 @@ export default class TMDB implements KnowledgeProvider
 		];
 	}
 
-	async getFiltered(filter: KPFilterModel): Promise<PaginationModel<ListModel[]>>
+	async getFiltered(filter: KPFilterModel): Promise<PaginationModel<ListModel>>
 	{
-		if (filter.title != 'Films' && filter.title != 'Serials')
+		if (filter.id != 'movie' && filter.id != 'tv')
 		{
 			return {
 				results: [],
@@ -63,8 +63,8 @@ export default class TMDB implements KnowledgeProvider
 		const media_type: string = filter.id;
 
 		const url = `https://api.themoviedb.org/3/${media_type}/popular?api_key=${TMDB.apiKey}&language=${TMDB.locale}&page=1`;
-		return TMDB.getJson<PaginationModel<ListModel[]>>(url)
-			.then((movies: PaginationModel<ListModel[]>) =>
+		return TMDB.getJson<PaginationModel<ListModel>>(url)
+			.then((movies: PaginationModel<ListModel>) =>
 			{
 				movies.results = movies.results.map((m: ListModel) =>
 				{
@@ -76,12 +76,12 @@ export default class TMDB implements KnowledgeProvider
 			});
 	}
 
-	async search(text: string): Promise<PaginationModel<ListModel[]>>
+	async search(text: string): Promise<PaginationModel<ListModel>>
 	{
 		const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB.apiKey}&language=${TMDB.locale}&query=${text}&page=1&include_adult=false`
 
-		return TMDB.getJson<PaginationModel<any[]>>(url)
-			.then((cards: PaginationModel<any[]>) =>
+		return TMDB.getJson<PaginationModel<any>>(url)
+			.then((cards: PaginationModel<any>) =>
 			{
 				cards.results = cards.results.map((card) =>
 				{
@@ -89,7 +89,7 @@ export default class TMDB implements KnowledgeProvider
 				}).filter((card) => card);
 				return cards;
 			})
-			.then((cards: PaginationModel<ListModel[]>) =>
+			.then((cards: PaginationModel<ListModel>) =>
 			{
 				cards.results = TMDB.setFullImagePaths(cards.results);
 				return cards;

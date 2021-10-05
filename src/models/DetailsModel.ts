@@ -32,7 +32,7 @@ export default interface DetailsModel
 
 	status :string;
 
-	recommendations :PaginationModel<ListModel[]>;
+	recommendations :PaginationModel<ListModel>;
 
 	number_of_episodes :number|undefined;
 	number_of_seasons :number|undefined;
