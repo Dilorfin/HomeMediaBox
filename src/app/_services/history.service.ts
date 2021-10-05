@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import DetailsModel from 'src/models/DetailsModel';
+import HistoryModel from 'src/models/HistoryModel';
 import ListModel from 'src/models/ListModel';
 import VideoFileModel from 'src/models/VideoFileModel';
 
@@ -8,11 +9,7 @@ import VideoFileModel from 'src/models/VideoFileModel';
 })
 export class HistoryService
 {
-	private watched: Record<string,
-		{
-			movie: ListModel | DetailsModel,
-			videos: VideoFileModel[]
-		}> = {};
+	private watched: Record<string, HistoryModel> = {};
 
 	private storageKey: string = 'history';
 
@@ -34,8 +31,9 @@ export class HistoryService
 			this.watched[full_id] = {
 				movie: movie,
 				videos: []
-			};
+			} as HistoryModel;
 		}
+		this.watched[full_id].date = new Date();
 		this.watched[full_id].videos.push(video);
 		localStorage.setItem(this.storageKey, JSON.stringify(this.watched));
 	}
