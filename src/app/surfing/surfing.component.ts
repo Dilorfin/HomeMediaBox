@@ -34,6 +34,14 @@ export class SurfingComponent implements OnInit
 			title: 'Serials',
 			icon: 'albums'
 		});
+		this.categories.set(MovieCategory.Cartoon, {
+			title: 'Cartoons',
+			icon: ''
+		});
+		this.categories.set(MovieCategory.AnimatedSeries, {
+			title: 'Animated Series',
+			icon: ''
+		});
 
 		this.availableCategories = knService.getCategories();
 		this.openTab(this.availableCategories[0]);
