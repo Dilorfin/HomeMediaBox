@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import KPFilterModel from 'src/models/KPFilterModel';
 import ListModel from 'src/models/ListModel';
+import { MovieCategory } from 'src/providers/MovieCategory';
 import { HistoryService } from '../_services/history.service';
 import { KnowledgeService } from '../_services/knowledge.service';
 
@@ -13,14 +13,30 @@ export class SurfingComponent implements OnInit
 {
 	list: ListModel[];
 
-	currentFilter: KPFilterModel;
+	history: boolean = false;
 
-	filters: KPFilterModel[];
+	currentCategory: MovieCategory;
+	availableCategories :MovieCategory[];
+	categories: Map<MovieCategory,
+	{
+		icon:string,
+		title:string
+	}>;
 
 	constructor(public knService: KnowledgeService, private historyService: HistoryService)
 	{
-		this.filters = knService.getFilters();
-		this.openTab(this.filters[0]);
+		this.categories = new Map();
+		this.categories.set(MovieCategory.Film, {
+			title: 'Films',
+			icon: 'film'
+		});
+		this.categories.set(MovieCategory.Series, {
+			title: 'Serials',
+			icon: 'albums'
+		});
+
+		this.availableCategories = knService.getCategories();
+		this.openTab(this.availableCategories[0]);
 	}
 
 	ngOnInit()
@@ -29,19 +45,19 @@ export class SurfingComponent implements OnInit
 	openHistory()
 	{
 		this.list = this.historyService.getWatchedMovies() as ListModel[];
-		this.currentFilter = {
-			id: 'history',
-			title: 'History'
-		} as KPFilterModel;
+		this.history = true;
+		this.currentCategory = null;
 	}
 
-	openTab(tab: KPFilterModel): void
+	openTab(tab: MovieCategory): void
 	{
-		if (this.currentFilter && this.currentFilter.id == tab.id)
+		if (this.currentCategory && this.currentCategory == tab)
 			return;
 
-		this.currentFilter = tab;
-		this.knService.getFiltered(this.currentFilter)
+		this.history = false;
+		this.currentCategory = tab;
+		
+		this.knService.getCategory(this.currentCategory)
 			.then((result) =>
 			{
 				this.list = result.results;

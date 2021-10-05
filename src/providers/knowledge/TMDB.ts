@@ -1,8 +1,8 @@
-import KPFilterModel from "src/models/KPFilterModel";
 import DetailsModel from "../../models/DetailsModel";
 import ListModel from "../../models/ListModel";
 import PaginationModel from "../../models/PaginationModel";
 import KnowledgeProvider from "../KnowledgeProvider";
+import { MovieCategory } from "../MovieCategory";
 
 export default class TMDB implements KnowledgeProvider
 {
@@ -32,25 +32,17 @@ export default class TMDB implements KnowledgeProvider
 			});
 	}
 
-	public getFilters(): KPFilterModel[]
+	public getCategories(): MovieCategory[]
 	{
 		return [
-			{
-				id: 'movie',
-				title: 'Films',
-				icon: 'film'
-			},
-			{
-				id: 'tv',
-				title: 'Serials',
-				icon: 'albums'
-			}
+			MovieCategory.Film,
+			MovieCategory.Series
 		];
 	}
 
-	async getFiltered(filter: KPFilterModel): Promise<PaginationModel<ListModel>>
+	async getCategory(category: MovieCategory): Promise<PaginationModel<ListModel>>
 	{
-		if (filter.id != 'movie' && filter.id != 'tv')
+		if (this.getCategories().indexOf(category) < 0)
 		{
 			return {
 				results: [],
@@ -60,7 +52,7 @@ export default class TMDB implements KnowledgeProvider
 			}
 		}
 
-		const media_type: string = filter.id;
+		const media_type: 'tv' | 'movie' = category == MovieCategory.Film ? 'movie' : 'tv';
 
 		const url = `https://api.themoviedb.org/3/${media_type}/popular?api_key=${TMDB.apiKey}&language=${TMDB.locale}&page=1`;
 		return TMDB.getJson<PaginationModel<ListModel>>(url)

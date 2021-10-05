@@ -15,17 +15,17 @@
 						</ion-label>
 					</ion-item>
 					<ion-item button (click)="openHistory()"
-						[disabled]="currentFilter.id == 'history'">
+						[disabled]="history">
 						<ion-icon slot="start" name="file-tray"></ion-icon>
 						<ion-label>
 							History
 						</ion-label>
 					</ion-item>
-					<ion-item *ngFor="let filter of filters" (click)="openTab(filter)"
-						[disabled]="currentFilter.id == filter.id" button>
-						<ion-icon slot="start" [name]="filter.icon"></ion-icon>
+					<ion-item *ngFor="let category of availableCategories" (click)="openTab(category)"
+						[disabled]="category == currentCategory" button>
+						<ion-icon slot="start" [name]="this.categories.get(category).icon"></ion-icon>
 						<ion-label>
-							{{filter.title}}
+							{{this.categories.get(category).title}}
 						</ion-label>
 					</ion-item>
 				</ion-menu-toggle>
@@ -50,7 +50,11 @@
 							</ion-button>
 						</ion-menu-toggle>
 					</ion-buttons>
-					<ion-title>{{this.currentFilter.title}}</ion-title>
+					<ion-title>{{
+						!history
+							? this.categories.get(currentCategory).title
+							: "History"
+					}}</ion-title>
 				</ion-toolbar>
 			</ion-header>
 			<ion-content class="ion-padding">

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import DetailsModel from 'src/models/DetailsModel';
-import KPFilterModel from 'src/models/KPFilterModel';
 import ListModel from 'src/models/ListModel';
 import PaginationModel from 'src/models/PaginationModel';
 import TMDB from 'src/providers/knowledge/TMDB';
 import KnowledgeProvider from 'src/providers/KnowledgeProvider';
+import { MovieCategory } from 'src/providers/MovieCategory';
 
 @Injectable({
 	providedIn: 'root'
@@ -18,14 +18,14 @@ export class KnowledgeService
 		this.knowledgeProvider = new TMDB();
 	}
 
-	getFilters(): KPFilterModel[]
+	getCategories(): MovieCategory[]
 	{
-		return this.knowledgeProvider.getFilters();
+		return this.knowledgeProvider.getCategories();
 	}
 
-	async getFiltered(filter: KPFilterModel): Promise<PaginationModel<ListModel>>
+	async getCategory(category: MovieCategory): Promise<PaginationModel<ListModel>>
 	{
-		return this.knowledgeProvider.getFiltered(filter);
+		return this.knowledgeProvider.getCategory(category);
 	}
 
 	async getDetails(listModel: ListModel): Promise<DetailsModel>
