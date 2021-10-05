@@ -104,8 +104,8 @@ export default class VideoCdnProvider implements VideoProvider
 						}
 						else // array of episodes of the single season
 						{
-							const season_id: number = 0;
-							const e_temp = this.mapSeasonEpisodes(season_id, tr_title, obj);
+							const season: number = 0;
+							const e_temp = this.mapSeasonEpisodes(season, tr_title, obj);
 
 							result = result.concat(e_temp);
 						}
@@ -162,7 +162,7 @@ export default class VideoCdnProvider implements VideoProvider
 			});
 	}
 
-	private mapSeasonEpisodes(season_id, tr_title, obj): VideoFileModel
+	private mapSeasonEpisodes(season, tr_title, obj): VideoFileModel
 	{
 		return obj.map(e =>
 		{
@@ -175,7 +175,7 @@ export default class VideoCdnProvider implements VideoProvider
 			{
 				return {
 					voice_title: tr_title,
-					season_id: season_id,
+					season: season,
 					episode_id: ep_model.id,
 					quality: file.quality,
 					url: file.url

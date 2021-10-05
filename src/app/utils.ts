@@ -14,7 +14,7 @@ export default class Utils
 		{
 			if (!getValue) getValue = (v: T) => v;
 
-			return this.filter((value: T, index: number) => index == this.findIndex(el => getValue(el) == getValue(value)))
+			return this.filter((value: T, index: number) => index == this.findIndex((el: T) => getValue(el) == getValue(value)))
 				.filter((value: T) => value != null);
 		}
 	}
