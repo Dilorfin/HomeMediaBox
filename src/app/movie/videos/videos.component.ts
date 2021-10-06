@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
 import { HistoryService } from 'src/app/_services/history.service';
 import { VideoService } from 'src/app/_services/video.service';
 import DetailsModel from 'src/models/DetailsModel';
@@ -29,11 +31,15 @@ export class VideosComponent implements OnInit, OnChanges
 		seasons: string[]
 	}> = {};
 
-	constructor(private videoService: VideoService,
+	constructor(private router: Router,
+		private route: ActivatedRoute,
+		private platform: Platform,
+		private videoService: VideoService,
 		private historyService: HistoryService)
 	{ }
 
-	ngOnInit() { }
+	ngOnInit()
+	{ }
 
 	ngOnChanges(changes: SimpleChanges): void
 	{
@@ -52,7 +58,7 @@ export class VideosComponent implements OnInit, OnChanges
 					this.providers.push(value);
 					return value;
 				}).then((provider) => this.createFilters(provider))
-				.then(provider => this.markWatched(provider))
+					.then(provider => this.markWatched(provider))
 			);
 	}
 
@@ -63,7 +69,20 @@ export class VideosComponent implements OnInit, OnChanges
 
 		this.providers.forEach(p => this.markWatched(p))
 
-		window.open(video.url);
+		if (this.platform.is('android'))
+		{
+			window.open(video.url);
+		}
+		else 
+		{
+			const id = this.route.snapshot.params['id'];
+			const type = this.route.snapshot.params['type'];
+			this.router.navigate([`/movie/${type}/${id}/player`], {
+				queryParams: {
+					file: video.url
+				}
+			})
+		}
 	}
 
 	setProvider(event: any)
@@ -99,7 +118,7 @@ export class VideosComponent implements OnInit, OnChanges
 		}).sort((a, b) => a.episode_id - b.episode_id);
 	}
 
-	private createFilters(provider : { provider_title: string, videos: VideoFileModel[] })
+	private createFilters(provider: { provider_title: string, videos: VideoFileModel[] })
 	{
 		if (!provider)
 			return;
