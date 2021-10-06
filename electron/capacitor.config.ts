@@ -1,6 +1,6 @@
-import { ElectronCapacitorConfig } from '@capacitor-community/electron';
+import { CapacitorConfig } from '@capacitor/cli';
 
-const config: ElectronCapacitorConfig  = {
+const config: CapacitorConfig = {
   appId: 'com.dilorfin.homemediabox',
   appName: 'Home Media Box',
   webDir: 'www',
