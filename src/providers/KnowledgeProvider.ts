@@ -1,7 +1,7 @@
 import DetailsModel from "src/models/DetailsModel";
-import KPFilterModel from "src/models/KPFilterModel";
 import ListModel from "src/models/ListModel";
 import PaginationModel from "src/models/PaginationModel";
+import { MovieCategory } from "./MovieCategory";
 
 export default interface KnowledgeProvider
 {
@@ -9,7 +9,7 @@ export default interface KnowledgeProvider
 
 	getDetails(model: ListModel): Promise<DetailsModel>;
 
-	getFiltered(filter: KPFilterModel): Promise<PaginationModel<ListModel>>
+	getCategory(filter: MovieCategory): Promise<PaginationModel<ListModel>>
 
-	getFilters(): KPFilterModel[];
+	getCategories(): MovieCategory[];
 };
