@@ -65,9 +65,13 @@ export default class VideoCdnProvider implements VideoProvider
 				{
 					throw `${movieModel.imdb_id} should be checked`;
 				}
-
-				return matches[0].replace(/<input type=["']hidden["'] id=["']files["'] value=["']/g, '')
+				var filesString:string = matches[0].replace(/<input type=["']hidden["'] id=["']files["'] value=["']/g, '')
 					.replace(/["']>/g, '');
+
+				matches = htmlText.match(/userKey\s*=\s*["'].*["']/g);
+				const userKey:string = matches[0].replace(/userKey\s*=\s*/, '').replaceAll('"', '');
+
+				return filesString.replaceAll(userKey, '.mp4');
 			})
 			.then((encodedPlaylist: string) =>
 			{
