@@ -23,12 +23,21 @@ export default class AnilibriaProvider implements VideoProvider
 			{
 				return [];
 			}
+			
+			const urlTitle = encodeURIComponent(title)
+				.replace(/%26|&/, ' '); // ???
 
-			const url = `https://api.anilibria.tv/v2/searchTitles?search=${title}`;
+			const url = `https://api.anilibria.tv/v2/searchTitles?search=${urlTitle}`;
 			return fetch(url, { headers: this.headers })
 				.then((response: Response) => response.json())
 				.then((responseJson) =>
 				{
+					if(responseJson.error)
+					{
+						console.log(`${responseJson.error.code} - ${responseJson.error.message}`);
+						return [];
+					}
+
 					var videos: VideoFileModel[] = [];
 
 					for (const item of responseJson)
