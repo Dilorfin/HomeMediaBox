@@ -1,3 +1,4 @@
+import SearchModel from "src/models/SearchModel";
 import DetailsModel from "../../models/DetailsModel";
 import ListModel from "../../models/ListModel";
 import PaginationModel from "../../models/PaginationModel";
@@ -68,9 +69,9 @@ export default class TMDB implements KnowledgeProvider
 			});
 	}
 
-	async search(text: string): Promise<PaginationModel<ListModel>>
+	async search(model: SearchModel): Promise<PaginationModel<ListModel>>
 	{
-		const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB.apiKey}&language=${TMDB.locale}&query=${text}&page=1&include_adult=false`
+		const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB.apiKey}&language=${TMDB.locale}&query=${model.text}&page=1&include_adult=false`
 
 		return TMDB.getJson<PaginationModel<any>>(url)
 			.then((cards: PaginationModel<any>) =>

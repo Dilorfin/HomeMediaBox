@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import ListModel from 'src/models/ListModel';
 import { KnowledgeService } from '../_services/knowledge.service';
 
@@ -25,7 +24,7 @@ export class SearchComponent implements OnInit
 		if(searchText.length < 3)
 			return;
 
-		this.knService.search(searchText)
+		this.knService.search({text: searchText})
 			.then(list =>
 				this.list = list.results
 			);
