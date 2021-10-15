@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HistoryService } from '../_services/history.service';
+import { Location } from '@angular/common';
 
 @Component({
 	selector: 'app-settings',
@@ -8,7 +9,7 @@ import { HistoryService } from '../_services/history.service';
 })
 export class SettingsComponent implements OnInit
 {
-	constructor(private historyService: HistoryService)
+	constructor(private historyService: HistoryService, private location: Location)
 	{}
 
 	ngOnInit() { }
@@ -16,5 +17,10 @@ export class SettingsComponent implements OnInit
 	clearHistory()
 	{
 		this.historyService.clear();
+	}
+
+	goBack(): void
+	{
+		this.location.back();
 	}
 }
