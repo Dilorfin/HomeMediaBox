@@ -6,13 +6,15 @@ import { MovieRoutingModule } from './movie-routing.module';
 import { MovieComponent } from './movie.component';
 import { InfoComponent } from './info/info.component';
 import { VideosComponent } from './videos/videos.component';
+import { PlayerComponent } from './player/player.component';
 import { SharedComponentsModule } from '../_shared-components/shared-components.module';
 
 @NgModule({
 	declarations: [
 		MovieComponent,
 		InfoComponent,
-		VideosComponent
+		VideosComponent,
+		PlayerComponent
 	],
 	imports: [
 		CommonModule,

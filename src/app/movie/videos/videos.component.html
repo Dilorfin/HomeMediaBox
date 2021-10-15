@@ -49,7 +49,7 @@
 		<div>
 			<!--<ion-content> -->
 				<ion-list *ngIf="currentFilter">
-					<ion-item *ngFor="let video of currentFilter.videos" button (click)="openVideo(video)">
+					<ion-item button (click)="openVideo(video)" *ngFor="let video of currentFilter.videos">
 						<ion-icon slot="start" color="success" [name]="!video.watched?'videocam-outline' : 'videocam'"></ion-icon>
 						<ion-label color="success">
 							{{!video.episode_id ? 'Watch now :)' : 'Episode ' + video.episode_id }}
