@@ -36,10 +36,14 @@ export class SurfingComponent implements OnInit
 		});
 		this.categories.set(MovieCategory.Cartoon, {
 			title: 'Cartoons',
-			icon: ''
+			icon: 'film'
 		});
 		this.categories.set(MovieCategory.AnimatedSeries, {
 			title: 'Animated Series',
+			icon: 'albums'
+		});
+		this.categories.set(MovieCategory.Anime, {
+			title: 'Anime',
 			icon: ''
 		});
 
