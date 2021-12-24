@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import DetailsModel from 'src/models/DetailsModel';
 import ListModel from 'src/models/ListModel';
 import PaginationModel from 'src/models/PaginationModel';
+import SearchModel from 'src/models/SearchModel';
 import TMDB from 'src/providers/knowledge/TMDB';
 import KnowledgeProvider from 'src/providers/KnowledgeProvider';
 import { MovieCategory } from 'src/providers/MovieCategory';
@@ -33,7 +34,7 @@ export class KnowledgeService
 		return this.knowledgeProvider.getDetails(listModel);
 	}
 
-	async search(text: string): Promise<PaginationModel<ListModel>>
+	async search(text: SearchModel): Promise<PaginationModel<ListModel>>
 	{
 		return this.knowledgeProvider.search(text);
 	}

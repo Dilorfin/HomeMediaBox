@@ -11,6 +11,8 @@
   },
   "private": true,
   "dependencies": {
+    "hls.js": "^1.1.2",
+    "plyr": "^3.6.12",
     "@angular/common": "~13.1.1",
     "@angular/core": "~13.1.1",
     "@angular/forms": "~13.1.1",

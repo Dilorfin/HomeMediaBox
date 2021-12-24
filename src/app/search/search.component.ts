@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import ListModel from 'src/models/ListModel';
 import { KnowledgeService } from '../_services/knowledge.service';
+import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
 
 @Component({
 	selector: 'app-search',
@@ -10,13 +11,20 @@ import { KnowledgeService } from '../_services/knowledge.service';
 })
 export class SearchComponent implements OnInit
 {
-	constructor(private knService: KnowledgeService)
+	constructor(private knService: KnowledgeService,
+		private platform: Platform,
+		private location: Location)
 	{}
+
+	showTop: boolean = false;
 
 	searchText: string;
 	list: ListModel[];
 
-	ngOnInit() { }
+	ngOnInit() 
+	{
+		this.showTop = !this.platform.is('android');
+	}
 
 	onSearchChange(event: any)
 	{
@@ -25,9 +33,14 @@ export class SearchComponent implements OnInit
 		if(searchText.length < 3)
 			return;
 
-		this.knService.search(searchText)
+		this.knService.search({text: searchText})
 			.then(list =>
-				this.list = list.results
+				this.list = list.results.filter(m => m.poster_path)
 			);
+	}
+
+	goBack(): void
+	{
+		this.location.back();
 	}
 }

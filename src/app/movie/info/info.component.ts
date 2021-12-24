@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
 import DetailsModel from 'src/models/DetailsModel';
 
 @Component({
@@ -11,14 +13,23 @@ export class InfoComponent implements OnInit
 	@Input() movie: DetailsModel;
 	@Output() openVideos = new EventEmitter<void>();
 
+	showTop: boolean = false;
+
 	genres: string;
 	countries: string;
 
-	constructor()
+	constructor(private platform: Platform, private location: Location)
 	{ }
 
 	ngOnInit()
-	{ }
+	{
+		this.showTop = !this.platform.is('android');
+	}
+
+	goBack(): void
+	{
+		this.location.back();
+	}
 
 	ngOnChanges(changes: SimpleChanges): void
 	{

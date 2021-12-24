@@ -1,3 +1,4 @@
+import SearchModel from "src/models/SearchModel";
 import DetailsModel from "../../models/DetailsModel";
 import ListModel from "../../models/ListModel";
 import PaginationModel from "../../models/PaginationModel";
@@ -36,7 +37,9 @@ export default class TMDB implements KnowledgeProvider
 	{
 		return [
 			MovieCategory.Film,
-			MovieCategory.Series
+			MovieCategory.Series,
+			MovieCategory.Cartoon,
+			MovieCategory.AnimatedSeries
 		];
 	}
 
@@ -52,9 +55,29 @@ export default class TMDB implements KnowledgeProvider
 			}
 		}
 
-		const media_type: 'tv' | 'movie' = category == MovieCategory.Film ? 'movie' : 'tv';
+		let url = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB.apiKey}&language=${TMDB.locale}`;
+		let media_type:'tv'|'movie' = 'movie';
+		if (category == MovieCategory.Film)
+		{
+			url = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB.apiKey}&language=${TMDB.locale}&without_genres=16`;
+			media_type = 'movie';
+		}
+		else if (category == MovieCategory.Cartoon)
+		{
+			url = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB.apiKey}&language=${TMDB.locale}&with_genres=16`;
+			media_type = 'movie';
+		}
+		else if (category == MovieCategory.AnimatedSeries)
+		{
+			url = `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB.apiKey}&language=${TMDB.locale}&with_genres=16`;
+			media_type = 'tv';
+		}
+		else if (category == MovieCategory.Series)
+		{
+			url = `https://api.themoviedb.org/3/discover/tv?api_key=${TMDB.apiKey}&language=${TMDB.locale}&without_genres=16`;
+			media_type = 'tv';
+		}
 
-		const url = `https://api.themoviedb.org/3/${media_type}/popular?api_key=${TMDB.apiKey}&language=${TMDB.locale}&page=1`;
 		return TMDB.getJson<PaginationModel<ListModel>>(url)
 			.then((movies: PaginationModel<ListModel>) =>
 			{
@@ -68,9 +91,9 @@ export default class TMDB implements KnowledgeProvider
 			});
 	}
 
-	async search(text: string): Promise<PaginationModel<ListModel>>
+	async search(model: SearchModel): Promise<PaginationModel<ListModel>>
 	{
-		const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB.apiKey}&language=${TMDB.locale}&query=${text}&page=1&include_adult=false`
+		const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB.apiKey}&language=${TMDB.locale}&query=${model.text}&page=1&include_adult=false`
 
 		return TMDB.getJson<PaginationModel<any>>(url)
 			.then((cards: PaginationModel<any>) =>

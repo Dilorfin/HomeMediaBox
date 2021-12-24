@@ -1,3 +1,7 @@
-<video controls>
-	<source [src]="file">
-</video>
+<ion-content>
+	<ion-item button (click)="goBack()">
+		<ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+		<ion-label>Go back</ion-label>
+	</ion-item>
+	<video id="player" controls></video>
+</ion-content>
