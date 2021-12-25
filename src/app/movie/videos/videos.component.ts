@@ -16,6 +16,9 @@ export class VideosComponent implements OnInit, OnChanges
 	@Input() movie: FullMovieModel;
 	@Output() openInfo = new EventEmitter<void>();
 
+	isLoading: boolean = true;
+	private providersLoaded: number = 0;
+
 	currentFilter: {
 		provider_title: string,
 		videos: VideoFileModel[],
@@ -43,10 +46,20 @@ export class VideosComponent implements OnInit, OnChanges
 
 	ngOnChanges(changes: SimpleChanges): void
 	{
+		this.providersLoaded = 0;
+		this.isLoading = false;
+
 		this.videoService.getVideos(this.movie)
 			.forEach(provider =>
 				provider.videos.then(videos =>
 				{
+					const providersNumber: number = this.videoService.getProvidersNumber();
+					this.providersLoaded++;
+					if (this.providersLoaded >= providersNumber)
+					{
+						this.isLoading = true;
+					}
+
 					if (!videos || videos.length <= 0)
 						return;
 

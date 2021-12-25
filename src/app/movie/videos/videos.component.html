@@ -5,6 +5,15 @@
 			<ion-label>Open info</ion-label>
 		</ion-item>
 
+		<ion-item *ngIf="!isLoading">
+			<ion-spinner slot="start" name="crescent"></ion-spinner>
+			<ion-label>Loading...</ion-label>
+		</ion-item>
+
+		<ion-item *ngIf="isLoading && providers.length <= 0">
+			<ion-label>Nothing found</ion-label>
+		</ion-item>
+
 		<ion-item *ngIf="providers && providers.length > 0">
 			<ion-label>Provider</ion-label>
 			<ion-select (ionChange)="setProvider($event)" [value]="currentFilter.provider_title">

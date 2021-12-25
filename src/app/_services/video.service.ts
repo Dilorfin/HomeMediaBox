@@ -20,12 +20,18 @@ export class VideoService
 		];
 	}
 
-	getVideos(movieModel: FullMovieModel): {title:string, videos:Promise<VideoFileModel[]>}[]
+	getVideos(movieModel: FullMovieModel): { title: string, videos: Promise<VideoFileModel[]> }[]
 	{
-		return this.videoProviders.map(provider=>{
+		return this.videoProviders.map(provider =>
+		{
 			const title = provider.getProviderTitle();
 			const videos = provider.getVideos(movieModel);
-			return {title, videos};
+			return { title, videos };
 		});
+	}
+
+	getProvidersNumber(): number
+	{
+		return this.videoProviders.length;
 	}
 }
