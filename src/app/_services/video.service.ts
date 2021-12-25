@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import DetailsModel from 'src/models/DetailsModel';
+import FullMovieModel from 'src/models/FullMovieModel';
 import VideoFileModel from 'src/models/VideoFileModel';
 import AnilibriaProvider from 'src/providers/video/Anilibria';
 import VideoCdnProvider from 'src/providers/video/VideoCdn';
@@ -20,7 +20,7 @@ export class VideoService
 		];
 	}
 
-	getVideos(movieModel: DetailsModel): {title:string, videos:Promise<VideoFileModel[]>}[]
+	getVideos(movieModel: FullMovieModel): {title:string, videos:Promise<VideoFileModel[]>}[]
 	{
 		return this.videoProviders.map(provider=>{
 			const title = provider.getProviderTitle();

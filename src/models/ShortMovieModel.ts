@@ -1,4 +1,4 @@
-export default interface ListModel
+export default interface ShortMovieModel
 {
 	id: string;
 

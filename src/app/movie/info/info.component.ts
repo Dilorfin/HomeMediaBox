@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
-import DetailsModel from 'src/models/DetailsModel';
+import FullMovieModel from 'src/models/FullMovieModel';
 
 @Component({
 	selector: 'movie-info',
@@ -10,7 +10,7 @@ import DetailsModel from 'src/models/DetailsModel';
 })
 export class InfoComponent implements OnInit
 {
-	@Input() movie: DetailsModel;
+	@Input() movie: FullMovieModel;
 	@Output() openVideos = new EventEmitter<void>();
 
 	showTop: boolean = false;

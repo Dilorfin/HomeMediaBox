@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import DetailsModel from 'src/models/DetailsModel';
-import ListModel from 'src/models/ListModel';
+import FullMovieModel from 'src/models/FullMovieModel';
+import ShortMovieModel from 'src/models/ShortMovieModel';
 import PaginationModel from 'src/models/PaginationModel';
 import SearchModel from 'src/models/SearchModel';
 import TMDB from 'src/providers/knowledge/TMDB';
@@ -24,17 +24,17 @@ export class KnowledgeService
 		return this.knowledgeProvider.getCategories();
 	}
 
-	async getCategory(category: MovieCategory): Promise<PaginationModel<ListModel>>
+	async getCategory(category: MovieCategory): Promise<PaginationModel<ShortMovieModel>>
 	{
 		return this.knowledgeProvider.getCategory(category);
 	}
 
-	async getDetails(listModel: ListModel): Promise<DetailsModel>
+	async getDetails(listModel: ShortMovieModel): Promise<FullMovieModel>
 	{
 		return this.knowledgeProvider.getDetails(listModel);
 	}
 
-	async search(text: SearchModel): Promise<PaginationModel<ListModel>>
+	async search(text: SearchModel): Promise<PaginationModel<ShortMovieModel>>
 	{
 		return this.knowledgeProvider.search(text);
 	}
