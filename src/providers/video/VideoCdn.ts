@@ -1,5 +1,5 @@
 import VideoFileModel from "src/models/VideoFileModel";
-import DetailsModel from "../../models/DetailsModel";
+import FullMovieModel from "../../models/FullMovieModel";
 import VideoProvider from "../VideoProvider";
 
 export default class VideoCdnProvider implements VideoProvider
@@ -34,7 +34,7 @@ export default class VideoCdnProvider implements VideoProvider
 		return "VideoCdn";
 	}
 
-	public async getVideos(movieModel: DetailsModel): Promise<VideoFileModel[]>
+	public async getVideos(movieModel: FullMovieModel): Promise<VideoFileModel[]>
 	{
 		if (!movieModel.imdb_id)
 		{

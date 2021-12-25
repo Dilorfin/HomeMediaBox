@@ -1,7 +1,7 @@
-import ListModel from "./ListModel";
+import ShortMovieModel from "./ShortMovieModel";
 import PaginationModel from "./PaginationModel";
 
-export default interface DetailsModel
+export default interface FullMovieModel
 {
 	id :string;
 	imdb_id :string;
@@ -32,7 +32,7 @@ export default interface DetailsModel
 
 	status :string;
 
-	recommendations :PaginationModel<ListModel>;
+	recommendations :PaginationModel<ShortMovieModel>;
 
 	number_of_episodes :number|undefined;
 	number_of_seasons :number|undefined;

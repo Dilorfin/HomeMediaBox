@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { HistoryService } from 'src/app/_services/history.service';
 import { VideoService } from 'src/app/_services/video.service';
-import DetailsModel from 'src/models/DetailsModel';
+import FullMovieModel from 'src/models/FullMovieModel';
 import VideoFileModel from 'src/models/VideoFileModel';
 
 @Component({
@@ -13,7 +13,7 @@ import VideoFileModel from 'src/models/VideoFileModel';
 })
 export class VideosComponent implements OnInit, OnChanges
 {
-	@Input() movie: DetailsModel;
+	@Input() movie: FullMovieModel;
 	@Output() openInfo = new EventEmitter<void>();
 
 	currentFilter: {

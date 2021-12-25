@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import ListModel from 'src/models/ListModel';
+import ShortMovieModel from 'src/models/ShortMovieModel';
 import { KnowledgeService } from '../_services/knowledge.service';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
@@ -19,7 +19,7 @@ export class SearchComponent implements OnInit
 	showTop: boolean = false;
 
 	searchText: string;
-	list: ListModel[];
+	list: ShortMovieModel[];
 
 	ngOnInit() 
 	{

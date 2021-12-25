@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import ListModel from 'src/models/ListModel';
+import ShortMovieModel from 'src/models/ShortMovieModel';
 import { MovieCategory } from 'src/providers/MovieCategory';
 import { HistoryService } from '../_services/history.service';
 import { KnowledgeService } from '../_services/knowledge.service';
@@ -11,7 +11,7 @@ import { KnowledgeService } from '../_services/knowledge.service';
 })
 export class SurfingComponent implements OnInit
 {
-	list: ListModel[];
+	list: ShortMovieModel[];
 
 	history: boolean = false;
 
@@ -56,7 +56,7 @@ export class SurfingComponent implements OnInit
 
 	openHistory()
 	{
-		this.list = this.historyService.getWatchedMovies() as ListModel[];
+		this.list = this.historyService.getWatchedMovies() as ShortMovieModel[];
 		this.history = true;
 		this.currentCategory = null;
 	}

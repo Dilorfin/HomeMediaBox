@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import DetailsModel from 'src/models/DetailsModel';
-import ListModel from 'src/models/ListModel';
+import FullMovieModel from 'src/models/FullMovieModel';
+import ShortMovieModel from 'src/models/ShortMovieModel';
 
 @Component({
 	selector: 'app-card',
@@ -10,7 +10,7 @@ import ListModel from 'src/models/ListModel';
 })
 export class CardComponent implements OnInit
 {
-	@Input() movie: DetailsModel | ListModel;
+	@Input() movie: FullMovieModel | ShortMovieModel;
 
 	constructor(private router: Router) { }
 

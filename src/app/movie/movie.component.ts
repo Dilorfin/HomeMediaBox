@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import DetailsModel from 'src/models/DetailsModel';
-import ListModel from 'src/models/ListModel';
+import FullMovieModel from 'src/models/FullMovieModel';
+import ShortMovieModel from 'src/models/ShortMovieModel';
 import { KnowledgeService } from '../_services/knowledge.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class MovieComponent implements OnInit
 
 	tab: 'info' | 'video' = 'info';
 
-	movie: DetailsModel | ListModel;
+	movie: FullMovieModel;
 
 	constructor(public router: Router,
 		private knService: KnowledgeService,
@@ -37,14 +37,14 @@ export class MovieComponent implements OnInit
 
 	ngOnInit()
 	{
-		this.movie = this.router.getCurrentNavigation().extras.state as ListModel;
-		const tempMovie: ListModel = (this.movie ? this.movie : {
+		this.movie = this.router.getCurrentNavigation().extras.state as FullMovieModel;
+		const tempMovie: FullMovieModel = (this.movie ? this.movie : {
 			id: this.movieId,
 			media_type: this.movieType
-		}) as ListModel;
+		}) as FullMovieModel;
 
-		this.knService.getDetails(tempMovie)
-			.then((value: DetailsModel) =>
+		this.knService.getDetails(tempMovie as unknown as ShortMovieModel)
+			.then((value: FullMovieModel) =>
 			{
 				this.movie = value;
 			});

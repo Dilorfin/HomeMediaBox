@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import DetailsModel from 'src/models/DetailsModel';
+import FullMovieModel from 'src/models/FullMovieModel';
 import HistoryModel from 'src/models/HistoryModel';
-import ListModel from 'src/models/ListModel';
+import ShortMovieModel from 'src/models/ShortMovieModel';
 import VideoFileModel from 'src/models/VideoFileModel';
 
 @Injectable({
@@ -22,7 +22,7 @@ export class HistoryService
 		}
 	}
 
-	watchMovie(movie: ListModel | DetailsModel, video: VideoFileModel): void
+	watchMovie(movie: ShortMovieModel | FullMovieModel, video: VideoFileModel): void
 	{
 		const full_id: string = `${movie.media_type}/${movie.id}`;
 
@@ -43,7 +43,7 @@ export class HistoryService
 		this.watched[full_id].date = new Date();
 	}
 
-	wasWatched(movie: ListModel | DetailsModel, video: VideoFileModel): boolean
+	wasWatched(movie: ShortMovieModel | FullMovieModel, video: VideoFileModel): boolean
 	{
 		const watchedVideos = this.getWatchedVideos(movie);
 		const wasWatched: VideoFileModel = watchedVideos.find(w =>
@@ -53,7 +53,7 @@ export class HistoryService
 		return !!wasWatched;
 	}
 
-	getWatchedVideos(movie: ListModel | DetailsModel): VideoFileModel[]
+	getWatchedVideos(movie: ShortMovieModel | FullMovieModel): VideoFileModel[]
 	{
 		const full_id: string = `${movie.media_type}/${movie.id}`;
 		if (!this.watched[full_id])
@@ -61,7 +61,7 @@ export class HistoryService
 		return this.watched[full_id].videos;
 	}
 
-	getWatchedMovies(): (ListModel | DetailsModel)[]
+	getWatchedMovies(): (ShortMovieModel | FullMovieModel)[]
 	{
 		return Object.values(this.watched).map(w => w.movie);
 	}

@@ -1,5 +1,5 @@
 import VideoFileModel from "src/models/VideoFileModel";
-import DetailsModel from "../../models/DetailsModel";
+import FullMovieModel from "../../models/FullMovieModel";
 import VideoProvider from "../VideoProvider";
 
 export default class AnilibriaProvider implements VideoProvider
@@ -15,7 +15,7 @@ export default class AnilibriaProvider implements VideoProvider
 		return "Anilibria";
 	}
 
-	public async getVideos(movieModel: DetailsModel): Promise<VideoFileModel[]>
+	public async getVideos(movieModel: FullMovieModel): Promise<VideoFileModel[]>
 	{
 		return await this.requestForEngJpTitle(movieModel).then((title) =>
 		{
@@ -68,7 +68,7 @@ export default class AnilibriaProvider implements VideoProvider
 		});
 	}
 
-	private requestForEngJpTitle(movieModel: DetailsModel): Promise<string>
+	private requestForEngJpTitle(movieModel: FullMovieModel): Promise<string>
 	{
 		const kitsu_url: string = `https://kitsu.io/api/edge/anime?filter[text]=${movieModel.original_title}`;
 		return fetch(kitsu_url, { headers: this.headers })

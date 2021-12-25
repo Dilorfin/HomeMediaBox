@@ -1,6 +1,6 @@
 import SearchModel from "src/models/SearchModel";
-import DetailsModel from "../../models/DetailsModel";
-import ListModel from "../../models/ListModel";
+import FullMovieModel from "../../models/FullMovieModel";
+import ShortMovieModel from "../../models/ShortMovieModel";
 import PaginationModel from "../../models/PaginationModel";
 import KnowledgeProvider from "../KnowledgeProvider";
 import { MovieCategory } from "../MovieCategory";
@@ -43,7 +43,7 @@ export default class TMDB implements KnowledgeProvider
 		];
 	}
 
-	async getCategory(category: MovieCategory): Promise<PaginationModel<ListModel>>
+	async getCategory(category: MovieCategory): Promise<PaginationModel<ShortMovieModel>>
 	{
 		if (this.getCategories().indexOf(category) < 0)
 		{
@@ -78,10 +78,10 @@ export default class TMDB implements KnowledgeProvider
 			media_type = 'tv';
 		}
 
-		return TMDB.getJson<PaginationModel<ListModel>>(url)
-			.then((movies: PaginationModel<ListModel>) =>
+		return TMDB.getJson<PaginationModel<ShortMovieModel>>(url)
+			.then((movies: PaginationModel<ShortMovieModel>) =>
 			{
-				movies.results = movies.results.map((m: ListModel) =>
+				movies.results = movies.results.map((m: ShortMovieModel) =>
 				{
 					m.media_type = media_type
 					return this.mapToListModel(m);
@@ -91,7 +91,7 @@ export default class TMDB implements KnowledgeProvider
 			});
 	}
 
-	async search(model: SearchModel): Promise<PaginationModel<ListModel>>
+	async search(model: SearchModel): Promise<PaginationModel<ShortMovieModel>>
 	{
 		const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB.apiKey}&language=${TMDB.locale}&query=${model.text}&page=1&include_adult=false`
 
@@ -104,14 +104,14 @@ export default class TMDB implements KnowledgeProvider
 				}).filter((card) => card);
 				return cards;
 			})
-			.then((cards: PaginationModel<ListModel>) =>
+			.then((cards: PaginationModel<ShortMovieModel>) =>
 			{
 				cards.results = TMDB.setFullImagePaths(cards.results);
 				return cards;
 			});
 	}
 
-	async getDetails(listModel: ListModel): Promise<DetailsModel>
+	async getDetails(listModel: ShortMovieModel): Promise<FullMovieModel>
 	{
 		const url: string = `https://api.themoviedb.org/3/${listModel.media_type}/${listModel.id}?api_key=${TMDB.apiKey}&language=${TMDB.locale}&append_to_response=external_ids,recommendations`;
 		return TMDB.getJson<any>(url)
@@ -120,7 +120,7 @@ export default class TMDB implements KnowledgeProvider
 				model.media_type = listModel.media_type;
 				return this.mapToDetails(model);
 			})
-			.then((movie: DetailsModel) =>
+			.then((movie: FullMovieModel) =>
 			{
 				if (movie.poster_path)
 				{
@@ -151,9 +151,9 @@ export default class TMDB implements KnowledgeProvider
 		});
 	}
 
-	private static setFullImagePaths(movies: ListModel[]): ListModel[]
+	private static setFullImagePaths(movies: ShortMovieModel[]): ShortMovieModel[]
 	{
-		return movies.map((el: ListModel) =>
+		return movies.map((el: ShortMovieModel) =>
 		{
 			if (el.poster_path)
 			{
@@ -177,12 +177,12 @@ export default class TMDB implements KnowledgeProvider
 		return `https://image.tmdb.org/t/p/${size}${shortUrl}`;
 	}
 
-	private mapToDetails(model: any): DetailsModel
+	private mapToDetails(model: any): FullMovieModel
 	{
 		if (model.media_type != 'tv' && model.media_type != 'movie')
 			return null;
 
-		var result: DetailsModel = model;
+		var result: FullMovieModel = model;
 		if (model.media_type == 'tv')
 		{
 			result.title = model.name;
@@ -204,12 +204,12 @@ export default class TMDB implements KnowledgeProvider
 		return result;
 	}
 
-	private mapToListModel(model: any): ListModel
+	private mapToListModel(model: any): ShortMovieModel
 	{
 		if (model.media_type != 'tv' && model.media_type != 'movie')
 			return null;
 
-		var result: ListModel = model;
+		var result: ShortMovieModel = model;
 		if (model.genre_ids && this.genres[model.media_type])
 		{
 			result.genres = model.genre_ids.map((gid) =>

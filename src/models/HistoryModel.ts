@@ -1,10 +1,10 @@
-import DetailsModel from "./DetailsModel";
-import ListModel from "./ListModel";
+import FullMovieModel from "./FullMovieModel";
+import ShortMovieModel from "./ShortMovieModel";
 import VideoFileModel from "./VideoFileModel";
 
 export default interface HistoryModel 
 {
 	date: Date,
-	movie: ListModel | DetailsModel,
+	movie: ShortMovieModel | FullMovieModel,
 	videos: VideoFileModel[]
 };
