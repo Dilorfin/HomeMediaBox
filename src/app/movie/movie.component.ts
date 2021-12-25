@@ -16,7 +16,7 @@ export class MovieComponent implements OnInit
 
 	tab: 'info' | 'video' = 'info';
 
-	movie: FullMovieModel | ShortMovieModel;
+	movie: FullMovieModel;
 
 	constructor(public router: Router,
 		private knService: KnowledgeService,
@@ -37,13 +37,13 @@ export class MovieComponent implements OnInit
 
 	ngOnInit()
 	{
-		this.movie = this.router.getCurrentNavigation().extras.state as ShortMovieModel;
-		const tempMovie: ShortMovieModel = (this.movie ? this.movie : {
+		this.movie = this.router.getCurrentNavigation().extras.state as FullMovieModel;
+		const tempMovie: FullMovieModel = (this.movie ? this.movie : {
 			id: this.movieId,
 			media_type: this.movieType
-		}) as ShortMovieModel;
+		}) as FullMovieModel;
 
-		this.knService.getDetails(tempMovie)
+		this.knService.getDetails(tempMovie as unknown as ShortMovieModel)
 			.then((value: FullMovieModel) =>
 			{
 				this.movie = value;
