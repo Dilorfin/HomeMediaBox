@@ -18,7 +18,9 @@ export class HistoryService
 		const savedHistory = localStorage.getItem(this.storageKey);
 		if (savedHistory)
 		{
-			this.watched = JSON.parse(savedHistory);
+			this.watched = JSON.parse(savedHistory, (k, v)=> {
+				return k != 'date' ? v : new Date(v);
+			});
 		}
 	}
 
@@ -60,7 +62,9 @@ export class HistoryService
 
 	getWatchedMovies(): (ShortMovieModel | FullMovieModel)[]
 	{
-		return Object.values(this.watched).map(w => w.movie);
+		return Object.values(this.watched).sort((a:HistoryModel, b:HistoryModel)=> {
+			return b.date.valueOf() - a.date.valueOf();
+		}).map(w => w.movie);
 	}
 
 	clear()
