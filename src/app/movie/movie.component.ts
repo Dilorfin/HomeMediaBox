@@ -22,7 +22,6 @@ export class MovieComponent implements OnInit
 		activateRoute: ActivatedRoute)
 	{
 		this.movieId = activateRoute.snapshot.params['movie-id'];
-		console.log(this.movieId);
 	}
 
 	get dynamic_style()

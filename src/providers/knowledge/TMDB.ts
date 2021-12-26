@@ -113,7 +113,6 @@ export default class TMDB implements KnowledgeProvider
 
 	async getDetails(shortModel: ShortMovieModel): Promise<FullMovieModel>
 	{
-		console.log(shortModel.id)
 		const splitted:string[] = shortModel.id.split('-');
 		const media_type:string = splitted[0];
 		const id:string = splitted[1];
