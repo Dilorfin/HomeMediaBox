@@ -82,7 +82,7 @@ export class VideosComponent implements OnInit, OnChanges
 
 		this.providers.forEach(p => this.markWatched(p))
 
-		if (this.platform.is('android'))
+		if (this.platform.is('android') && !this.platform.is('mobileweb'))
 		{
 			window.open(video.url);
 		}
