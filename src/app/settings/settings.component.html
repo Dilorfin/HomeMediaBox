@@ -1,11 +1,11 @@
 <ion-content>
 	<ion-item color="danger">In development</ion-item>
-	<ion-item button (click)="goBack()">
+	<ion-item button (click)="goBack()" detail="false">
 		<ion-icon slot="start" name="arrow-back-outline"></ion-icon>
 		<ion-label>Go back</ion-label>
 	</ion-item>
 	<ion-list>
-		<ion-item button>
+		<ion-item button detail="false">
 			<ion-label color="danger" (click)="clearHistory()">
 				Clear history
 			</ion-label>

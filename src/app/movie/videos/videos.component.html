@@ -1,6 +1,6 @@
 <ion-content id="centered-container">
 	<div>
-		<ion-item button (click)="openInfo.emit()">
+		<ion-item button (click)="openInfo.emit()" detail="false">
 			<ion-icon slot="start" name="arrow-back-outline"></ion-icon>
 			<ion-label>Open info</ion-label>
 		</ion-item>
@@ -58,7 +58,7 @@
 		<div>
 			<!--<ion-content> -->
 				<ion-list *ngIf="currentFilter">
-					<ion-item button (click)="openVideo(video)" *ngFor="let video of currentFilter.videos">
+					<ion-item button (click)="openVideo(video)" detail="false" *ngFor="let video of currentFilter.videos">
 						<ion-icon slot="start" color="success" [name]="!video.watched?'videocam-outline' : 'videocam'"></ion-icon>
 						<ion-label color="success">
 							{{!video.episode_id ? 'Watch now :)' : 'Episode ' + video.episode_id }}
