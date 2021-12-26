@@ -24,23 +24,21 @@ export class HistoryService
 
 	watchMovie(movie: ShortMovieModel | FullMovieModel, video: VideoFileModel): void
 	{
-		const full_id: string = `${movie.media_type}/${movie.id}`;
-
-		if (!this.watched[full_id])
+		if (!this.watched[movie.id])
 		{
-			this.watched[full_id] = {
+			this.watched[movie.id] = {
 				movie: movie,
 				videos: []
 			} as HistoryModel;
-		}		
-		
+		}
+
 		if (!this.wasWatched(movie, video))
 		{
-			this.watched[full_id].videos.push(video);
+			this.watched[movie.id].videos.push(video);
 			localStorage.setItem(this.storageKey, JSON.stringify(this.watched));
 		}
 
-		this.watched[full_id].date = new Date();
+		this.watched[movie.id].date = new Date();
 	}
 
 	wasWatched(movie: ShortMovieModel | FullMovieModel, video: VideoFileModel): boolean
@@ -55,10 +53,9 @@ export class HistoryService
 
 	getWatchedVideos(movie: ShortMovieModel | FullMovieModel): VideoFileModel[]
 	{
-		const full_id: string = `${movie.media_type}/${movie.id}`;
-		if (!this.watched[full_id])
+		if (!this.watched[movie.id])
 			return [];
-		return this.watched[full_id].videos;
+		return this.watched[movie.id].videos;
 	}
 
 	getWatchedMovies(): (ShortMovieModel | FullMovieModel)[]
