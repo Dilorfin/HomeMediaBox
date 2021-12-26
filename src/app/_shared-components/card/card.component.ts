@@ -18,7 +18,7 @@ export class CardComponent implements OnInit
 
 	onClick(event: MouseEvent)
 	{
-		this.router.navigate(['/movie', this.movie.media_type, this.movie.id], {
+		this.router.navigate(['/movie', this.movie.id], {
 			state: this.movie
 		});
 	}
@@ -28,7 +28,7 @@ export class CardComponent implements OnInit
 		if (event.key !== 'Enter')
 			return;
 
-		this.router.navigate(['/movie', this.movie.media_type, this.movie.id], {
+		this.router.navigate(['/movie', this.movie.id], {
 			state: this.movie
 		});
 	}

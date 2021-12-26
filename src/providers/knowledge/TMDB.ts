@@ -84,7 +84,7 @@ export default class TMDB implements KnowledgeProvider
 				movies.results = movies.results.map((m: ShortMovieModel) =>
 				{
 					m.media_type = media_type
-					return this.mapToListModel(m);
+					return this.mapToShortMovieModel(m);
 				});
 				movies.results = TMDB.setFullImagePaths(movies.results);
 				return movies;
@@ -100,7 +100,7 @@ export default class TMDB implements KnowledgeProvider
 			{
 				cards.results = cards.results.map((card) =>
 				{
-					return this.mapToListModel(card);
+					return this.mapToShortMovieModel(card);
 				}).filter((card) => card);
 				return cards;
 			})
@@ -111,14 +111,18 @@ export default class TMDB implements KnowledgeProvider
 			});
 	}
 
-	async getDetails(listModel: ShortMovieModel): Promise<FullMovieModel>
+	async getDetails(shortModel: ShortMovieModel): Promise<FullMovieModel>
 	{
-		const url: string = `https://api.themoviedb.org/3/${listModel.media_type}/${listModel.id}?api_key=${TMDB.apiKey}&language=${TMDB.locale}&append_to_response=external_ids,recommendations`;
+		const splitted:string[] = shortModel.id.split('-');
+		const media_type:string = splitted[0];
+		const id:string = splitted[1];
+
+		const url: string = `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${TMDB.apiKey}&language=${TMDB.locale}&append_to_response=external_ids,recommendations`;
 		return TMDB.getJson<any>(url)
 			.then((model: any) =>
 			{
-				model.media_type = listModel.media_type;
-				return this.mapToDetails(model);
+				model.media_type = media_type;
+				return this.mapToFullMovieModel(model);
 			})
 			.then((movie: FullMovieModel) =>
 			{
@@ -177,12 +181,14 @@ export default class TMDB implements KnowledgeProvider
 		return `https://image.tmdb.org/t/p/${size}${shortUrl}`;
 	}
 
-	private mapToDetails(model: any): FullMovieModel
+	private mapToFullMovieModel(model: any): FullMovieModel
 	{
 		if (model.media_type != 'tv' && model.media_type != 'movie')
 			return null;
 
 		var result: FullMovieModel = model;
+		result.id = this.makeTMDBId(model.media_type, model.id);
+
 		if (model.media_type == 'tv')
 		{
 			result.title = model.name;
@@ -199,17 +205,19 @@ export default class TMDB implements KnowledgeProvider
 		}
 
 		model.recommendations.results = model.recommendations.results
-			.map(rec => this.mapToListModel(rec));
+			.map(rec => this.mapToShortMovieModel(rec));
 
 		return result;
 	}
 
-	private mapToListModel(model: any): ShortMovieModel
+	private mapToShortMovieModel(model: any): ShortMovieModel
 	{
 		if (model.media_type != 'tv' && model.media_type != 'movie')
 			return null;
 
 		var result: ShortMovieModel = model;
+		result.id = this.makeTMDBId(model.media_type, model.id);
+
 		if (model.genre_ids && this.genres[model.media_type])
 		{
 			result.genres = model.genre_ids.map((gid) =>
@@ -226,5 +234,10 @@ export default class TMDB implements KnowledgeProvider
 			result.release_date = model.first_air_date;
 		}
 		return result;
+	}
+
+	private makeTMDBId(media_type:string, id:string):string
+	{
+		return `${media_type}-${id}`;
 	}
 }

@@ -12,7 +12,6 @@ import { KnowledgeService } from '../_services/knowledge.service';
 export class MovieComponent implements OnInit
 {
 	private movieId: string;
-	private movieType: string;
 
 	tab: 'info' | 'video' = 'info';
 
@@ -22,8 +21,7 @@ export class MovieComponent implements OnInit
 		private knService: KnowledgeService,
 		activateRoute: ActivatedRoute)
 	{
-		this.movieId = activateRoute.snapshot.params['id'];
-		this.movieType = activateRoute.snapshot.params['type'];
+		this.movieId = activateRoute.snapshot.params['movie-id'];
 	}
 
 	get dynamic_style()
@@ -39,8 +37,7 @@ export class MovieComponent implements OnInit
 	{
 		this.movie = this.router.getCurrentNavigation().extras.state as FullMovieModel;
 		const tempMovie: FullMovieModel = (this.movie ? this.movie : {
-			id: this.movieId,
-			media_type: this.movieType
+			id: this.movieId
 		}) as FullMovieModel;
 
 		this.knService.getDetails(tempMovie as unknown as ShortMovieModel)
