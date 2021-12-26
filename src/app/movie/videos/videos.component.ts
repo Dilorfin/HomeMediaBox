@@ -78,7 +78,6 @@ export class VideosComponent implements OnInit, OnChanges
 	openVideo(video: VideoFileModel)
 	{
 		this.historyService.watchMovie(this.movie, video);
-		this.historyService.getWatchedMovies();
 
 		this.providers.forEach(p => this.markWatched(p))
 
@@ -88,9 +87,8 @@ export class VideosComponent implements OnInit, OnChanges
 		}
 		else 
 		{
-			const id = this.route.snapshot.params['id'];
-			const type = this.route.snapshot.params['type'];
-			this.router.navigate([`/movie/${type}/${id}/player`], {
+			this.router.navigate([`./player`], {
+				relativeTo: this.route,
 				queryParams: {
 					file: video.url
 				}
