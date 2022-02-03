@@ -7,7 +7,7 @@ import { MovieCategory } from "../MovieCategory";
 
 export default class TMDB implements KnowledgeProvider
 {
-	private static locale: string = 'ru-RU';//'en-US';
+	private static locale: string = 'en-US';//'ru-RU';
 	private static apiKey: string = '3735813b72994d73278ea217e6a50dd0';
 	private genres: any = {};
 
@@ -117,7 +117,7 @@ export default class TMDB implements KnowledgeProvider
 		const media_type:string = splitted[0];
 		const id:string = splitted[1];
 
-		const url: string = `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${TMDB.apiKey}&language=${TMDB.locale}&append_to_response=external_ids,recommendations`;
+		const url: string = `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${TMDB.apiKey}&language=${TMDB.locale}&append_to_response=external_ids,recommendations,translations`;
 		return TMDB.getJson<any>(url)
 			.then((model: any) =>
 			{
@@ -204,6 +204,18 @@ export default class TMDB implements KnowledgeProvider
 			}
 		}
 
+		if (model.translations)
+		{
+			model.translations = model.translations.translations;
+			model.translations.forEach(el => {
+				el.combined_code = `${el.iso_639_1}-${el.iso_3166_1}`;
+				if(!el.data.title)
+				{
+					el.data.title = el.data.name;
+				}
+			});
+		}
+
 		model.recommendations.results = model.recommendations.results
 			.map(rec => this.mapToShortMovieModel(rec));
 
@@ -225,6 +237,7 @@ export default class TMDB implements KnowledgeProvider
 				return this.genres[model.media_type]
 					.filter(e => e.id == gid)[0];
 			});
+			result.genres = result.genres.filter(g => g);
 		}
 
 		if (model.media_type == 'tv')
