@@ -36,4 +36,17 @@ export default interface FullMovieModel
 
 	number_of_episodes :number|undefined;
 	number_of_seasons :number|undefined;
+
+	images: {
+		backdrops:{
+			height: number,
+			width: number,
+			
+			iso_639_1: string,
+			vote_average: number,
+			vote_count: number,
+
+			file_path: string
+		}[]
+	};
 };

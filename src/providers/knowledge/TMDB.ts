@@ -7,7 +7,7 @@ import { MovieCategory } from "../MovieCategory";
 
 export default class TMDB implements KnowledgeProvider
 {
-	private static locale: string = 'ru-RU';//'en-US';
+	private static locale: string = 'en-US'; // ru-RU
 	private static apiKey: string = '3735813b72994d73278ea217e6a50dd0';
 	private genres: any = {};
 
@@ -116,11 +116,12 @@ export default class TMDB implements KnowledgeProvider
 		const splitted:string[] = shortModel.id.split('-');
 		const media_type:string = splitted[0];
 		const id:string = splitted[1];
-
-		const url: string = `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${TMDB.apiKey}&language=${TMDB.locale}&append_to_response=external_ids,recommendations`;
+		//&language=${TMDB.locale}
+		const url: string = `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${TMDB.apiKey}&append_to_response=external_ids,recommendations,images`;
 		return TMDB.getJson<any>(url)
 			.then((model: any) =>
 			{
+				console.log(model);
 				model.media_type = media_type;
 				return this.mapToFullMovieModel(model);
 			})
@@ -204,6 +205,13 @@ export default class TMDB implements KnowledgeProvider
 			}
 		}
 
+		model.images.backdrops = model.images.backdrops.filter(el => {
+			return !el.iso_639_1;
+		})
+		model.images.backdrops.forEach(element => {
+			element.file_path = TMDB.getBackdropFullUrl(element.file_path);
+		});
+		
 		model.recommendations.results = model.recommendations.results
 			.map(rec => this.mapToShortMovieModel(rec));
 

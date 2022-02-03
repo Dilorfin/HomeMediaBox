@@ -63,6 +63,12 @@
 						</ion-col>
 					</ion-row>
 				</ion-grid>
+				<div *ngIf="movie.images && movie.images.backdrops && movie.images.backdrops.length > 0">
+					<p>Images:</p>
+					<div class="cards-row">
+						<img *ngFor="let item of movie.images.backdrops" [src]="item.file_path"/>
+					</div>
+				</div>
 				<div *ngIf="movie.recommendations && movie.recommendations.results.length > 0">
 					<p>Recommendations:</p>
 					<div class="cards-row">
