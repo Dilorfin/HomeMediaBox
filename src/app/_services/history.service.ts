@@ -34,16 +34,16 @@ export class HistoryService
 			} as HistoryModel;
 		}
 
-		if (!this.wasWatched(movie, video))
+		if (!this.checkVideoWasWatched(movie, video))
 		{
 			this.watched[movie.id].videos.push(video);
-			localStorage.setItem(this.storageKey, JSON.stringify(this.watched));
 		}
 
 		this.watched[movie.id].date = new Date();
+		localStorage.setItem(this.storageKey, JSON.stringify(this.watched));
 	}
 
-	wasWatched(movie: ShortMovieModel | FullMovieModel, video: VideoFileModel): boolean
+	checkVideoWasWatched(movie: ShortMovieModel | FullMovieModel, video: VideoFileModel): boolean
 	{
 		const watchedVideos = this.getWatchedVideos(movie);
 		const wasWatched: VideoFileModel = watchedVideos.find(w =>
