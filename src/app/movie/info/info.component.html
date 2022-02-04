@@ -1,77 +1,83 @@
-<div id="centered-container">
-	<div>
-		<ion-content>
-			<ion-item button *ngIf="showTop" (click)="goBack()" detail="false">
-				<ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-				<ion-label>Go back</ion-label>
-			</ion-item>
-			<div class="inside-padding">
-				<!--TODO: remake to div aligning for UHD+ -->
-				<ion-grid>
-					<ion-row>
-						<ion-col size="12" size-md>
-							<img [src]="movie.poster_path" />
-						</ion-col>
-						<ion-col size="12" size-md>
-							<div>
-								<h1>{{movie.title}}</h1>
-								<h4>{{movie.original_title}}</h4>
-								
-								<ion-button color="dark" (click)="openVideos.emit()">
-									Open videos
-								</ion-button>
-								
-								<p *ngIf="movie.production_countries 
-											&& movie.production_countries.length > 0">
-									<span>Countries: </span>
-									<span>{{countries}}</span>
-								</p>
-								<p>
-									<span>Genres: </span>
-									<span>{{genres}}</span>
-								</p>
-								<p>
-									<span>Release date: </span>
-									<span>{{movie.release_date | date : 'd MMMM y'}}</span>
-								</p>
-								<p>
-									<span>Runtime: </span>
-									<span>{{movie.runtime}}m</span>
-								</p>
-								<p>
-									<span>Vote average: </span>
-									<span>{{movie.vote_average}} ({{movie.vote_count}})</span>
-								</p>
-								<p>
-									<span>Status: </span>
-									<span>{{movie.status}}</span>
-								</p>
+<div class="loading" *ngIf="!movie">
+	<ion-item>
+		<ion-spinner slot="start" name="crescent"></ion-spinner>
+		<ion-label>Loading...</ion-label>
+	</ion-item>
+</div>
 
-								<p *ngIf="movie.number_of_seasons">
-									<span>Seasons: </span>
-									{{movie.number_of_seasons}}
-								</p>
-								<p *ngIf="movie.number_of_episodes">
-									<span>Episodes: </span>
-									{{movie.number_of_episodes}}
-								</p>
-								<div *ngIf="movie.overview">
-									<p>Description:</p>
-									<p>{{movie.overview}}</p>
+<app-background-image *ngIf="movie" [movie]="movie">
+	<div id="centered-container">
+		<div>
+			<ion-content>
+				<app-go-back-button></app-go-back-button>
+				
+				<div *ngIf="movie" class="inside-padding">
+					<!--TODO: remake to div aligning for UHD+ -->
+					<ion-grid>
+						<ion-row>
+							<ion-col size="12" size-md>
+								<img [src]="movie.poster_path" />
+							</ion-col>
+							<ion-col size="12" size-md>
+								<div>
+									<h1>{{movie.title}}</h1>
+									<h4>{{movie.original_title}}</h4>
+
+									<ion-button color="dark" routerLink="./videos">
+										Open videos
+									</ion-button>
+
+									<p *ngIf="movie.production_countries 
+											&& movie.production_countries.length > 0">
+										<span>Countries: </span>
+										<span>{{countries}}</span>
+									</p>
+									<p>
+										<span>Genres: </span>
+										<span>{{genres}}</span>
+									</p>
+									<p>
+										<span>Release date: </span>
+										<span>{{movie.release_date | date : 'd MMMM y'}}</span>
+									</p>
+									<p>
+										<span>Runtime: </span>
+										<span>{{movie.runtime}}m</span>
+									</p>
+									<p>
+										<span>Vote average: </span>
+										<span>{{movie.vote_average}} ({{movie.vote_count}})</span>
+									</p>
+									<p>
+										<span>Status: </span>
+										<span>{{movie.status}}</span>
+									</p>
+
+									<p *ngIf="movie.number_of_seasons">
+										<span>Seasons: </span>
+										{{movie.number_of_seasons}}
+									</p>
+									<p *ngIf="movie.number_of_episodes">
+										<span>Episodes: </span>
+										{{movie.number_of_episodes}}
+									</p>
+									<div *ngIf="movie.overview">
+										<p>Description:</p>
+										<p>{{movie.overview}}</p>
+									</div>
 								</div>
-							</div>
-						</ion-col>
-					</ion-row>
-				</ion-grid>
-				<div *ngIf="movie.recommendations && movie.recommendations.results.length > 0">
-					<p>Recommendations:</p>
-					<div class="cards-row">
-						<app-card *ngFor="let item of movie.recommendations.results"
-							[movie]="item">
-						</app-card>
+							</ion-col>
+						</ion-row>
+					</ion-grid>
+					<div *ngIf="movie.recommendations && movie.recommendations.results.length > 0">
+						<p>Recommendations:</p>
+						<div class="cards-row">
+							<app-card *ngFor="let item of movie.recommendations.results" [movie]="item">
+							</app-card>
+						</div>
 					</div>
 				</div>
-			</div>
-		</ion-content>
+			</ion-content>
+		</div>
 	</div>
-</div>
+</app-background-image>

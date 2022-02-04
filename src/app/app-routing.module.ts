@@ -9,7 +9,15 @@ const routes: Routes = [
 	},
 	{
 		path: 'movie/:movie-id',
-		loadChildren: () => import('./movie/movie.module').then(m => m.MovieModule)
+		loadChildren: () => import('./movie/info/info.module').then(m => m.InfoModule)
+	},
+	{
+		path: 'movie/:movie-id/videos',
+		loadChildren: () => import('./movie/videos/videos.module').then(m => m.VideosModule)
+	},
+	{
+		path: 'movie/:movie-id/player',
+		loadChildren: () => import('./movie/player/player.module').then(m => m.PlayerModule)
 	},
 	{
 		path: 'surfing',
@@ -22,7 +30,7 @@ const routes: Routes = [
 	{
 		path: 'settings',
 		loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule)
-	},
+	}
 ];
 
 @NgModule({

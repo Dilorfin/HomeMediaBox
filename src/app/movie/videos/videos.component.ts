@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { HistoryService } from 'src/app/_services/history.service';
+import { KnowledgeService } from 'src/app/_services/knowledge.service';
 import { VideoService } from 'src/app/_services/video.service';
 import FullMovieModel from 'src/models/FullMovieModel';
 import VideoFileModel from 'src/models/VideoFileModel';
@@ -11,11 +12,10 @@ import VideoFileModel from 'src/models/VideoFileModel';
 	templateUrl: './videos.component.html',
 	styleUrls: ['./videos.component.scss'],
 })
-export class VideosComponent implements OnInit, OnChanges
+export class VideosComponent implements OnInit
 {
-	@Input() movie: FullMovieModel;
-	@Output() openInfo = new EventEmitter<void>();
-
+	movie: FullMovieModel;
+	private movieId: string;
 	isLoading: boolean = true;
 	private providersLoaded: number = 0;
 
@@ -35,16 +35,29 @@ export class VideosComponent implements OnInit, OnChanges
 	}> = {};
 
 	constructor(private router: Router,
-		private route: ActivatedRoute,
+		private activateRoute: ActivatedRoute,
 		private platform: Platform,
 		private videoService: VideoService,
+		private knService: KnowledgeService,
 		private historyService: HistoryService)
-	{ }
+	{ 
+		this.movieId = activateRoute.snapshot.params['movie-id'];
+	}
 
 	ngOnInit()
-	{ }
+	{
+		this.movie = this.router.getCurrentNavigation().extras.state as FullMovieModel;
+		this.knService.getDetailsById(this.movieId)
+			.then((value: FullMovieModel) =>
+			{
+				this.movie = value;
+			})
+			.then(()=>{
+				this.onModelLoaded();
+			})
+	}
 
-	ngOnChanges(changes: SimpleChanges): void
+	onModelLoaded()
 	{
 		this.providersLoaded = 0;
 		this.isLoading = false;
@@ -87,8 +100,8 @@ export class VideosComponent implements OnInit, OnChanges
 		}
 		else 
 		{
-			this.router.navigate([`./player`], {
-				relativeTo: this.route,
+			this.router.navigate([`../player`], {
+				relativeTo: this.activateRoute,
 				queryParams: {
 					file: video.url
 				}
@@ -153,7 +166,7 @@ export class VideosComponent implements OnInit, OnChanges
 
 		provider.videos = provider.videos.map((video: VideoFileModel) =>
 		{
-			video.watched = this.historyService.wasWatched(this.movie, video);
+			video.watched = this.historyService.checkVideoWasWatched(this.movie, video);
 			return video;
 		});
 	}

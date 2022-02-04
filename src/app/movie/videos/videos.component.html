@@ -1,69 +1,77 @@
-<ion-content id="centered-container">
-	<div>
-		<ion-item button (click)="openInfo.emit()" detail="false">
-			<ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-			<ion-label>Open info</ion-label>
-		</ion-item>
+<div class="loading" *ngIf="!movie">
+	<ion-item>
+		<ion-spinner slot="start" name="crescent"></ion-spinner>
+		<ion-label>Loading...</ion-label>
+	</ion-item>
+</div>
 
-		<ion-item *ngIf="!isLoading">
-			<ion-spinner slot="start" name="crescent"></ion-spinner>
-			<ion-label>Loading...</ion-label>
-		</ion-item>
+<app-background-image *ngIf="movie" [movie]="movie">
+	<ion-content id="centered-container">
+		<div>
+			<app-go-back-button></app-go-back-button>
 
-		<ion-item *ngIf="isLoading && providers.length <= 0">
-			<ion-label>Nothing found</ion-label>
-		</ion-item>
+			<ion-item *ngIf="!isLoading">
+				<ion-spinner slot="start" name="crescent"></ion-spinner>
+				<ion-label>Loading...</ion-label>
+			</ion-item>
 
-		<ion-item *ngIf="providers && providers.length > 0">
-			<ion-label>Provider</ion-label>
-			<ion-select (ionChange)="setProvider($event)" [value]="currentFilter.provider_title">
-				<ion-select-option *ngFor="let provider of providers" [value]="provider.provider_title">
-					{{provider.provider_title}}
-				</ion-select-option>
-			</ion-select>
-		</ion-item>
+			<ion-item *ngIf="isLoading && providers.length <= 0">
+				<ion-label>Nothing found</ion-label>
+			</ion-item>
 
-		<ion-item *ngIf="providers && providers.length > 0">
-			<ion-label>Qualities</ion-label>
-			<ion-select (ionChange)="setFilterProperty('quality', $event)" [value]="currentFilter.quality">
-				<ion-select-option *ngFor="let quality of filters[currentFilter.provider_title].qualities"
-					[value]="quality">
-					{{quality}}
-				</ion-select-option>
-			</ion-select>
-		</ion-item>
+			<ion-item *ngIf="providers && providers.length > 0">
+				<ion-label>Provider</ion-label>
+				<ion-select (ionChange)="setProvider($event)" [value]="currentFilter.provider_title">
+					<ion-select-option *ngFor="let provider of providers" [value]="provider.provider_title">
+						{{provider.provider_title}}
+					</ion-select-option>
+				</ion-select>
+			</ion-item>
 
-		<ion-item *ngIf="providers && providers.length > 0">
-			<ion-label>Translation</ion-label>
-			<ion-select (ionChange)="setFilterProperty('translation', $event)" [value]="currentFilter.translation">
-				<ion-select-option *ngFor="let translation of filters[currentFilter.provider_title].translations"
-					[value]="translation">
-					{{translation}}
-				</ion-select-option>
-			</ion-select>
-		</ion-item>
+			<ion-item *ngIf="providers && providers.length > 0">
+				<ion-label>Qualities</ion-label>
+				<ion-select (ionChange)="setFilterProperty('quality', $event)" [value]="currentFilter.quality">
+					<ion-select-option *ngFor="let quality of filters[currentFilter.provider_title].qualities"
+						[value]="quality">
+						{{quality}}
+					</ion-select-option>
+				</ion-select>
+			</ion-item>
 
-		<ion-item *ngIf="providers && providers.length > 0
+			<ion-item *ngIf="providers && providers.length > 0">
+				<ion-label>Translation</ion-label>
+				<ion-select (ionChange)="setFilterProperty('translation', $event)" [value]="currentFilter.translation">
+					<ion-select-option *ngFor="let translation of filters[currentFilter.provider_title].translations"
+						[value]="translation">
+						{{translation}}
+					</ion-select-option>
+				</ion-select>
+			</ion-item>
+
+			<ion-item *ngIf="providers && providers.length > 0
 				&& filters[currentFilter.provider_title].seasons 
 				&& filters[currentFilter.provider_title].seasons.length > 0">
-			<ion-label>Seasons</ion-label>
-			<ion-select (ionChange)="setFilterProperty('season', $event)" [value]="currentFilter.season">
-				<ion-select-option *ngFor="let season of filters[currentFilter.provider_title].seasons"
-					[value]="season">
-					{{season}}
-				</ion-select-option>
-			</ion-select>
-		</ion-item>
+				<ion-label>Seasons</ion-label>
+				<ion-select (ionChange)="setFilterProperty('season', $event)" [value]="currentFilter.season">
+					<ion-select-option *ngFor="let season of filters[currentFilter.provider_title].seasons"
+						[value]="season">
+						{{season}}
+					</ion-select-option>
+				</ion-select>
+			</ion-item>
 
-		<div>
-			<ion-list *ngIf="currentFilter">
-				<ion-item button (click)="openVideo(video)" detail="false" *ngFor="let video of currentFilter.videos">
-					<ion-icon slot="start" color="success" [name]="!video.watched?'videocam-outline' : 'videocam'"></ion-icon>
-					<ion-label color="success">
-						{{!video.episode_id ? 'Watch now :)' : 'Episode ' + video.episode_id }}
-					</ion-label>
-				</ion-item>
-			</ion-list>
+			<div>
+				<ion-list *ngIf="currentFilter">
+					<ion-item button (click)="openVideo(video)" detail="false"
+						*ngFor="let video of currentFilter.videos">
+						<ion-icon slot="start" color="success" [name]="!video.watched?'videocam-outline' : 'videocam'">
+						</ion-icon>
+						<ion-label color="success">
+							{{!video.episode_id ? 'Watch now :)' : 'Episode ' + video.episode_id }}
+						</ion-label>
+					</ion-item>
+				</ion-list>
+			</div>
 		</div>
-	</div>
-</ion-content>
+	</ion-content>
+</app-background-image>
