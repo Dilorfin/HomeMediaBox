@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
 import { CardComponent } from './card/card.component';
+import { BackgroundImageComponent } from './background-image/background-image.component';
 import { GoBackButtonComponent } from './go-back-button/go-back-button.component';
 
 @NgModule({
 	declarations: [
 		CardComponent,
+		BackgroundImageComponent,
 		GoBackButtonComponent
 	],
 	imports: [
@@ -16,6 +18,7 @@ import { GoBackButtonComponent } from './go-back-button/go-back-button.component
 	],
 	exports: [
 		CardComponent,
+		BackgroundImageComponent,
 		GoBackButtonComponent
 	]
 })
