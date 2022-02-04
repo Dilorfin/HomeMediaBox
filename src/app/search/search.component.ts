@@ -38,9 +38,4 @@ export class SearchComponent implements OnInit
 				this.list = list.results.filter(m => m.poster_path)
 			);
 	}
-
-	goBack(): void
-	{
-		this.location.back();
-	}
 }

@@ -3,17 +3,20 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
 import { CardComponent } from './card/card.component';
+import { GoBackButtonComponent } from './go-back-button/go-back-button.component';
 
 @NgModule({
 	declarations: [
-		CardComponent
+		CardComponent,
+		GoBackButtonComponent
 	],
 	imports: [
 		CommonModule,
 		IonicModule
 	],
 	exports: [
-		CardComponent
+		CardComponent,
+		GoBackButtonComponent
 	]
 })
 export class SharedComponentsModule { }

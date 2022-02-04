@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SettingsRoutingModule } from './settings-routing.module';
 import { IonicModule } from '@ionic/angular';
 import { SettingsComponent } from './settings.component';
+import { SharedComponentsModule } from '../_shared-components/shared-components.module';
 
 @NgModule({
 	declarations: [ 
@@ -12,7 +13,8 @@ import { SettingsComponent } from './settings.component';
 	imports: [
 		IonicModule,
 		CommonModule,
-		SettingsRoutingModule
+		SettingsRoutingModule,
+		SharedComponentsModule
 	]
 })
 export class SettingsModule { }

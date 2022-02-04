@@ -18,9 +18,4 @@ export class SettingsComponent implements OnInit
 	{
 		this.historyService.clear();
 	}
-
-	goBack(): void
-	{
-		this.location.back();
-	}
 }
