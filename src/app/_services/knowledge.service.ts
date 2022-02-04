@@ -13,6 +13,7 @@ import { MovieCategory } from 'src/providers/MovieCategory';
 export class KnowledgeService
 {
 	private knowledgeProvider: KnowledgeProvider;
+	private lastFullModel: FullMovieModel;
 
 	constructor()
 	{
@@ -29,9 +30,26 @@ export class KnowledgeService
 		return this.knowledgeProvider.getCategory(category);
 	}
 
+	async getDetailsById(movieId:string): Promise<FullMovieModel>
+	{
+		const tempMovie: ShortMovieModel = {
+			id: movieId
+		} as ShortMovieModel;
+
+		return this.getDetails(tempMovie);
+	}
 	async getDetails(listModel: ShortMovieModel): Promise<FullMovieModel>
 	{
-		return this.knowledgeProvider.getDetails(listModel);
+		if(this.lastFullModel && listModel.id == this.lastFullModel.id)
+		{
+			return this.lastFullModel;
+		}
+
+		return this.knowledgeProvider.getDetails(listModel)
+			.then((value: FullMovieModel)=>{
+				this.lastFullModel = value;
+				return value;
+			});
 	}
 
 	async search(text: SearchModel): Promise<PaginationModel<ShortMovieModel>>
