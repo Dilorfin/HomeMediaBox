@@ -56,7 +56,7 @@ export default class TMDB implements KnowledgeProvider
 		}
 
 		let url = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB.apiKey}&language=${TMDB.locale}`;
-		let media_type:'tv'|'movie' = 'movie';
+		let media_type: 'tv' | 'movie' = 'movie';
 		if (category == MovieCategory.Film)
 		{
 			url = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB.apiKey}&language=${TMDB.locale}&without_genres=16`;
@@ -113,9 +113,9 @@ export default class TMDB implements KnowledgeProvider
 
 	async getDetails(shortModel: ShortMovieModel): Promise<FullMovieModel>
 	{
-		const splitted:string[] = shortModel.id.split('-');
-		const media_type:string = splitted[0];
-		const id:string = splitted[1];
+		const splitted: string[] = shortModel.id.split('-');
+		const media_type: string = splitted[0];
+		const id: string = splitted[1];
 
 		const url: string = `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${TMDB.apiKey}&language=${TMDB.locale}&append_to_response=external_ids,recommendations,translations`;
 		return TMDB.getJson<any>(url)
@@ -207,12 +207,12 @@ export default class TMDB implements KnowledgeProvider
 		if (model.translations)
 		{
 			model.translations = model.translations.translations;
-			model.translations.forEach(el => {
+			model.translations.forEach(el =>
+			{
 				el.combined_code = `${el.iso_639_1}-${el.iso_3166_1}`;
-				if(!el.data.title)
-				{
-					el.data.title = el.data.name;
-				}
+
+				// ??? (in original language undefined)
+				el.data.title = el.data.title ? el.data.title : el.data.name || "";
 			});
 		}
 
@@ -249,7 +249,7 @@ export default class TMDB implements KnowledgeProvider
 		return result;
 	}
 
-	private makeTMDBId(media_type:string, id:string):string
+	private makeTMDBId(media_type: string, id: string): string
 	{
 		return `${media_type}-${id}`;
 	}
