@@ -1,5 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
 import FullMovieModel from 'src/models/FullMovieModel';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KnowledgeService } from 'src/app/_services/knowledge.service';
@@ -17,8 +16,7 @@ export class InfoComponent implements OnInit
 	genres: string;
 	countries: string;
 
-	constructor(public router: Router, 
-		private platform: Platform,
+	constructor(public router: Router,
 		private knService: KnowledgeService,
 		activateRoute: ActivatedRoute)
 	{
@@ -32,23 +30,19 @@ export class InfoComponent implements OnInit
 			.then((value: FullMovieModel) =>
 			{
 				this.movie = value;
+				if (this.movie.genres)
+				{
+					this.genres = this.movie.genres
+						.map(g => g.name)
+						.join(", ");
+				}
+
+				if (this.movie.production_countries)
+				{
+					this.countries = this.movie.production_countries
+						.map(c => c.name)
+						.join(", ");
+				}
 			});
-	}
-
-	ngOnChanges(changes: SimpleChanges): void
-	{
-		if (this.movie.genres)
-		{
-			this.genres = this.movie.genres
-				.map(g => g.name)
-				.join(", ");
-		}
-
-		if (this.movie.production_countries)
-		{
-			this.countries = this.movie.production_countries
-				.map(c => c.name)
-				.join(", ");
-		}
 	}
 }
