@@ -15,73 +15,103 @@ export default class AnilibriaProvider implements VideoProvider
 		return "Anilibria";
 	}
 
-	public async getVideos(movieModel: FullMovieModel): Promise<VideoFileModel[]>
+	public getVideos(movieModel: FullMovieModel): Promise<VideoFileModel[]>
 	{
-		return await this.requestForEngJpTitle(movieModel).then((title) =>
+		return this.requestForEngJpTitle(movieModel).then((titles:string[]) =>
 		{
-			if (!title)
+			if (!titles || titles.length <= 0)
 			{
 				return [];
 			}
 			
-			const urlTitle = encodeURIComponent(title)
-				.replace(/%26|&/, ' '); // ???
+			const promises = titles.map((title: string) =>
+			{
+				const urlTitle = encodeURIComponent(title)
+					.replace(/%26|&/, ' '); // ???
 
-			const url = `https://api.anilibria.tv/v2/searchTitles?search=${urlTitle}`;
-			return fetch(url, { headers: this.headers })
-				.then((response: Response) => response.json())
-				.then((responseJson) =>
-				{
-					if(responseJson.error)
+				const url = `https://api.anilibria.tv/v2/searchTitles?search=${urlTitle}`;
+				return fetch(url, { headers: this.headers })
+					.then((response: Response) => response.json())
+					.then((responseJson) =>
 					{
-						console.log(`${responseJson.error.code} - ${responseJson.error.message}`);
-						return [];
-					}
-
-					var videos: VideoFileModel[] = [];
-
-					for (const item of responseJson)
-					{
-						for (const key in item.player.playlist)
+						if (responseJson.error)
 						{
-							const ser = item.player.playlist[key];
+							console.log(`${responseJson.error.code} - ${responseJson.error.message}`);
+							return [];
+						}
 
-							if (ser.hls.fhd)
-							{
-								videos.push(this.createVideoFileModel(item, ser, 'fhd'));
-							}
+						var videos: VideoFileModel[] = [];
 
-							if (ser.hls.hd)
+						for (const item of responseJson)
+						{
+							for (const key in item.player.playlist)
 							{
-								videos.push(this.createVideoFileModel(item, ser, 'hd'));
-							}
+								const ser = item.player.playlist[key];
 
-							if (ser.hls.sd)
-							{
-								videos.push(this.createVideoFileModel(item, ser, 'sd'));
+								if (ser.hls.fhd)
+								{
+									videos.push(this.createVideoFileModel(item, ser, 'fhd'));
+								}
+
+								if (ser.hls.hd)
+								{
+									videos.push(this.createVideoFileModel(item, ser, 'hd'));
+								}
+
+								if (ser.hls.sd)
+								{
+									videos.push(this.createVideoFileModel(item, ser, 'sd'));
+								}
 							}
 						}
-					}
 
-					return videos;
-				});
+						return videos;
+					});
+			});
+
+			return Promise.all(promises).then((values:VideoFileModel[][]) =>{
+				return values.flat().filterUnique((v:VideoFileModel) => `${v.episode_id}${v.season}${v.voice_title}`);
+			}).then(v => {
+				console.log(v);
+				return v;
+			});
 		});
 	}
 
-	private requestForEngJpTitle(movieModel: FullMovieModel): Promise<string>
+	private requestForEngJpTitle(movieModel: FullMovieModel): Promise<string[]>
 	{
 		const kitsu_url: string = `https://kitsu.io/api/edge/anime?filter[text]=${movieModel.original_title}`;
+
 		return fetch(kitsu_url, { headers: this.headers })
 			.then((response: Response) => response.json())
 			.then((responseJson) =>
 			{
-				const animes = responseJson.data.filter(d => d.type == 'anime');
-				if (animes.length <= 0)
+				const anime = responseJson.data.filter(d => d.type == 'anime');
+				if (anime.length <= 0)
 				{
 					console.log(`${movieModel.title} wasn't found at kitsu db (Anilibria.tv)`);
 					return null;
 				}
-				return animes[0].attributes.canonicalTitle;
+
+				const lowOriginalTitle = movieModel.original_title.toLowerCase();
+
+				const english = movieModel.translations.filter(tr => tr.iso_639_1 === "en")[0];
+				const lowEnglishTitle = english.data.title.toLowerCase();
+				for(var i = 0; i < anime.length; i++)
+				{
+					var titles:string[] = Object.values(anime[i].attributes.titles);
+					const result = titles
+						.filter((t:string) => t)
+						.map((t:string) => t.toLowerCase())
+						.find((v:string)=> v == lowOriginalTitle || v == lowEnglishTitle);
+					if (result)
+					{
+						titles.push(anime[i].attributes.slug);
+						return titles;
+					}
+				}
+
+				return null;
 			});
 	}
 
