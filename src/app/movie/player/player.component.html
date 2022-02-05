@@ -1,7 +1,10 @@
 <ion-content>
-	<ion-item button (click)="goBack()" detail="false">
-		<ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-		<ion-label>Go back</ion-label>
-	</ion-item>
-	<video id="player" controls></video>
+	<app-go-back-button></app-go-back-button>
+
+	<div id="centered-container">
+		<div>
+			<video id="player" controls></video>
+		</div>
+	</div>
+
 </ion-content>

@@ -1,4 +1,16 @@
-ion-content {
+.plyr {
 	height: 100%;
-	width: 100%;
+	width :100%;
 }
+
+#centered-container {
+	text-align: center;
+	width: 100%;
+
+	& > div {
+		width: 75%;
+
+		display: inline-block;
+	}
+}
+

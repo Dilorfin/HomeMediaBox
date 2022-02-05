@@ -35,9 +35,4 @@ export class PlayerComponent implements OnInit
 			hls.attachMedia(video);
 		}
 	}
-
-	goBack(): void
-	{
-		this.location.back();
-	}
 }
