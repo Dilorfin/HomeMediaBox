@@ -153,16 +153,16 @@ export default class VideoCdnProvider implements VideoProvider
 			.map((url: string) => `https:${url}`)
 			.map((url: string) =>
 			{
-				const matches: number[] = url.match(/\/\d+\.mp4/g)
-					.map((name: string) =>
-					{
-						return parseInt(name.match(/\d{3,}/g)[0]);
-					});
+				const matches: RegExpMatchArray = url.match(/\/\d+(\.mp4|\.m3u8)/g);
 				if (!matches || matches.length != 1)
 				{
 					console.error(`${this.getProviderTitle()} can't parse quality from url: ${url}`);
 				}
-				return { quality: matches[0], url: url };
+				const parsedMatches:number[] = matches.map((name: string) =>
+					{
+						return parseInt(name.match(/\d{3,}/g)[0]);
+					});
+				return { quality: parsedMatches[0], url: url };
 			});
 	}
 
