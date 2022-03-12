@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import FullMovieModel from 'src/models/FullMovieModel';
 import VideoFileModel from 'src/models/VideoFileModel';
 import AnilibriaProvider from 'src/providers/video/Anilibria';
-import VideoCdnProvider from 'src/providers/video/VideoCdn';
+//import VideoCdnProvider from 'src/providers/video/VideoCdn';
 import VideoProvider from 'src/providers/VideoProvider';
 
 @Injectable({
@@ -15,7 +15,7 @@ export class VideoService
 	constructor()
 	{
 		this.videoProviders = [
-			new VideoCdnProvider(),
+			//new VideoCdnProvider(),
 			new AnilibriaProvider()
 		];
 	}
